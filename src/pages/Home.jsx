@@ -307,6 +307,7 @@ const featuredProducts = [
 
 export default function Home() {
   const [banners, setBanners] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchBanners();
@@ -314,18 +315,46 @@ export default function Home() {
 
   const fetchBanners = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(`${API_BASE}/banners?type=hero`);
       setBanners(response.data.data || []);
     } catch (error) {
       console.error('Error fetching banners:', error);
-      // Use default banners if API fails
+      // Use default banners if API fails - set empty array to use HeroBanner defaults
+      setBanners([]);
+      
+      // Show user-friendly notification for development
+      if (import.meta.env.DEV) {
+        console.log('🔧 Using default banners due to API error. Check if backend server is running.');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div>
+      {/* Development Notice - Only show in development and when API fails */}
+      {import.meta.env.DEV && !loading && banners.length === 0 && (
+        <div className="bg-amber-50 border-b border-amber-200 px-4 py-2">
+          <div className="max-w-7xl mx-auto flex items-center gap-2">
+            <div className="w-4 h-4 bg-amber-500 rounded-full animate-pulse"></div>
+            <p className="text-amber-800 text-sm">
+              <strong>Development Mode:</strong> Backend server appears to be offline. Using default content. 
+              <span className="ml-2 text-amber-600">Start backend server at localhost:8000</span>
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Integrated Hero Banner */}
-      <HeroBanner banners={banners} autoSlide={true} interval={6000} />
+      {loading ? (
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-700">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+        </div>
+      ) : (
+        <HeroBanner banners={banners} autoSlide={true} interval={6000} />
+      )}
 
       {/* Services Grid */}
       <section className="py-20 bg-white">

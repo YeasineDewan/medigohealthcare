@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Play, Phone, Calendar, Star, Shield, ArrowRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, Phone, Calendar, Star, Shield, ArrowRight, Stethoscope } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '../core/Button';
 
@@ -9,42 +9,30 @@ const defaultBanners = [
     id: 1,
     title: 'Complete Healthcare Solution',
     subtitle: 'From consultations to medicines, we\'ve got you covered 24/7',
-    description: 'Experience seamless healthcare with our integrated platform',
+    description: 'Experience seamless healthcare with our integrated platform featuring expert doctors and emergency services',
     image: '/banners/healthcare-hero.jpg',
     backgroundColor: 'from-emerald-600 via-teal-600 to-cyan-700',
-    features: ['Video Consultations', 'Medicine Delivery', 'Lab Tests at Home'],
-    ctaText: 'Get Started',
-    ctaLink: '/doctors',
-    secondaryCtaText: 'Emergency',
-    secondaryCtaLink: '/emergency',
+    features: ['Video Consultations', 'Medicine Delivery', 'Lab Tests at Home', '24/7 Emergency'],
     active: true
   },
   {
     id: 2,
     title: 'Expert Doctors at Your Fingertips',
     subtitle: 'Connect with certified specialists in seconds',
-    description: 'Get medical advice from the comfort of your home',
+    description: 'Get medical advice from the comfort of your home with our trusted healthcare professionals',
     image: '/banners/doctor-consultation.jpg',
     backgroundColor: 'from-blue-600 via-indigo-600 to-purple-700',
-    features: ['1000+ Doctors', '24/7 Availability', 'Instant Consultations'],
-    ctaText: 'Consult Now',
-    ctaLink: '/consult',
-    secondaryCtaText: 'View Doctors',
-    secondaryCtaLink: '/doctors',
+    features: ['1000+ Doctors', '24/7 Availability', 'Instant Consultations', 'Emergency Care'],
     active: true
   },
   {
     id: 3,
     title: 'Fast Medicine Delivery',
     subtitle: 'Order medicines online and get them delivered within hours',
-    description: 'Your neighborhood pharmacy, now online and faster',
+    description: 'Your neighborhood pharmacy, now online and faster with emergency support available',
     image: '/banners/pharmacy-delivery.jpg',
     backgroundColor: 'from-green-600 via-emerald-600 to-teal-700',
-    features: ['Same Day Delivery', 'Genuine Medicines', 'Prescription Upload'],
-    ctaText: 'Order Now',
-    ctaLink: '/pharmacy',
-    secondaryCtaText: 'Upload Prescription',
-    secondaryCtaLink: '/prescription',
+    features: ['Same Day Delivery', 'Genuine Medicines', 'Prescription Upload', 'Emergency Support'],
     active: true
   }
 ];
@@ -53,34 +41,44 @@ export default function HeroBanner({ banners = defaultBanners, autoSlide = true,
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Ensure component is mounted before animations
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const activeBanners = banners.filter(b => b.active);
+  const displayBanners = activeBanners.length > 0 ? activeBanners : defaultBanners.filter(b => b.active);
 
   const nextSlide = useCallback(() => {
+    if (displayBanners.length <= 1) return;
     setDirection(1);
-    setCurrentIndex((prev) => (prev + 1) % activeBanners.length);
-  }, [activeBanners.length]);
+    setCurrentIndex((prev) => (prev + 1) % displayBanners.length);
+  }, [displayBanners.length]);
 
   const prevSlide = useCallback(() => {
+    if (displayBanners.length <= 1) return;
     setDirection(-1);
-    setCurrentIndex((prev) => (prev - 1 + activeBanners.length) % activeBanners.length);
-  }, [activeBanners.length]);
+    setCurrentIndex((prev) => (prev - 1 + displayBanners.length) % displayBanners.length);
+  }, [displayBanners.length]);
 
   const goToSlide = (index) => {
+    if (index === currentIndex || displayBanners.length <= 1) return;
     setDirection(index > currentIndex ? 1 : -1);
     setCurrentIndex(index);
   };
 
   useEffect(() => {
-    if (!autoSlide || activeBanners.length <= 1 || isPaused) return;
+    if (!autoSlide || displayBanners.length <= 1 || isPaused || !mounted) return;
 
     const timer = setInterval(nextSlide, interval);
     return () => clearInterval(timer);
-  }, [autoSlide, interval, nextSlide, activeBanners.length, isPaused]);
+  }, [autoSlide, interval, nextSlide, displayBanners.length, isPaused, mounted]);
 
-  if (activeBanners.length === 0) return null;
+  if (!mounted) return null;
 
-  const currentBanner = activeBanners[currentIndex];
+  const currentBanner = displayBanners[currentIndex];
 
   const slideVariants = {
     enter: (direction) => ({
@@ -221,29 +219,30 @@ export default function HeroBanner({ banners = defaultBanners, autoSlide = true,
               transition={{ delay: 0.8 }}
               className="flex flex-col sm:flex-row gap-4"
             >
-              {currentBanner.ctaText && (
-                <Link to={currentBanner.ctaLink}>
-                  <Button 
-                    size="lg" 
-                    className="bg-white text-gray-900 hover:bg-gray-100 px-8 py-4 text-lg font-semibold shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 group"
-                  >
-                    {currentBanner.ctaText}
-                    <ArrowRight className="w-5 h-5 ml-2 inline group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-              )}
+              {/* Book a Doctor Button */}
+              <Link to="/doctors">
+                <Button 
+                  size="lg" 
+                  className="bg-green-500 text-white hover:bg-green-600 px-8 py-4 text-lg font-semibold shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 group"
+                >
+                  <Stethoscope className="w-5 h-5 mr-2" />
+                  Book a Doctor
+                  <ArrowRight className="w-5 h-5 ml-2 inline group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
               
-              {currentBanner.secondaryCtaText && (
-                <Link to={currentBanner.secondaryCtaLink}>
-                  <Button 
-                    variant="outline" 
-                    size="lg"
-                    className="border-2 border-white/30 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 hover:border-white/50 px-8 py-4 text-lg font-semibold transition-all duration-300"
-                  >
-                    {currentBanner.secondaryCtaText}
-                  </Button>
-                </Link>
-              )}
+              {/* Emergency Button */}
+              <Link to="/emergency">
+                <Button 
+                  variant="outline" 
+                  size="lg"
+                  className="border-2 border-red-500 bg-white text-red-500 hover:bg-red-50 px-8 py-4 text-lg font-semibold shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 group"
+                >
+                  <Phone className="w-5 h-5 mr-2 animate-pulse" />
+                  Emergency
+                  <ArrowRight className="w-5 h-5 ml-2 inline group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
             </motion.div>
 
             {/* Quick Stats */}
@@ -327,7 +326,7 @@ export default function HeroBanner({ banners = defaultBanners, autoSlide = true,
         </div>
 
         {/* Navigation Controls */}
-        {activeBanners.length > 1 && (
+        {displayBanners.length > 1 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -345,7 +344,7 @@ export default function HeroBanner({ banners = defaultBanners, autoSlide = true,
 
             {/* Dots Indicator */}
             <div className="flex items-center gap-3">
-              {activeBanners.map((_, index) => (
+              {displayBanners.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => goToSlide(index)}
