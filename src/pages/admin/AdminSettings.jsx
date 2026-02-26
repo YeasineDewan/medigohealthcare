@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Save, Globe, Bell, Shield, Search, Code, Smartphone, Mail, Palette, Lock, Database, Zap, AlertCircle, CheckCircle, Copy, Eye, EyeOff } from 'lucide-react';
+import { Save, Globe, Bell, Shield, Search, Code, Smartphone, Mail, Palette, Lock, Database, Zap, AlertCircle, CheckCircle, Copy, Eye, EyeOff, Calendar, ShoppingCart } from 'lucide-react';
 
 export default function AdminSettings() {
   // General Settings

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MenuController;
+use App\Http\Controllers\Api\AdminMenuController;
 use App\Http\Controllers\Api\DoctorController;
 use App\Http\Controllers\Api\AppointmentController;
 use App\Http\Controllers\Api\ProductController;
@@ -22,6 +23,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('v1')->group(function () {
+    
+    // Admin Menu
+    Route::get('/admin/menu', [AdminMenuController::class, 'index']);
     
     // Public Routes
     Route::get('/menus/services', [MenuController::class, 'services']);

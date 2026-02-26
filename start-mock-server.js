@@ -95,29 +95,21 @@ const mockData = {
 
 // API Routes
 app.get('/api/v1/banners', (req, res) => {
-  console.log('🎯 Mock API: GET /api/v1/banners', req.query);
-  
-  let banners = mockData.banners;
-  
-  // Handle include_inactive parameter
-  if (req.query.include_inactive !== 'true') {
-    banners = banners.filter(banner => banner.active === true);
-  }
+  console.log('🎯 Mock API: GET /api/v1/banners');
   
   // Simulate different responses based on query params
   if (req.query.type === 'hero') {
     return res.json({
       success: true,
       message: 'Banners fetched successfully',
-      data: banners
+      data: mockData.banners
     });
   }
   
-  // Return the expected structure for AdminBanners component
   return res.json({
     success: true,
     message: 'Banners fetched successfully',
-    data: banners
+    data: mockData.banners
   });
 });
 
@@ -136,6 +128,16 @@ app.get('/api/v1/menus/emergency', (req, res) => {
     success: true,
     message: 'Emergency menu fetched successfully',
     data: mockData.emergency
+  });
+});
+
+// Health check endpoint
+app.get('/api/v1/health', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Server is running',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
   });
 });
 
@@ -397,26 +399,10 @@ const adminMenu = [
   }
 ];
 
-// Admin menu endpoint (with v1 prefix to match frontend)
+// Admin Menu endpoint
 app.get('/api/v1/admin/menu', (req, res) => {
   console.log('🎯 Mock API: GET /api/v1/admin/menu');
   res.json(adminMenu);
-});
-
-// Also keep the old endpoint for backwards compatibility
-app.get('/api/admin/menu', (req, res) => {
-  console.log('🎯 Mock API: GET /api/admin/menu');
-  res.json(adminMenu);
-});
-
-// Health check endpoint
-app.get('/api/v1/health', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Server is running',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime()
-  });
 });
 
 // Error handling middleware

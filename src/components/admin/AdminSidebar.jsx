@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -86,7 +86,15 @@ import {
   Wind,
   Brain as BrainIcon,
   List,
+  RefreshCw,
+  Expand,
+  Minimize2,
+  Menu,
+  X,
 } from 'lucide-react';
+import DynamicMenuItem from './DynamicMenuItem';
+import { useAdminMenu } from '../../hooks/useAdminMenu';
+import { useAdminStore } from '../../store/adminStore';
 
 const menuStructure = [
   {
@@ -767,151 +775,238 @@ const menuStructure = [
   },
 ];
 
-const MenuItem = ({ item, level = 0, isNested = false }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const hasChildren = item.children && item.children.length > 0;
-  const isActive = item.path && location.pathname === item.path;
-  
-  const isChildActive = hasChildren && item.children.some(child => 
-    child.path ? location.pathname === child.path : 
-    child.children ? child.children.some(grandchild => location.pathname === grandchild.path) : false
-  );
-
-  const handleClick = () => {
-    if (hasChildren) {
-      setIsExpanded(!isExpanded);
-    } else if (item.path) {
-      navigate(item.path);
-    }
-  };
-
-  const bgColor = isActive 
-    ? 'bg-gradient-to-r from-[#5DBB63] to-[#4CAF50]' 
-    : isChildActive 
-    ? 'bg-gradient-to-r from-[#2E7D32] to-[#388E3C]'
-    : isNested
-    ? 'hover:bg-white/5'
-    : 'hover:bg-white/10';
-
-  const textColor = isActive 
-    ? 'text-white' 
-    : isChildActive
-    ? 'text-white/90'
-    : 'text-white/80';
-
-  const paddingLeft = level === 0 ? '' : level === 1 ? 'pl-8' : 'pl-16';
-
-  return (
-    <div className="w-full">
-      <button
-        onClick={handleClick}
-        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${bgColor} ${textColor} ${paddingLeft}`}
-      >
-        <item.icon className={`w-5 h-5 flex-shrink-0 ${level > 0 ? 'ml-2' : ''}`} />
-        <span className="font-medium flex-1 text-left">{item.label}</span>
-        {hasChildren && (
-          <motion.div
-            animate={{ rotate: isExpanded ? 90 : 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <ChevronRight className="w-4 h-4" />
-          </motion.div>
-        )}
-        {isActive && !hasChildren && (
-          <CheckCircle className="w-4 h-4 ml-auto" />
-        )}
-      </button>
-      
-      <AnimatePresence>
-        {hasChildren && isExpanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="overflow-hidden"
-          >
-            <div className="mt-1 space-y-1">
-              {item.children.map((child) => (
-                <MenuItem 
-                  key={child.id} 
-                  item={child} 
-                  level={level + 1} 
-                  isNested={true}
-                />
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};
-
 export default function AdminSidebar() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, isAuthenticated, sidebarCollapsed } = useAdminStore();
+  
+  // Use the dynamic menu hook
+  const {
+    menuItems,
+    loading,
+    error,
+    expandedItems,
+    menuStats,
+    toggleExpanded,
+    expandAll,
+    collapseAll,
+    refresh,
+    setSearchTerm: setMenuSearchTerm,
+    effectiveRole,
+    effectivePermissions,
+    hasSearchTerm,
+    isMenuEmpty,
+  } = useAdminMenu({
+    autoRefresh: true,
+    refreshInterval: 300000, // 5 minutes
+    enableCache: true,
+    enableSearch: true
+  });
 
-  const filteredMenu = menuStructure.filter(item =>
-    item.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (item.children && item.children.some(child =>
-      child.label.toLowerCase().includes(searchTerm.toLowerCase())
-    ))
-  );
+  // Sync search term with menu hook
+  useEffect(() => {
+    setMenuSearchTerm(searchTerm);
+  }, [searchTerm, setMenuSearchTerm]);
+
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ctrl/Cmd + K for search focus
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        document.getElementById('admin-menu-search')?.focus();
+      }
+      // Escape to clear search
+      if (e.key === 'Escape' && hasSearchTerm) {
+        setSearchTerm('');
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [hasSearchTerm]);
+
+  const handleRefresh = () => {
+    refresh();
+  };
+
+  const handleExpandAll = () => {
+    expandAll();
+  };
+
+  const handleCollapseAll = () => {
+    collapseAll();
+  };
 
   return (
-    <aside className="w-64 bg-gradient-to-b from-[#0F3D1F] via-[#165028] to-[#1A5C2E] text-white fixed inset-y-0 left-0 z-40 flex flex-col">
+    <aside className={`bg-gradient-to-b from-[#0F3D1F] via-[#165028] to-[#1A5C2E] text-white fixed inset-y-0 left-0 z-40 flex flex-col transition-all duration-300 ${
+      sidebarCollapsed ? 'w-20' : 'w-64'
+    }`}>
       {/* Header */}
       <div className="p-6 border-b border-white/10">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#5DBB63] to-[#4CAF50] flex items-center justify-center shadow-lg">
-            <Stethoscope className="w-6 h-6 text-white" />
+        {!sidebarCollapsed ? (
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#5DBB63] to-[#4CAF50] flex items-center justify-center shadow-lg">
+              <Stethoscope className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <span className="font-bold text-xl">Medigo Admin</span>
+              <p className="text-xs text-white/60">Healthcare Management</p>
+            </div>
           </div>
-          <div>
-            <span className="font-bold text-xl">Medigo Admin</span>
-            <p className="text-xs text-white/60">Healthcare Management</p>
+        ) : (
+          <div className="flex justify-center mb-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#5DBB63] to-[#4CAF50] flex items-center justify-center shadow-lg">
+              <Stethoscope className="w-6 h-6 text-white" />
+            </div>
           </div>
-        </div>
+        )}
         
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
-          <input
-            type="text"
-            placeholder="Search menu..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
-          />
-        </div>
+        {/* Search - Only show when not collapsed */}
+        {!sidebarCollapsed && (
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/40" />
+            <input
+              id="admin-menu-search"
+              type="text"
+              placeholder="Search menu... (Ctrl+K)"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
+            />
+            {hasSearchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 rounded hover:bg-white/10 transition-colors"
+              >
+                <X className="w-3 h-3 text-white/60" />
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Navigation */}
       <nav className="flex-1 p-4 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
-        <div className="space-y-2">
-          {filteredMenu.map((item) => (
-            <MenuItem key={item.id} item={item} />
-          ))}
-        </div>
+        {/* Loading State */}
+        {loading && (
+          <div className="flex items-center justify-center py-8">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+              className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full"
+            />
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <div className="mb-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
+            <p className="text-sm text-red-200">{error}</p>
+            <button
+              onClick={handleRefresh}
+              className="mt-2 text-xs text-red-200 hover:text-white transition-colors flex items-center gap-1"
+            >
+              <RefreshCw className="w-3 h-3" />
+              Retry
+            </button>
+          </div>
+        )}
+
+        {/* Menu Controls - Only show when not collapsed */}
+        {!sidebarCollapsed && !loading && !error && menuItems.length > 0 && (
+          <div className="mb-4 flex items-center gap-2 p-2 bg-white/5 rounded-lg">
+            <button
+              onClick={handleExpandAll}
+              className="flex-1 text-xs text-white/70 hover:text-white transition-colors flex items-center justify-center gap-1 py-1 rounded hover:bg-white/10"
+            >
+              <Expand className="w-3 h-3" />
+              Expand All
+            </button>
+            <button
+              onClick={handleCollapseAll}
+              className="flex-1 text-xs text-white/70 hover:text-white transition-colors flex items-center justify-center gap-1 py-1 rounded hover:bg-white/10"
+            >
+              <Minimize2 className="w-3 h-3" />
+              Collapse All
+            </button>
+            <button
+              onClick={handleRefresh}
+              className="p-1 text-xs text-white/70 hover:text-white transition-colors rounded hover:bg-white/10"
+              title="Refresh menu"
+            >
+              <RefreshCw className="w-3 h-3" />
+            </button>
+          </div>
+        )}
+
+        {/* Menu Items */}
+        {!loading && !error && (
+          <div className="space-y-2">
+            {isMenuEmpty ? (
+              <div className="text-center py-8">
+                <p className="text-sm text-white/60">No menu items found</p>
+                {hasSearchTerm && (
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="mt-2 text-xs text-white/40 hover:text-white/60 transition-colors"
+                  >
+                    Clear search
+                  </button>
+                )}
+              </div>
+            ) : (
+              menuItems.map((item) => (
+                <DynamicMenuItem
+                  key={item.id}
+                  item={item}
+                  expandedItems={expandedItems}
+                  onToggleExpand={toggleExpanded}
+                  searchTerm={searchTerm}
+                  userRole={effectiveRole}
+                  permissions={effectivePermissions}
+                  showBadges={true}
+                  animationEnabled={true}
+                />
+              ))
+            )}
+          </div>
+        )}
       </nav>
 
       {/* Footer */}
       <div className="p-4 border-t border-white/10">
-        <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-white/5">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#5DBB63] to-[#4CAF50] flex items-center justify-center">
-            <span className="text-sm font-bold">A</span>
+        {!sidebarCollapsed ? (
+          <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-white/5">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#5DBB63] to-[#4CAF50] flex items-center justify-center">
+              <span className="text-sm font-bold">
+                {user?.name?.charAt(0)?.toUpperCase() || 'A'}
+              </span>
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium">{user?.name || 'Admin User'}</p>
+              <p className="text-xs text-white/60">{user?.email || 'admin@medigo.com'}</p>
+            </div>
+            <button 
+              onClick={() => {/* Handle logout */}}
+              className="p-1 rounded hover:bg-white/10 transition-colors"
+              title="Logout"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
-          <div className="flex-1">
-            <p className="text-sm font-medium">Admin User</p>
-            <p className="text-xs text-white/60">admin@medigo.com</p>
+        ) : (
+          <div className="flex justify-center">
+            <button 
+              onClick={() => {/* Handle logout */}}
+              className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+              title="Logout"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
-          <button className="p-1 rounded hover:bg-white/10 transition-colors">
-            <LogOut className="w-4 h-4" />
-          </button>
-        </div>
+        )}
       </div>
     </aside>
   );

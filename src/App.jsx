@@ -45,6 +45,48 @@ import AdminSettings from './pages/admin/AdminSettings';
 import AdminInventory from './pages/admin/AdminInventory';
 import AdminCategories from './pages/admin/AdminCategories';
 import AdminBanners from './pages/admin/AdminBanners';
+import GeneralSettings from './pages/admin/settings/General';
+import UserManagement from './pages/admin/settings/UserManagement';
+import RolePermissions from './pages/admin/settings/RolePermissions';
+import SystemConfig from './pages/admin/settings/SystemConfig';
+import BackupRestore from './pages/admin/settings/BackupRestore';
+
+// Accounts
+import CreateGroup from './pages/admin/accounts/CreateGroup';
+import CreateLedger from './pages/admin/accounts/CreateLedger';
+import ChartOfAccounts from './pages/admin/accounts/ChartOfAccounts';
+import TrialBalance from './pages/admin/accounts/TrialBalance';
+import BalanceSheet from './pages/admin/accounts/BalanceSheet';
+import IncomeStatement from './pages/admin/accounts/IncomeStatement';
+
+// Reports
+import PatientReports from './pages/admin/reports/PatientReports';
+
+// Marketing
+import Promotions from './pages/admin/marketing/Promotions';
+
+// Communications
+import Notifications from './pages/admin/communications/Notifications';
+
+// HR
+import SalaryProcess from './pages/admin/hr/SalaryProcess';
+import EmployeeEntry from './pages/admin/hr/EmployeeEntry';
+
+// Emergency
+import EmergencyCases from './pages/admin/emergency/EmergencyCases';
+
+// Inventory
+import StockManagement from './pages/admin/inventory/StockManagement';
+
+// Lab
+import LabTestsAdmin from './pages/admin/lab/LabTests';
+
+// Pharmacy
+import Medicines from './pages/admin/pharmacy/Medicines';
+
+// Medical
+import Diagnostic from './pages/admin/medical/Diagnostic';
+
 import DoctorLayout from './components/doctor/DoctorLayout';
 import DoctorDashboard from './pages/doctor/DoctorDashboard';
 import DoctorSchedule from './pages/doctor/DoctorSchedule';
@@ -131,6 +173,70 @@ function App() {
           <Route path="banners" element={<AdminBanners />} />
           <Route path="marketing/banners" element={<AdminBanners />} />
           <Route path="settings" element={<AdminSettings />} />
+          <Route path="settings/general" element={<GeneralSettings />} />
+          <Route path="settings/users" element={<UserManagement />} />
+          <Route path="settings/permissions" element={<RolePermissions />} />
+          <Route path="settings/system" element={<SystemConfig />} />
+          <Route path="settings/backup" element={<BackupRestore />} />
+          <Route path="settings/:subpage" element={<AdminSettings />} />
+          
+          {/* Accounts Routes */}
+          <Route path="accounts/create-group" element={<CreateGroup />} />
+          <Route path="accounts/create-ledger" element={<CreateLedger />} />
+          <Route path="accounts/chart-of-accounts" element={<ChartOfAccounts />} />
+          <Route path="accounts/trial-balance" element={<TrialBalance />} />
+          <Route path="accounts/balance-sheet" element={<BalanceSheet />} />
+          <Route path="accounts/income-statement" element={<IncomeStatement />} />
+          <Route path="accounts/*" element={<AdminSettings />} />
+          
+          {/* HR Routes */}
+          <Route path="hr/employee-entry" element={<EmployeeEntry />} />
+          <Route path="hr/salary-process" element={<SalaryProcess />} />
+          <Route path="hr/*" element={<AdminSettings />} />
+          
+          {/* Reports Routes */}
+          <Route path="reports/patients" element={<PatientReports />} />
+          <Route path="reports/*" element={<AdminSettings />} />
+          
+          {/* Medical Routes */}
+          <Route path="medical/diagnostic" element={<Diagnostic />} />
+          <Route path="medical/*" element={<AdminSettings />} />
+          
+          {/* Departments Routes */}
+          <Route path="departments/*" element={<AdminSettings />} />
+          
+          {/* Pharmacy Routes */}
+          <Route path="pharmacy/medicines" element={<Medicines />} />
+          <Route path="pharmacy/*" element={<AdminSettings />} />
+          
+          {/* Lab Routes */}
+          <Route path="lab/tests" element={<LabTestsAdmin />} />
+          <Route path="lab/*" element={<AdminSettings />} />
+          
+          {/* Patients sub-routes */}
+          <Route path="patients/*" element={<AdminSettings />} />
+          
+          {/* Doctors sub-routes */}
+          <Route path="doctors/*" element={<AdminSettings />} />
+          
+          {/* Inventory Routes */}
+          <Route path="inventory/stock" element={<StockManagement />} />
+          <Route path="inventory/*" element={<AdminSettings />} />
+          
+          {/* Emergency sub-routes */}
+          <Route path="emergency/cases" element={<EmergencyCases />} />
+          <Route path="emergency/*" element={<AdminSettings />} />
+          
+          {/* Services sub-routes */}
+          <Route path="services/*" element={<AdminSettings />} />
+          
+          {/* Marketing Routes */}
+          <Route path="marketing/promotions" element={<Promotions />} />
+          <Route path="marketing/*" element={<AdminSettings />} />
+          
+          {/* Communications Routes */}
+          <Route path="communications/notifications" element={<Notifications />} />
+          <Route path="communications/*" element={<AdminSettings />} />
         </Route>
 
         <Route path="/doctor" element={<DoctorLayout />}>
