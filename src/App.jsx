@@ -129,6 +129,7 @@ function App() {
           <Route path="services" element={<AdminServices />} />
           <Route path="emergency" element={<AdminEmergency />} />
           <Route path="banners" element={<AdminBanners />} />
+          <Route path="marketing/banners" element={<AdminBanners />} />
           <Route path="settings" element={<AdminSettings />} />
         </Route>
 
