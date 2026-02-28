@@ -65,7 +65,6 @@ import {
   MessageCircle,
   Zap,
   Target,
-  Award,
   Gift,
   Tag,
   Percent,
@@ -351,7 +350,7 @@ const menuStructure = [
       {
         id: 'general-medicine',
         label: 'General Medicine',
-        icon: StethoscopeIcon,
+        icon: Stethoscope,
         path: '/admin/departments/general',
       },
       {
@@ -363,7 +362,7 @@ const menuStructure = [
       {
         id: 'radiology',
         label: 'Radiology',
-        icon: ActivityIcon,
+        icon: Activity,
         path: '/admin/departments/radiology',
       },
       {
@@ -400,13 +399,13 @@ const menuStructure = [
       {
         id: 'medicines',
         label: 'Medicines',
-        icon: PillIcon,
+        icon: Pill,
         path: '/admin/pharmacy/medicines',
       },
       {
         id: 'supplements',
         label: 'Supplements',
-        icon: PackageIcon,
+        icon: Package,
         path: '/admin/pharmacy/supplements',
       },
       {

@@ -72,6 +72,11 @@ import Notifications from './pages/admin/communications/Notifications';
 // HR
 import SalaryProcess from './pages/admin/hr/SalaryProcess';
 import EmployeeEntry from './pages/admin/hr/EmployeeEntry';
+import SalaryPayment from './pages/admin/hr/SalaryPayment';
+import HRLedger from './pages/admin/hr/HRLedger';
+import DailyAttendance from './pages/admin/hr/attendance/DailyAttendance';
+import MonthlyAttendance from './pages/admin/hr/attendance/MonthlyAttendance';
+import AttendanceReport from './pages/admin/hr/attendance/AttendanceReport';
 
 // Emergency
 import EmergencyCases from './pages/admin/emergency/EmergencyCases';
@@ -193,6 +198,11 @@ function App() {
           {/* HR Routes */}
           <Route path="hr/employee-entry" element={<EmployeeEntry />} />
           <Route path="hr/salary-process" element={<SalaryProcess />} />
+          <Route path="hr/salary-payment" element={<SalaryPayment />} />
+          <Route path="hr/ledger" element={<HRLedger />} />
+          <Route path="hr/attendance/daily" element={<DailyAttendance />} />
+          <Route path="hr/attendance/monthly" element={<MonthlyAttendance />} />
+          <Route path="hr/attendance/report" element={<AttendanceReport />} />
           <Route path="hr/*" element={<AdminSettings />} />
           
           {/* Reports Routes */}
