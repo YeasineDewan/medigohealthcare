@@ -398,6 +398,7 @@ const adminMenu = [
 ];
 
 // Admin menu endpoint (with v1 prefix to match frontend)
+// Note: Returns the array directly without wrapping in object (matching Laravel response)
 app.get('/api/v1/admin/menu', (req, res) => {
   console.log('🎯 Mock API: GET /api/v1/admin/menu');
   res.json(adminMenu);

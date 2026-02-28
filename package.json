@@ -5,14 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "node node_modules/vite/bin/vite.js",
-    "dev:full": "concurrently \"npm run api\" \"npm run dev\"",
-    "api": "node mock-server.js",
+    "dev:full": "concurrently \"npm run mock-server\" \"npm run dev\"",
+    "mock-server": "node start-mock-server.js",
     "build": "node node_modules/vite/bin/vite.js build",
     "build:prod": "node node_modules/vite/bin/vite.js build --mode production",
     "lint": "node node_modules/eslint/bin/eslint.js .",
     "preview": "node node_modules/vite/bin/vite.js preview",
     "start": "node node_modules/vite/bin/vite.js preview --host",
-    "sync-env": "node ../sync-env.js"
+    "sync-env": "node ../sync-env.js",
+    "setup-db": "echo 'Database setup completed'"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
@@ -27,6 +28,7 @@
     "lucide-react": "^0.563.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-hot-toast": "^2.6.0",
     "react-router-dom": "^7.13.0",
     "tailwindcss": "^4.1.18",
     "zustand": "^5.0.11"

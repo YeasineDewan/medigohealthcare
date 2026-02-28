@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\PrescriptionController;
 use App\Http\Controllers\Api\MedicalRecordController;
 use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\BannerController;
+use App\Http\Controllers\Api\SettingsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,6 +27,41 @@ Route::prefix('v1')->group(function () {
     
     // Admin Menu
     Route::get('/admin/menu', [AdminMenuController::class, 'index']);
+    
+    // Settings Routes
+    Route::prefix('settings')->group(function () {
+        // General Settings
+        Route::get('/general', [SettingsController::class, 'getGeneralSettings']);
+        Route::put('/general', [SettingsController::class, 'updateGeneralSettings']);
+        
+        // User Management
+        Route::get('/users', [SettingsController::class, 'getUsers']);
+        Route::post('/users', [SettingsController::class, 'createUser']);
+        Route::put('/users/{id}', [SettingsController::class, 'updateUser']);
+        Route::delete('/users/{id}', [SettingsController::class, 'deleteUser']);
+        
+        // Roles & Permissions
+        Route::get('/roles-permissions', [SettingsController::class, 'getRolesPermissions']);
+        Route::post('/roles', [SettingsController::class, 'createRole']);
+        Route::put('/roles/{id}', [SettingsController::class, 'updateRolePermissions']);
+        Route::delete('/roles/{id}', [SettingsController::class, 'deleteRole']);
+        
+        // System Configuration
+        Route::get('/system', [SettingsController::class, 'getSystemConfig']);
+        Route::put('/system', [SettingsController::class, 'updateSystemConfig']);
+        Route::post('/system/api-key', [SettingsController::class, 'generateApiKey']);
+        Route::delete('/system/api-key', [SettingsController::class, 'deleteApiKey']);
+        Route::post('/system/maintenance', [SettingsController::class, 'toggleMaintenanceMode']);
+        Route::post('/system/clear-cache', [SettingsController::class, 'clearCache']);
+        
+        // Backup & Restore
+        Route::get('/backups', [SettingsController::class, 'getBackups']);
+        Route::post('/backups', [SettingsController::class, 'createBackup']);
+        Route::put('/backups/schedule', [SettingsController::class, 'updateBackupSchedule']);
+        Route::post('/backups/{id}/restore', [SettingsController::class, 'restoreBackup']);
+        Route::delete('/backups/{id}', [SettingsController::class, 'deleteBackup']);
+        Route::get('/backups/{id}/download', [SettingsController::class, 'downloadBackup']);
+    });
     
     // Public Routes
     Route::get('/menus/services', [MenuController::class, 'services']);

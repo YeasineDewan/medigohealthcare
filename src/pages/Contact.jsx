@@ -461,20 +461,22 @@ export default function Contact() {
           {/* Alternative: Interactive location selector */}
           <div className="mt-8 grid md:grid-cols-3 gap-4">
             {offices.map((office, i) => (
-              <button
+              <div
                 key={office.city}
-                onClick={() => window.open(`https://www.google.com/maps/search/${encodeURIComponent(office.address)}`, '_blank')}
-                className="p-4 bg-white rounded-lg border border-gray-200 hover:border-[#5DBB63] hover:shadow-md transition-all duration-300 text-left"
+                className="p-4 bg-white rounded-lg border border-gray-200 hover:border-[#5DBB63] hover:shadow-md transition-all duration-300"
               >
                 <div className="flex items-center gap-2 mb-2">
                   <MapPin className="w-4 h-4 text-[#5DBB63]" />
                   <span className="font-semibold text-gray-900">{office.city}</span>
                 </div>
                 <p className="text-sm text-gray-600">{office.address}</p>
-                <button className="mt-2 text-[#5DBB63] text-sm font-medium hover:text-[#165028]">
+                <button 
+                  onClick={() => window.open(`https://www.google.com/maps/search/${encodeURIComponent(office.address)}`, '_blank')}
+                  className="mt-2 text-[#5DBB63] text-sm font-medium hover:text-[#165028] cursor-pointer"
+                >
                   View on Map <Navigation className="w-3 h-3 inline ml-1" />
                 </button>
-              </button>
+              </div>
             ))}
           </div>
         </div>
