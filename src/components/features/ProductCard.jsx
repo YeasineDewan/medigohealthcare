@@ -1,5 +1,6 @@
 import { Plus, Star, Heart, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import Card from '../core/Card';
 import FileUpload from '../core/FileUpload';
 import { useCartStore } from '../../store/cartStore';
@@ -29,7 +30,16 @@ export default function ProductCard({ product, viewMode = 'grid' }) {
     }
     
     addItem({ id, name: name || genericName, price: currentPrice });
-    alert('Added to cart!');
+    toast.success(`${name || genericName} added to cart!`, {
+      icon: '🛒',
+      style: {
+        borderRadius: '12px',
+        background: '#fff',
+        color: '#111827',
+        border: '1px solid #e5e7eb',
+        padding: '12px 16px',
+      },
+    });
   };
 
   const handlePrescriptionSubmit = () => {
@@ -37,7 +47,16 @@ export default function ProductCard({ product, viewMode = 'grid' }) {
       addItem({ id, name: name || genericName, price: currentPrice, prescription });
       setShowPrescriptionUpload(false);
       setPrescription(null);
-      alert('Added to cart with prescription!');
+      toast.success(`${name || genericName} added with prescription!`, {
+        icon: '💊',
+        style: {
+          borderRadius: '12px',
+          background: '#fff',
+          color: '#111827',
+          border: '1px solid #e5e7eb',
+          padding: '12px 16px',
+        },
+      });
     }
   };
 

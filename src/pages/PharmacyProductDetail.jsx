@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { 
   ArrowLeft, Star, Heart, Plus, ShoppingCart, Shield, Truck, Clock, 
   CheckCircle, AlertCircle, Phone, Mail, MapPin, Info, Package, Pill
@@ -69,7 +70,16 @@ export default function PharmacyProductDetail() {
       });
     }
     
-    alert(`Added ${quantity} item${quantity > 1 ? 's' : ''} to cart!`);
+    toast.success(`${quantity} item${quantity > 1 ? 's' : ''} added to cart!`, {
+      icon: '🛒',
+      style: {
+        borderRadius: '12px',
+        background: '#fff',
+        color: '#111827',
+        border: '1px solid #e5e7eb',
+        padding: '12px 16px',
+      },
+    });
   };
 
   const handlePrescriptionSubmit = () => {
@@ -84,7 +94,16 @@ export default function PharmacyProductDetail() {
       }
       setShowPrescriptionUpload(false);
       setPrescription(null);
-      alert(`Added ${quantity} item${quantity > 1 ? 's' : ''} to cart with prescription!`);
+      toast.success(`${quantity} item${quantity > 1 ? 's' : ''} added with prescription!`, {
+        icon: '💊',
+        style: {
+          borderRadius: '12px',
+          background: '#fff',
+          color: '#111827',
+          border: '1px solid #e5e7eb',
+          padding: '12px 16px',
+        },
+      });
     }
   };
 

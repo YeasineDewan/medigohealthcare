@@ -673,8 +673,23 @@ const FirstAidModal = ({ item, onSave, onClose }) => {
     sterile: item?.sterile || false,
     waterproof: item?.waterproof || false,
     size: item?.size || '',
-    quantityPerUnit: item?.quantityPerUnit || 1
+    quantityPerUnit: item?.quantityPerUnit || 1,
+    image: item?.image || null
   });
+
+  const [imagePreview, setImagePreview] = useState(item?.image || null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+        setFormData({ ...formData, image: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -787,6 +802,21 @@ const FirstAidModal = ({ item, onSave, onClose }) => {
                     <option value="Units">Units</option>
                     <option value="Bottles">Bottles</option>
                   </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Product Image</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
+                  />
+                  {imagePreview && (
+                    <div className="mt-2">
+                      <img src={imagePreview} alt="Preview" className="w-full h-32 object-cover rounded-lg" />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

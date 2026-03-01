@@ -424,7 +424,7 @@ const menuStructure = [
         id: 'prescription-orders',
         label: 'Prescription Orders',
         icon: FileText,
-        path: '/admin/pharmacy/prescriptions',
+        path: '/admin/pharmacy/prescription-orders',
       },
       {
         id: 'stock-management',

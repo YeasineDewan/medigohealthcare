@@ -358,26 +358,121 @@ export const generateWord = async (order, customer) => {
 };
 
 // Preview invoice (opens PDF in new tab)
-export const previewInvoice = (order) => {
+export const previewInvoice = (order, customer) => {
   const doc = new jsPDF();
   const invoiceNumber = generateInvoiceNumber(order.id);
   
-  // Same PDF generation logic as generatePDF but open instead of save
-  // (Reusing the logic from generatePDF)
+  // Company Header
   doc.setFontSize(24);
-  doc.setTextColor(22, 80, 40);
+  doc.setTextColor(22, 80, 40); // #165028
   doc.text('Medigo Health', 14, 20);
   
   doc.setFontSize(10);
   doc.setTextColor(100, 100, 100);
   doc.text('Digital Healthcare Platform', 14, 27);
+  doc.text('Dhaka, Bangladesh', 14, 32);
+  doc.text('Phone: +880 1XXX-XXXXXX', 14, 37);
+  doc.text('Email: support@medigo.health', 14, 42);
   
+  // Invoice Title
   doc.setFontSize(20);
   doc.setTextColor(0, 0, 0);
   doc.text('INVOICE', 150, 20);
   
+  // Invoice Details (Right side)
   doc.setFontSize(10);
+  doc.setTextColor(100, 100, 100);
   doc.text(`Invoice #: ${invoiceNumber}`, 150, 27);
+  doc.text(`Order #: ${order.id}`, 150, 32);
+  doc.text(`Date: ${formatDate(order.created_at || new Date())}`, 150, 37);
+  doc.text(`Payment: ${order.payment_method || 'COD'}`, 150, 42);
+  
+  // Line separator
+  doc.setDrawColor(220, 220, 220);
+  doc.line(14, 48, 196, 48);
+  
+  // Bill To / Ship To section
+  doc.setFontSize(11);
+  doc.setTextColor(0, 0, 0);
+  doc.text('Bill To:', 14, 58);
+  
+  doc.setFontSize(10);
+  doc.setTextColor(60, 60, 60);
+  doc.text(customer?.name || order.shipping_name, 14, 64);
+  doc.text(customer?.email || 'N/A', 14, 69);
+  doc.text(customer?.phone || order.shipping_phone, 14, 74);
+  
+  doc.setFontSize(11);
+  doc.setTextColor(0, 0, 0);
+  doc.text('Ship To:', 110, 58);
+  
+  doc.setFontSize(10);
+  doc.setTextColor(60, 60, 60);
+  doc.text(order.shipping_name, 110, 64);
+  doc.text(order.shipping_address, 110, 69, { maxWidth: 80 });
+  doc.text(`${order.shipping_city}`, 110, 79);
+  
+  // Items Table
+  const tableData = order.items.map((item) => [
+    item.product?.name || item.name || 'Product',
+    item.quantity.toString(),
+    formatCurrency(item.price),
+    formatCurrency(item.total || item.price * item.quantity),
+  ]);
+  
+  doc.autoTable({
+    startY: 90,
+    head: [['Product', 'Quantity', 'Price', 'Total']],
+    body: tableData,
+    theme: 'striped',
+    headStyles: {
+      fillColor: [22, 80, 40],
+      textColor: [255, 255, 255],
+      fontStyle: 'bold',
+    },
+    styles: {
+      fontSize: 10,
+      cellPadding: 5,
+    },
+    columnStyles: {
+      0: { cellWidth: 90 },
+      1: { cellWidth: 30, halign: 'center' },
+      2: { cellWidth: 35, halign: 'right' },
+      3: { cellWidth: 35, halign: 'right' },
+    },
+  });
+  
+  // Summary section
+  const finalY = doc.lastAutoTable.finalY + 10;
+  const summaryX = 140;
+  
+  doc.setFontSize(10);
+  doc.setTextColor(60, 60, 60);
+  
+  doc.text('Subtotal:', summaryX, finalY);
+  doc.text(formatCurrency(order.subtotal), 185, finalY, { align: 'right' });
+  
+  doc.text('Tax (5%):', summaryX, finalY + 6);
+  doc.text(formatCurrency(order.tax), 185, finalY + 6, { align: 'right' });
+  
+  doc.text('Shipping:', summaryX, finalY + 12);
+  doc.text(formatCurrency(order.shipping), 185, finalY + 12, { align: 'right' });
+  
+  if (order.discount > 0) {
+    doc.text('Discount:', summaryX, finalY + 18);
+    doc.text(`-${formatCurrency(order.discount)}`, 185, finalY + 18, { align: 'right' });
+  }
+  
+  // Total line
+  doc.setDrawColor(220, 220, 220);
+  const totalLineY = order.discount > 0 ? finalY + 22 : finalY + 16;
+  doc.line(summaryX, totalLineY, 196, totalLineY);
+  
+  doc.setFontSize(12);
+  doc.setTextColor(22, 80, 40);
+  doc.setFont(undefined, 'bold');
+  doc.text('Total:', summaryX, totalLineY + 7);
+  doc.text(formatCurrency(order.total), 185, totalLineY + 7, { align: 'right' });
   
   // Open in new tab
   window.open(doc.output('bloburl'), '_blank');

@@ -141,6 +141,25 @@ export default function Sales() {
     setShowViewModal(true);
   };
 
+  const handleExportCSV = () => {
+    const csvData = sales.map(sale => ({
+      'Invoice Number': sale.invoiceNumber,
+      'Customer': sale.customer.name,
+      'Phone': sale.customer.phone,
+      'Date': sale.salesDate,
+      'Time': sale.salesTime,
+      'Items': sale.items.map(item => `${item.name} (${item.quantity}x $${item.unitPrice})`).join(', '),
+      'Subtotal': sale.subtotal.toFixed(2),
+      'Discount': sale.discount.toFixed(2),
+      'Tax': sale.tax.toFixed(2),
+      'Total': sale.total.toFixed(2),
+      'Payment Method': sale.paymentMethod,
+      'Status': sale.status
+    }));
+    
+    exportToCSV(csvData, 'sales-report');
+  };
+
   const handleExportPDF = () => {
     const columns = [
       { key: 'invoiceNumber', label: 'Invoice #' },
@@ -177,6 +196,10 @@ export default function Sales() {
       customer: s.customer,
     }));
     exportToWord(exportData, 'Sales Report', columns);
+  };
+
+  const printDocument = () => {
+    window.print();
   };
 
   return (

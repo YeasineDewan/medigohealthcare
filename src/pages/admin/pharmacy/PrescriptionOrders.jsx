@@ -642,6 +642,7 @@ const PrescriptionOrderModal = ({ order, onSave, onClose }) => {
     notes: order?.notes || '',
     pharmacist: order?.pharmacist || '',
     insuranceInfo: order?.insuranceInfo || '',
+    prescriptionImage: order?.prescriptionImage || null,
     items: order?.items || [
       {
         medicineName: '',
@@ -653,6 +654,20 @@ const PrescriptionOrderModal = ({ order, onSave, onClose }) => {
       }
     ]
   });
+
+  const [imagePreview, setImagePreview] = useState(order?.prescriptionImage || null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+        setFormData({ ...formData, prescriptionImage: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -1041,8 +1056,22 @@ const PrescriptionOrderModal = ({ order, onSave, onClose }) => {
             </div>
             
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Additional Notes</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Additional Information</h3>
               <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Prescription Image</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
+                  />
+                  {imagePreview && (
+                    <div className="mt-2">
+                      <img src={imagePreview} alt="Prescription" className="w-full h-48 object-cover rounded-lg border border-gray-200" />
+                    </div>
+                  )}
+                </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
                   <textarea
@@ -1278,6 +1307,14 @@ const ViewPrescriptionOrderModal = ({ order, onClose }) => {
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Additional Information</h3>
                 <div className="space-y-3">
+                  {order.prescriptionImage && (
+                    <div>
+                      <span className="text-sm text-gray-600">Prescription Image:</span>
+                      <div className="mt-2">
+                        <img src={order.prescriptionImage} alt="Prescription" className="w-full h-64 object-cover rounded-lg border border-gray-200" />
+                      </div>
+                    </div>
+                  )}
                   {order.notes && (
                     <div>
                       <span className="text-sm text-gray-600">Notes:</span>
