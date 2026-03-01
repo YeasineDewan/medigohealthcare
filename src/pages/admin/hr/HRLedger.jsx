@@ -24,7 +24,7 @@ import {
   Building,
   Banknote
 } from 'lucide-react';
-import { exportToPDF, exportToWord, printDocument } from '../../utils/exportUtils';
+import { exportToPDF, exportToWord, printDocument } from '../../../utils/exportUtils';
 
 const hrLedgerData = [
   { id: 1, transactionDate: '2024-01-15', employeeId: 'EMP001', employeeName: 'Dr. Sarah Johnson', department: 'Cardiology', transactionType: 'Salary Payment', amount: 15500, paymentMethod: 'Bank Transfer', status: 'completed', reference: 'SAL/2024/001' },

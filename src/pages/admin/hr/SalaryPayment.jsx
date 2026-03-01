@@ -22,7 +22,7 @@ import {
   X,
   Save
 } from 'lucide-react';
-import { exportToPDF, exportToWord, printDocument } from '../../utils/exportUtils';
+import { exportToPDF, exportToWord, printDocument } from '../../../utils/exportUtils';
 
 const salaryPayments = [
   { id: 1, employeeId: 'EMP001', name: 'Dr. Sarah Johnson', department: 'Cardiology', basicSalary: 15000, allowances: 3000, deductions: 2500, netSalary: 15500, paymentDate: '2024-01-15', paymentMethod: 'Bank Transfer', status: 'completed', transactionId: 'TXN001' },

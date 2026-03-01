@@ -24,7 +24,7 @@ import {
   X,
   Save
 } from 'lucide-react';
-import { exportToPDF, exportToWord, printDocument } from '../../../utils/exportUtils';
+import { exportToPDF, exportToWord, printDocument } from '../../../../utils/exportUtils';
 
 const generateReportData = () => {
   const employees = [

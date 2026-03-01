@@ -23,7 +23,7 @@ import {
   Trash2,
   Plus
 } from 'lucide-react';
-import { exportToPDF, exportToWord, printDocument } from '../../../utils/exportUtils';
+import { exportToPDF, exportToWord, printDocument } from '../../../../utils/exportUtils';
 
 // Mock monthly attendance data
 const generateMonthlyData = (year, month) => {

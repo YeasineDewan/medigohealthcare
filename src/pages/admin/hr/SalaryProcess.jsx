@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
   Filter,
@@ -21,7 +21,13 @@ import {
   ChevronDown,
   ChevronRight,
   AlertCircle,
-  Send
+  Send,
+  Eye,
+  X,
+  Building,
+  Mail,
+  Phone,
+  MapPin
 } from 'lucide-react';
 
 // Mock salary data
@@ -41,6 +47,10 @@ export default function SalaryProcess() {
   const [deptFilter, setDeptFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('all');
   const [month, setMonth] = useState('2024-01');
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [showSalarySlip, setShowSalarySlip] = useState(false);
 
   const filteredSalaries = salaryData.filter(salary => {
     const matchesSearch = salary.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -57,6 +67,182 @@ export default function SalaryProcess() {
   const totalNet = filteredSalaries.reduce((sum, s) => sum + s.netSalary, 0);
   const paidCount = filteredSalaries.filter(s => s.status === 'paid').length;
   const pendingCount = filteredSalaries.filter(s => s.status === 'pending').length;
+
+  const handleCalculate = () => {
+    setIsCalculating(true);
+    // Simulate calculation process
+    setTimeout(() => {
+      setIsCalculating(false);
+      alert(`Salary calculated for ${filteredSalaries.length} employees for ${month}`);
+    }, 1500);
+  };
+
+  const handleExport = () => {
+    setIsExporting(true);
+    const exportData = filteredSalaries.map(s => ({
+      'Employee ID': s.employeeId,
+      'Name': s.name,
+      'Department': s.department,
+      'Basic Salary': s.basicSalary,
+      'Allowances': s.allowances,
+      'Deductions': s.deductions,
+      'Net Salary': s.netSalary,
+      'Status': s.status,
+      'Payment Date': s.paymentDate
+    }));
+    
+    const headers = Object.keys(exportData[0]).join(',');
+    const rows = exportData.map(row => Object.values(row).join(',')).join('\n');
+    const csv = `${headers}\n${rows}`;
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Salary_Report_${month}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    
+    setTimeout(() => setIsExporting(false), 1000);
+  };
+
+  const handleViewSalarySlip = (employee) => {
+    setSelectedEmployee(employee);
+    setShowSalarySlip(true);
+  };
+
+  const downloadSalarySlipPDF = (employee) => {
+    const content = generateSalarySlipHTML(employee);
+    const printWindow = window.open('', '', 'width=800,height=600');
+    printWindow.document.write(content);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 250);
+  };
+
+  const downloadSalarySlipWord = (employee) => {
+    const content = generateSalarySlipHTML(employee);
+    const blob = new Blob([content], { type: 'application/msword' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Salary_Slip_${employee.employeeId}_${month}.doc`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  };
+
+  const generateSalarySlipHTML = (emp) => {
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Salary Slip - ${emp.name}</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 40px; }
+          .header { text-align: center; border-bottom: 3px solid #5DBB63; padding-bottom: 20px; margin-bottom: 30px; }
+          .company-name { font-size: 28px; font-weight: bold; color: #5DBB63; margin-bottom: 5px; }
+          .slip-title { font-size: 20px; color: #333; margin-top: 10px; }
+          .info-section { display: flex; justify-content: space-between; margin-bottom: 30px; }
+          .info-box { width: 48%; }
+          .info-row { margin-bottom: 8px; font-size: 14px; }
+          .label { font-weight: bold; color: #555; }
+          table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+          th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+          th { background-color: #5DBB63; color: white; font-weight: bold; }
+          .earnings { color: #059669; }
+          .deductions { color: #DC2626; }
+          .total-row { font-weight: bold; font-size: 16px; background-color: #f9fafb; }
+          .net-salary { background-color: #5DBB63; color: white; font-size: 18px; }
+          .footer { margin-top: 50px; padding-top: 20px; border-top: 2px solid #ddd; text-align: center; color: #666; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div class="company-name">MediGo Healthcare</div>
+          <div class="slip-title">SALARY SLIP</div>
+          <div style="margin-top: 10px; color: #666;">Month: ${new Date(month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</div>
+        </div>
+        
+        <div class="info-section">
+          <div class="info-box">
+            <div class="info-row"><span class="label">Employee Name:</span> ${emp.name}</div>
+            <div class="info-row"><span class="label">Employee ID:</span> ${emp.employeeId}</div>
+            <div class="info-row"><span class="label">Department:</span> ${emp.department}</div>
+          </div>
+          <div class="info-box">
+            <div class="info-row"><span class="label">Payment Date:</span> ${emp.paymentDate}</div>
+            <div class="info-row"><span class="label">Status:</span> ${emp.status.toUpperCase()}</div>
+            <div class="info-row"><span class="label">Generated:</span> ${new Date().toLocaleDateString()}</div>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Earnings</th>
+              <th style="text-align: right;">Amount ($)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Basic Salary</td>
+              <td class="earnings" style="text-align: right;">${emp.basicSalary.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>Allowances (HRA, Medical, Transport)</td>
+              <td class="earnings" style="text-align: right;">${emp.allowances.toLocaleString()}</td>
+            </tr>
+            <tr class="total-row">
+              <td>Gross Salary</td>
+              <td style="text-align: right;">$${(emp.basicSalary + emp.allowances).toLocaleString()}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Deductions</th>
+              <th style="text-align: right;">Amount ($)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Tax & Insurance</td>
+              <td class="deductions" style="text-align: right;">${emp.deductions.toLocaleString()}</td>
+            </tr>
+            <tr class="total-row">
+              <td>Total Deductions</td>
+              <td style="text-align: right;">$${emp.deductions.toLocaleString()}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table>
+          <tbody>
+            <tr class="net-salary">
+              <td><strong>NET SALARY</strong></td>
+              <td style="text-align: right;"><strong>$${emp.netSalary.toLocaleString()}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="footer">
+          <p>This is a computer-generated salary slip and does not require a signature.</p>
+          <p>MediGo Healthcare | HR Department | hr@medigohealthcare.com</p>
+        </div>
+      </body>
+      </html>
+    `;
+  };
 
   return (
     <div className="space-y-6">
@@ -76,13 +262,29 @@ export default function SalaryProcess() {
               className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
             />
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-            <Download className="w-4 h-4" />
-            Export
+          <button 
+            onClick={handleExport}
+            disabled={isExporting || filteredSalaries.length === 0}
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          >
+            {isExporting ? (
+              <RefreshCw className="w-4 h-4 animate-spin" />
+            ) : (
+              <Download className="w-4 h-4" />
+            )}
+            {isExporting ? 'Exporting...' : 'Export'}
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#5DBB63] to-[#4CAF50] text-white rounded-lg hover:from-[#4CAF50] hover:to-[#45a049]">
-            <Calculator className="w-4 h-4" />
-            Calculate
+          <button 
+            onClick={handleCalculate}
+            disabled={isCalculating || filteredSalaries.length === 0}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#5DBB63] to-[#4CAF50] text-white rounded-lg hover:from-[#4CAF50] hover:to-[#45a049] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          >
+            {isCalculating ? (
+              <RefreshCw className="w-4 h-4 animate-spin" />
+            ) : (
+              <Calculator className="w-4 h-4" />
+            )}
+            {isCalculating ? 'Calculating...' : 'Calculate'}
           </button>
         </div>
       </div>
@@ -202,6 +404,7 @@ export default function SalaryProcess() {
                 <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Net Salary</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Status</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Payment Date</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -251,6 +454,31 @@ export default function SalaryProcess() {
                   <td className="px-4 py-3">
                     <span className="text-sm text-gray-500">{salary.paymentDate}</span>
                   </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleViewSalarySlip(salary)}
+                        className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="View Salary Slip"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => downloadSalarySlipPDF(salary)}
+                        className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Download PDF"
+                      >
+                        <FileText className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => downloadSalarySlipWord(salary)}
+                        className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                        title="Download Word"
+                      >
+                        <Download className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
                 </motion.tr>
               ))}
             </tbody>
@@ -267,6 +495,151 @@ export default function SalaryProcess() {
           </table>
         </div>
       </div>
+
+      {/* Salary Slip Modal */}
+      <AnimatePresence>
+        {showSalarySlip && selectedEmployee && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+            onClick={() => setShowSalarySlip(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+            >
+              {/* Header */}
+              <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">Salary Slip</h2>
+                  <p className="text-sm text-gray-500 mt-1">{new Date(month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => downloadSalarySlipPDF(selectedEmployee)}
+                    className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  >
+                    <FileText className="w-4 h-4" />
+                    PDF
+                  </button>
+                  <button
+                    onClick={() => downloadSalarySlipWord(selectedEmployee)}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <Download className="w-4 h-4" />
+                    Word
+                  </button>
+                  <button
+                    onClick={() => setShowSalarySlip(false)}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Salary Slip Content */}
+              <div className="p-8">
+                {/* Company Header */}
+                <div className="text-center border-b-4 border-[#5DBB63] pb-6 mb-6">
+                  <h1 className="text-3xl font-bold text-[#5DBB63] mb-2">MediGo Healthcare</h1>
+                  <p className="text-gray-600">SALARY SLIP</p>
+                  <p className="text-sm text-gray-500 mt-2">{new Date(month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
+                </div>
+
+                {/* Employee Info */}
+                <div className="grid grid-cols-2 gap-6 mb-8">
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-2">
+                      <span className="font-semibold text-gray-700 min-w-[120px]">Employee Name:</span>
+                      <span className="text-gray-900">{selectedEmployee.name}</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="font-semibold text-gray-700 min-w-[120px]">Employee ID:</span>
+                      <span className="text-gray-900">{selectedEmployee.employeeId}</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="font-semibold text-gray-700 min-w-[120px]">Department:</span>
+                      <span className="text-gray-900">{selectedEmployee.department}</span>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-2">
+                      <span className="font-semibold text-gray-700 min-w-[120px]">Payment Date:</span>
+                      <span className="text-gray-900">{selectedEmployee.paymentDate}</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="font-semibold text-gray-700 min-w-[120px]">Status:</span>
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        selectedEmployee.status === 'paid' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                      }`}>
+                        {selectedEmployee.status.toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="font-semibold text-gray-700 min-w-[120px]">Generated:</span>
+                      <span className="text-gray-900">{new Date().toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Earnings */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-bold text-gray-900 mb-3 bg-[#5DBB63] text-white px-4 py-2 rounded-t-lg">Earnings</h3>
+                  <div className="border border-gray-200 rounded-b-lg overflow-hidden">
+                    <div className="flex justify-between p-4 border-b border-gray-200">
+                      <span className="text-gray-700">Basic Salary</span>
+                      <span className="font-semibold text-green-600">${selectedEmployee.basicSalary.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between p-4 border-b border-gray-200">
+                      <span className="text-gray-700">Allowances (HRA, Medical, Transport)</span>
+                      <span className="font-semibold text-green-600">${selectedEmployee.allowances.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between p-4 bg-gray-50">
+                      <span className="font-bold text-gray-900">Gross Salary</span>
+                      <span className="font-bold text-gray-900">${(selectedEmployee.basicSalary + selectedEmployee.allowances).toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Deductions */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-bold text-gray-900 mb-3 bg-red-600 text-white px-4 py-2 rounded-t-lg">Deductions</h3>
+                  <div className="border border-gray-200 rounded-b-lg overflow-hidden">
+                    <div className="flex justify-between p-4 border-b border-gray-200">
+                      <span className="text-gray-700">Tax & Insurance</span>
+                      <span className="font-semibold text-red-600">${selectedEmployee.deductions.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between p-4 bg-gray-50">
+                      <span className="font-bold text-gray-900">Total Deductions</span>
+                      <span className="font-bold text-gray-900">${selectedEmployee.deductions.toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Net Salary */}
+                <div className="bg-gradient-to-r from-[#5DBB63] to-[#4CAF50] text-white rounded-lg p-6">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xl font-bold">NET SALARY</span>
+                    <span className="text-3xl font-bold">${selectedEmployee.netSalary.toLocaleString()}</span>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="mt-8 pt-6 border-t border-gray-200 text-center text-sm text-gray-500">
+                  <p>This is a computer-generated salary slip and does not require a signature.</p>
+                  <p className="mt-2">MediGo Healthcare | HR Department | hr@medigohealthcare.com</p>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

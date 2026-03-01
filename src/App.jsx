@@ -89,6 +89,12 @@ import LabTestsAdmin from './pages/admin/lab/LabTests';
 
 // Pharmacy
 import Medicines from './pages/admin/pharmacy/Medicines';
+import Supplements from './pages/admin/pharmacy/Supplements';
+import MedicalDevices from './pages/admin/pharmacy/MedicalDevices';
+import FirstAid from './pages/admin/pharmacy/FirstAid';
+import PrescriptionOrders from './pages/admin/pharmacy/PrescriptionOrders';
+import Suppliers from './pages/admin/pharmacy/Suppliers';
+import Sales from './pages/admin/pharmacy/Sales';
 
 // Medical
 import Diagnostic from './pages/admin/medical/Diagnostic';
@@ -218,6 +224,12 @@ function App() {
           
           {/* Pharmacy Routes */}
           <Route path="pharmacy/medicines" element={<Medicines />} />
+          <Route path="pharmacy/supplements" element={<Supplements />} />
+          <Route path="pharmacy/medical-devices" element={<MedicalDevices />} />
+          <Route path="pharmacy/first-aid" element={<FirstAid />} />
+          <Route path="pharmacy/prescription-orders" element={<PrescriptionOrders />} />
+          <Route path="pharmacy/suppliers" element={<Suppliers />} />
+          <Route path="pharmacy/sales" element={<Sales />} />
           <Route path="pharmacy/*" element={<AdminSettings />} />
           
           {/* Lab Routes */}

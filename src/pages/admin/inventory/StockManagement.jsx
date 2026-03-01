@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
   Filter,
@@ -19,8 +19,12 @@ import {
   ChevronDown,
   X,
   Save,
-  BarChart3
+  BarChart3,
+  FileText,
+  FileSpreadsheet,
+  Printer
 } from 'lucide-react';
+import { exportToPDF, exportToWord, printDocument } from '../../../utils/exportUtils';
 
 // Mock inventory data
 const inventoryData = [
@@ -61,9 +65,37 @@ export default function StockManagement() {
   const lowStockItems = filteredInventory.filter(i => i.status === 'low-stock' || i.status === 'out-of-stock').length;
   const inStockItems = filteredInventory.filter(i => i.status === 'in-stock').length;
 
-  const handleEdit = (item) => {
+const handleEdit = (item) => {
     setSelectedItem(item);
     setShowModal(true);
+  };
+
+  const handleExportPDF = () => {
+    const columns = [
+      { key: 'sku', label: 'SKU' },
+      { key: 'name', label: 'Item Name' },
+      { key: 'category', label: 'Category' },
+      { key: 'currentStock', label: 'Stock' },
+      { key: 'minStock', label: 'Min Stock' },
+      { key: 'unitPrice', label: 'Unit Price' },
+      { key: 'totalValue', label: 'Total Value' },
+      { key: 'status', label: 'Status' },
+    ];
+    exportToPDF(filteredInventory, 'Stock Management Report', columns);
+  };
+
+  const handleExportWord = () => {
+    const columns = [
+      { key: 'sku', label: 'SKU' },
+      { key: 'name', label: 'Item Name' },
+      { key: 'category', label: 'Category' },
+      { key: 'currentStock', label: 'Stock' },
+      { key: 'minStock', label: 'Min Stock' },
+      { key: 'unitPrice', label: 'Unit Price' },
+      { key: 'totalValue', label: 'Total Value' },
+      { key: 'status', label: 'Status' },
+    ];
+    exportToWord(filteredInventory, 'Stock Management Report', columns);
   };
 
   return (
@@ -75,9 +107,14 @@ export default function StockManagement() {
           <p className="text-gray-500 mt-1">Manage inventory and stock levels</p>
         </div>
         <div className="flex gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-            <Download className="w-4 h-4" />
-            Export
+          <button onClick={handleExportPDF} className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+            <FileText className="w-4 h-4" />PDF
+          </button>
+          <button onClick={handleExportWord} className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+            <FileSpreadsheet className="w-4 h-4" />Word
+          </button>
+          <button onClick={printDocument} className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+            <Printer className="w-4 h-4" />Print
           </button>
           <button className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#5DBB63] to-[#4CAF50] text-white rounded-lg hover:from-[#4CAF50] hover:to-[#45a049]">
             <Plus className="w-4 h-4" />
