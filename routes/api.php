@@ -146,8 +146,15 @@ Route::prefix('v1')->group(function () {
         
         // Prescriptions
         Route::get('/prescriptions', [PrescriptionController::class, 'index']);
+        Route::get('/prescriptions/search', [PrescriptionController::class, 'search']);
         Route::post('/prescriptions', [PrescriptionController::class, 'store']);
+        Route::post('/prescriptions/upload', [PrescriptionController::class, 'upload']);
+        Route::get('/prescriptions/customer/{customerId}', [PrescriptionController::class, 'getByCustomer']);
+        Route::get('/prescriptions/analytics', [PrescriptionController::class, 'analytics']);
         Route::get('/prescriptions/{id}', [PrescriptionController::class, 'show']);
+        Route::patch('/prescriptions/{id}/status', [PrescriptionController::class, 'updateStatus']);
+        Route::post('/prescriptions/{id}/process', [PrescriptionController::class, 'process']);
+        Route::delete('/prescriptions/{id}', [PrescriptionController::class, 'destroy']);
         
         // Medical Records
         Route::get('/medical-records', [MedicalRecordController::class, 'index']);

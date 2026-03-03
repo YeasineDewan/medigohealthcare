@@ -434,6 +434,114 @@ app.use((err, req, res, next) => {
 let prescriptions = [];
 let prescriptionIdCounter = 1000;
 
+// Initialize with sample prescriptions for testing
+const initializeSamplePrescriptions = () => {
+  if (prescriptions.length === 0) {
+    const samplePrescriptions = [
+      {
+        id: 'RX-1000',
+        customerId: 'CUST001',
+        doctorName: 'Dr. Sarah Johnson',
+        doctorLicense: 'MD12345',
+        notes: 'Patient allergic to penicillin',
+        urgency: 'normal',
+        deliveryMethod: 'pickup',
+        preferredPharmacy: 'Main Pharmacy',
+        status: 'pending_verification',
+        prescriptionImage: '/prescriptions/rx-1000.jpg',
+        uploadedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        verifiedAt: null,
+        processedAt: null,
+        pharmacistId: null,
+        pharmacistName: null,
+        verificationNotes: '',
+        processingNotes: '',
+        items: [
+          { name: 'Paracetamol', dosage: '500mg', quantity: 1, unitPrice: 15 },
+          { name: 'Amoxicillin', dosage: '250mg', quantity: 2, unitPrice: 25 }
+        ],
+        orderId: null,
+        rejectionReason: null,
+        priority: 'normal',
+        metadata: {
+          uploadSource: 'customer_portal',
+          ipAddress: '127.0.0.1',
+          userAgent: 'Test Browser'
+        }
+      },
+      {
+        id: 'RX-1001',
+        customerId: 'CUST002',
+        doctorName: 'Dr. Michael Chen',
+        doctorLicense: 'MD67890',
+        notes: 'Urgent prescription for chronic condition',
+        urgency: 'urgent',
+        deliveryMethod: 'delivery',
+        preferredPharmacy: 'Downtown Branch',
+        status: 'verified',
+        prescriptionImage: '/prescriptions/rx-1001.jpg',
+        uploadedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+        verifiedAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+        processedAt: null,
+        pharmacistId: 1,
+        pharmacistName: 'Pharmacist 1',
+        verificationNotes: 'Prescription verified and approved',
+        processingNotes: '',
+        items: [
+          { name: 'Lisinopril', dosage: '10mg', quantity: 1, unitPrice: 30 },
+          { name: 'Metformin', dosage: '500mg', quantity: 2, unitPrice: 20 }
+        ],
+        orderId: null,
+        rejectionReason: null,
+        priority: 'high',
+        metadata: {
+          uploadSource: 'customer_portal',
+          ipAddress: '127.0.0.1',
+          userAgent: 'Test Browser'
+        }
+      },
+      {
+        id: 'RX-1002',
+        customerId: 'CUST003',
+        doctorName: 'Dr. Emily Williams',
+        doctorLicense: 'MD11111',
+        notes: 'Post-surgery medication',
+        urgency: 'normal',
+        deliveryMethod: 'courier',
+        preferredPharmacy: 'North Location',
+        status: 'processing',
+        prescriptionImage: '/prescriptions/placeholder-prescription.jpg',
+        uploadedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+        verifiedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        processedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+        pharmacistId: 2,
+        pharmacistName: 'Pharmacist 2',
+        verificationNotes: 'Verified for processing',
+        processingNotes: 'Order being prepared',
+        items: [
+          { name: 'Ibuprofen', dosage: '400mg', quantity: 1, unitPrice: 18 },
+          { name: 'Omeprazole', dosage: '20mg', quantity: 1, unitPrice: 22 }
+        ],
+        orderId: 'ORD-' + Date.now(),
+        rejectionReason: null,
+        priority: 'normal',
+        metadata: {
+          uploadSource: 'customer_portal',
+          ipAddress: '127.0.0.1',
+          userAgent: 'Test Browser'
+        }
+      }
+    ];
+    
+    prescriptions = samplePrescriptions;
+    prescriptionIdCounter = 1003;
+    console.log('📋 Initialized with sample prescriptions:', prescriptions.length);
+  }
+};
+
+// Initialize sample data on server start
+initializeSamplePrescriptions();
+
 // Prescription upload endpoint
 app.post('/api/v1/prescriptions/upload', (req, res) => {
   console.log('🎯 Mock API: POST /api/v1/prescriptions/upload');

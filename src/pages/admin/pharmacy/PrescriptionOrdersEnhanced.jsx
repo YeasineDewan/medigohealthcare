@@ -192,8 +192,8 @@ const PrescriptionOrdersEnhanced = () => {
         
       } catch (error) {
         console.error('Error fetching prescription orders:', error);
-        // Fallback to mock data if API fails
-        setOrders(generateOrders());
+        // Fallback to empty array if API fails
+        setOrders([]);
       } finally {
         setLoading(false);
       }
@@ -351,6 +351,23 @@ const PrescriptionOrdersEnhanced = () => {
     setEditingOrder(null);
     setFormData({});
     addNotification('Prescription order updated successfully', 'success');
+  };
+
+  const handleAddOrder = () => {
+    const newOrder = {
+      id: Date.now().toString(),
+      orderNumber: `RX-${Date.now()}`,
+      ...formData,
+      status: 'pending',
+      paymentStatus: 'pending',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    setOrders([newOrder, ...orders]);
+    setShowAddModal(false);
+    setFormData({});
+    setPrescriptionFile(null);
+    addNotification('Prescription order created successfully', 'success');
   };
 
   const handleDeleteOrder = (orderId) => {

@@ -153,7 +153,30 @@ class PrescriptionService {
       return response.data;
     } catch (error) {
       console.error('Error fetching analytics:', error);
-      throw new Error('Failed to fetch analytics');
+      // Return default analytics if API fails
+      return {
+        totalPrescriptions: 0,
+        recentPrescriptions: 0,
+        statusBreakdown: {
+          pending_verification: 0,
+          verified: 0,
+          processing: 0,
+          completed: 0,
+          rejected: 0
+        },
+        urgencyBreakdown: {
+          normal: 0,
+          urgent: 0
+        },
+        deliveryMethodBreakdown: {
+          pickup: 0,
+          delivery: 0,
+          courier: 0
+        },
+        averageProcessingTime: '0 hours',
+        rejectionRate: 0,
+        dateRange: dateRange
+      };
     }
   }
 
@@ -161,15 +184,16 @@ class PrescriptionService {
   async searchPrescriptions(query, filters = {}) {
     try {
       const params = new URLSearchParams({
-        q: query,
+        q: query || '',
         ...filters
       });
       
       const response = await axios.get(`${this.baseURL}/search?${params}`);
-      return response.data;
+      return response.data || [];
     } catch (error) {
       console.error('Error searching prescriptions:', error);
-      throw new Error('Failed to search prescriptions');
+      // Return empty array instead of throwing error
+      return [];
     }
   }
 
