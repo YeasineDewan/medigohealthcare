@@ -1200,8 +1200,8 @@ INSERT INTO `stock_items` (`category_id`, `item_code`, `item_name`, `description
 
 -- Insert sample medical devices
 INSERT INTO `medical_devices` (`device_name`, `device_code`, `category`, `brand`, `model`, `serial_number`, `description`, `specifications`, `purchase_date`, `purchase_price`, `warranty_expiry`, `maintenance_interval`, `last_maintenance`, `next_maintenance`, `status`, `location`, `created_by`, `created_at`, `updated_at`) VALUES
-('Blood Pressure Monitor', 'BPM001', 'Diagnostic', 'Omron', 'BP786', 'SN001234', 'Automatic blood pressure monitor', '{"accuracy": "+/-3mmHg", "display": "Digital", "power": "Battery/AC"}', '2024-01-15', 8500.00, '2026-01-15', 90, '2024-10-15', '2025-01-15', 'active', 'Main Clinic', 1, NOW(), NOW()),
-('ECG Machine', 'ECG001', 'Diagnostic', 'Philips', 'PageWriter TC50', 'SN005678', '12-lead ECG machine with printer', '{"leads": 12, "display": "8-inch LCD", "paper_width": "110mm"}', '2024-02-20', 250000.00, '2027-02-20', 180, '2024-10-20', '2025-04-20', 'active', 'Cardiology Unit', 1, NOW(), NOW()),
-('Pulse Oximeter', 'POX001', 'Diagnostic', 'Contec', 'CMS50D', 'SN009012', 'Fingertip pulse oximeter', '{"accuracy": "+/-2%", "display": "OLED", "battery": "Rechargeable"}', '2024-03-10', 3500.00, '2026-03-10', 30, '2024-10-10', '2024-11-10', 'active', 'Emergency Room', 1, NOW(), NOW());
+('Blood Pressure Monitor', 'BPM001', 'Diagnostic', 'Omron', 'BP786', 'SN001234', 'Automatic blood pressure monitor', '{"accuracy": "+/-3mmHg", "display": "Digital", "power": "Battery/AC"}', '2024-01-15', 8500.00, '2026-01-15', 90, '2024-10-15', '2025-01-15', 'active', 'Main Clinic', NULL, NOW(), NOW()),
+('ECG Machine', 'ECG001', 'Diagnostic', 'Philips', 'PageWriter TC50', 'SN005678', '12-lead ECG machine with printer', '{"leads": 12, "display": "8-inch LCD", "paper_width": "110mm"}', '2024-02-20', 250000.00, '2027-02-20', 180, '2024-10-20', '2025-04-20', 'active', 'Cardiology Unit', NULL, NOW(), NOW()),
+('Pulse Oximeter', 'POX001', 'Diagnostic', 'Contec', 'CMS50D', 'SN009012', 'Fingertip pulse oximeter', '{"accuracy": "+/-2%", "display": "OLED", "battery": "Rechargeable"}', '2024-03-10', 3500.00, '2026-03-10', 30, '2024-10-10', '2024-11-10', 'active', 'Emergency Room', NULL, NOW(), NOW());
 
 COMMIT;

@@ -802,6 +802,23 @@ app.delete('/api/v1/prescriptions/:prescriptionId', (req, res) => {
   });
 });
 
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Medigo Healthcare Mock API Server',
+    version: '1.0.0',
+    status: 'running',
+    endpoints: {
+      health: '/api/v1/health',
+      banners: '/api/v1/banners',
+      services: '/api/v1/menus/services',
+      emergency: '/api/v1/menus/emergency',
+      admin: '/api/v1/admin/menu',
+      prescriptions: '/api/v1/prescriptions'
+    }
+  });
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 Mock API Server running on port ${PORT}`);

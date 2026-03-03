@@ -405,6 +405,22 @@ app.get('/api/v1/admin/menu', (req, res) => {
   res.json(adminMenu);
 });
 
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Medigo Healthcare Mock API Server',
+    version: '1.0.0',
+    status: 'running',
+    endpoints: {
+      health: '/api/v1/health',
+      banners: '/api/v1/banners',
+      services: '/api/v1/menus/services',
+      emergency: '/api/v1/menus/emergency',
+      admin: '/api/v1/admin/menu'
+    }
+  });
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('❌ Server Error:', err.message);
