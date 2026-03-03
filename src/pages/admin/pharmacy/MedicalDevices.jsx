@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
   Filter,
@@ -27,7 +27,31 @@ import {
   ShoppingCart,
   Zap,
   Shield,
-  Settings
+  Settings,
+  Upload,
+  Image as ImageIcon,
+  Star,
+  MoreVertical,
+  ChevronDown,
+  RefreshCw,
+  Printer,
+  FileSpreadsheet,
+  Mail,
+  Phone,
+  MapPin,
+  Globe,
+  Award,
+  Users,
+  Truck,
+  Box,
+  Wrench,
+  Heart,
+  Brain,
+  Bone,
+  Stethoscope,
+  Thermometer,
+  Syringe,
+  Bandage
 } from 'lucide-react';
 import { exportToPDF, exportToWord, exportToCSV } from '../../../utils/exportUtils';
 
@@ -40,11 +64,23 @@ const MedicalDevices = () => {
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [editingDevice, setEditingDevice] = useState(null);
+  const [formData, setFormData] = useState({});
+  const [imagePreview, setImagePreview] = useState(null);
+  const [bulkAction, setBulkAction] = useState('');
+  const [selectedDevices, setSelectedDevices] = useState([]);
+  const [showBulkModal, setShowBulkModal] = useState(false);
+  const [activeTab, setActiveTab] = useState('all');
+  const [sortBy, setSortBy] = useState('name');
+  const [sortOrder, setSortOrder] = useState('asc');
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [filters, setFilters] = useState({
     category: '',
     status: '',
     stockLevel: '',
-    manufacturer: ''
+    manufacturer: '',
+    priceRange: '',
+    certification: '',
+    warrantyStatus: ''
   });
 
   // Mock data

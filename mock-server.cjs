@@ -254,9 +254,9 @@ const adminMenu = [
     children: [
       { id: 'medicines', label: 'Medicines', icon: 'Pill', path: '/admin/pharmacy/medicines', order: 1 },
       { id: 'supplements', label: 'Supplements', icon: 'Package', path: '/admin/pharmacy/supplements', order: 2 },
-      { id: 'medical-devices', label: 'Medical Devices', icon: 'Syringe', path: '/admin/pharmacy/devices', order: 3 },
+      { id: 'medical-devices', label: 'Medical Devices', icon: 'Syringe', path: '/admin/pharmacy/medical-devices', order: 3 },
       { id: 'first-aid', label: 'First Aid', icon: 'Bandage', path: '/admin/pharmacy/first-aid', order: 4 },
-      { id: 'prescription-orders', label: 'Prescription Orders', icon: 'FileText', path: '/admin/pharmacy/prescriptions', order: 5 },
+      { id: 'prescription-orders', label: 'Prescription Orders', icon: 'FileText', path: '/admin/pharmacy/prescription-orders', order: 5 },
       { id: 'stock-management', label: 'Stock Management', icon: 'Package', path: '/admin/pharmacy/stock', order: 6 },
       { id: 'suppliers', label: 'Suppliers', icon: 'Building', path: '/admin/pharmacy/suppliers', order: 7 },
       { id: 'pharmacy-sales', label: 'Sales', icon: 'ShoppingCart', path: '/admin/pharmacy/sales', order: 8 }
@@ -427,6 +427,270 @@ app.use((err, req, res, next) => {
     success: false,
     message: 'Internal Server Error',
     error: err.message
+  });
+});
+
+// Dynamic Prescription Storage
+let prescriptions = [];
+let prescriptionIdCounter = 1000;
+
+// Prescription upload endpoint
+app.post('/api/v1/prescriptions/upload', (req, res) => {
+  console.log('🎯 Mock API: POST /api/v1/prescriptions/upload');
+  
+  const prescriptionId = `RX-${prescriptionIdCounter++}`;
+  const customerId = req.body.customerId;
+  const timestamp = new Date().toISOString();
+  
+  const newPrescription = {
+    id: prescriptionId,
+    customerId: customerId,
+    doctorName: req.body.doctorName || 'Unknown Doctor',
+    doctorLicense: req.body.doctorLicense || '',
+    notes: req.body.notes || '',
+    urgency: req.body.urgency || 'normal',
+    deliveryMethod: req.body.deliveryMethod || 'pickup',
+    preferredPharmacy: req.body.preferredPharmacy || 'Main Pharmacy',
+    status: 'pending_verification',
+    prescriptionImage: `/prescriptions/${prescriptionId}.jpg`,
+    uploadedAt: timestamp,
+    verifiedAt: null,
+    processedAt: null,
+    pharmacistId: null,
+    pharmacistName: null,
+    verificationNotes: '',
+    processingNotes: '',
+    items: [],
+    orderId: null,
+    rejectionReason: null,
+    priority: req.body.urgency === 'urgent' ? 'high' : 'normal',
+    metadata: {
+      uploadSource: 'customer_portal',
+      ipAddress: req.ip || '127.0.0.1',
+      userAgent: req.get('User-Agent') || 'Unknown'
+    }
+  };
+  
+  prescriptions.push(newPrescription);
+  
+  console.log(`✅ New prescription uploaded: ${prescriptionId} for customer ${customerId}`);
+  
+  res.json({
+    success: true,
+    prescription: newPrescription,
+    message: 'Prescription uploaded successfully'
+  });
+});
+
+// Get prescriptions by customer ID
+app.get('/api/v1/prescriptions/customer/:customerId', (req, res) => {
+  console.log(`🎯 Mock API: GET /api/v1/prescriptions/customer/${req.params.customerId}`);
+  
+  const customerId = req.params.customerId;
+  const customerPrescriptions = prescriptions.filter(p => p.customerId === customerId);
+  
+  res.json(customerPrescriptions);
+});
+
+// Get prescription by ID
+app.get('/api/v1/prescriptions/:prescriptionId', (req, res) => {
+  console.log(`🎯 Mock API: GET /api/v1/prescriptions/${req.params.prescriptionId}`);
+  
+  const prescriptionId = req.params.prescriptionId;
+  const prescription = prescriptions.find(p => p.id === prescriptionId);
+  
+  if (!prescription) {
+    return res.status(404).json({
+      success: false,
+      error: 'Prescription not found'
+    });
+  }
+  
+  res.json(prescription);
+});
+
+// Update prescription status
+app.patch('/api/v1/prescriptions/:prescriptionId/status', (req, res) => {
+  console.log(`🎯 Mock API: PATCH /api/v1/prescriptions/${req.params.prescriptionId}/status`);
+  
+  const prescriptionId = req.params.prescriptionId;
+  const { status, pharmacistId, notes } = req.body;
+  
+  const prescriptionIndex = prescriptions.findIndex(p => p.id === prescriptionId);
+  
+  if (prescriptionIndex === -1) {
+    return res.status(404).json({
+      success: false,
+      error: 'Prescription not found'
+    });
+  }
+  
+  prescriptions[prescriptionIndex] = {
+    ...prescriptions[prescriptionIndex],
+    status,
+    pharmacistId,
+    pharmacistName: `Pharmacist ${pharmacistId}`,
+    verifiedAt: status === 'verified' ? new Date().toISOString() : prescriptions[prescriptionIndex].verifiedAt,
+    verificationNotes: notes || prescriptions[prescriptionIndex].verificationNotes,
+    updatedAt: new Date().toISOString()
+  };
+  
+  res.json({
+    success: true,
+    prescription: prescriptions[prescriptionIndex],
+    message: 'Prescription status updated successfully'
+  });
+});
+
+// Process prescription into order
+app.post('/api/v1/prescriptions/:prescriptionId/process', (req, res) => {
+  console.log(`🎯 Mock API: POST /api/v1/prescriptions/${req.params.prescriptionId}/process`);
+  
+  const prescriptionId = req.params.prescriptionId;
+  const orderData = req.body;
+  
+  const prescriptionIndex = prescriptions.findIndex(p => p.id === prescriptionId);
+  
+  if (prescriptionIndex === -1) {
+    return res.status(404).json({
+      success: false,
+      error: 'Prescription not found'
+    });
+  }
+  
+  const orderId = `ORD-${Date.now()}`;
+  
+  prescriptions[prescriptionIndex] = {
+    ...prescriptions[prescriptionIndex],
+    status: 'processing',
+    orderId: orderId,
+    processedAt: new Date().toISOString(),
+    processingNotes: orderData.notes || '',
+    items: orderData.items || [],
+    updatedAt: new Date().toISOString()
+  };
+  
+  res.json({
+    success: true,
+    prescription: prescriptions[prescriptionIndex],
+    orderId: orderId,
+    message: 'Prescription processed successfully'
+  });
+});
+
+// Search prescriptions
+app.get('/api/v1/prescriptions/search', (req, res) => {
+  console.log('🎯 Mock API: GET /api/v1/prescriptions/search');
+  
+  const query = req.query.q?.toLowerCase() || '';
+  const status = req.query.status || '';
+  const urgency = req.query.urgency || '';
+  
+  let filteredPrescriptions = prescriptions;
+  
+  if (query) {
+    filteredPrescriptions = filteredPrescriptions.filter(p => 
+      p.id.toLowerCase().includes(query) ||
+      p.customerId.toLowerCase().includes(query) ||
+      p.doctorName.toLowerCase().includes(query) ||
+      p.notes.toLowerCase().includes(query)
+    );
+  }
+  
+  if (status) {
+    filteredPrescriptions = filteredPrescriptions.filter(p => p.status === status);
+  }
+  
+  if (urgency) {
+    filteredPrescriptions = filteredPrescriptions.filter(p => p.urgency === urgency);
+  }
+  
+  res.json(filteredPrescriptions);
+});
+
+// Get prescription analytics
+app.get('/api/v1/prescriptions/analytics', (req, res) => {
+  console.log('🎯 Mock API: GET /api/v1/prescriptions/analytics');
+  
+  const range = req.query.range || '30d';
+  const days = parseInt(range.replace('d', '')) || 30;
+  const cutoffDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  
+  const recentPrescriptions = prescriptions.filter(p => 
+    new Date(p.uploadedAt) >= cutoffDate
+  );
+  
+  const analytics = {
+    totalPrescriptions: prescriptions.length,
+    recentPrescriptions: recentPrescriptions.length,
+    statusBreakdown: {
+      pending_verification: prescriptions.filter(p => p.status === 'pending_verification').length,
+      verified: prescriptions.filter(p => p.status === 'verified').length,
+      processing: prescriptions.filter(p => p.status === 'processing').length,
+      completed: prescriptions.filter(p => p.status === 'completed').length,
+      rejected: prescriptions.filter(p => p.status === 'rejected').length
+    },
+    urgencyBreakdown: {
+      normal: prescriptions.filter(p => p.urgency === 'normal').length,
+      urgent: prescriptions.filter(p => p.urgency === 'urgent').length
+    },
+    deliveryMethodBreakdown: {
+      pickup: prescriptions.filter(p => p.deliveryMethod === 'pickup').length,
+      delivery: prescriptions.filter(p => p.deliveryMethod === 'delivery').length,
+      courier: prescriptions.filter(p => p.deliveryMethod === 'courier').length
+    },
+    averageProcessingTime: '2.5 hours',
+    rejectionRate: prescriptions.length > 0 ? (prescriptions.filter(p => p.status === 'rejected').length / prescriptions.length * 100).toFixed(1) : 0,
+    dateRange: range
+  };
+  
+  res.json(analytics);
+});
+
+// OCR simulation endpoint
+app.post('/api/v1/prescriptions/ocr', (req, res) => {
+  console.log('🎯 Mock API: POST /api/v1/prescriptions/ocr');
+  
+  // Simulate OCR processing
+  setTimeout(() => {
+    res.json({
+      success: true,
+      extractedText: 'Dr. Sarah Johnson\nCardiology - MD12345\n\nPatient: John Smith\n\nParacetamol 500mg - 1 tablet 3x daily\nAmoxicillin 250mg - 1 capsule 3x daily\n\nSignature: ___________________\nDr. Sarah Johnson',
+      confidence: 0.87,
+      medications: [
+        { name: 'Paracetamol', dosage: '500mg', frequency: '3x daily' },
+        { name: 'Amoxicillin', dosage: '250mg', frequency: '3x daily' }
+      ],
+      doctorName: 'Dr. Sarah Johnson',
+      doctorLicense: 'MD12345'
+    });
+  }, 2000);
+});
+
+// Delete prescription
+app.delete('/api/v1/prescriptions/:prescriptionId', (req, res) => {
+  console.log(`🎯 Mock API: DELETE /api/v1/prescriptions/${req.params.prescriptionId}`);
+  
+  const prescriptionId = req.params.prescriptionId;
+  const reason = req.body.reason || 'Deleted by administrator';
+  
+  const prescriptionIndex = prescriptions.findIndex(p => p.id === prescriptionId);
+  
+  if (prescriptionIndex === -1) {
+    return res.status(404).json({
+      success: false,
+      error: 'Prescription not found'
+    });
+  }
+  
+  const deletedPrescription = prescriptions[prescriptionIndex];
+  prescriptions.splice(prescriptionIndex, 1);
+  
+  res.json({
+    success: true,
+    deletedPrescription: deletedPrescription,
+    reason: reason,
+    message: 'Prescription deleted successfully'
   });
 });
 

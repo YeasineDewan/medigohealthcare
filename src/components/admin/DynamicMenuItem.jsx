@@ -64,7 +64,13 @@ import {
   Expand,
   RefreshCw,
   X,
-  LayoutDashboard
+  LayoutDashboard,
+  TrendingDown,
+  BookOpen,
+  Wrench,
+  Hash,
+  ArrowLeftRight,
+  ArrowUpDown
 } from 'lucide-react';
 
 const DynamicMenuItem = ({ 
@@ -201,7 +207,13 @@ const DynamicMenuItem = ({
       'ChevronDown': ChevronDown,
       'Star': Star,
       'AlertCircle': AlertCircle,
-      'Zap': Zap
+      'Zap': Zap,
+      'TrendingDown': TrendingDown,
+      'BookOpen': BookOpen,
+      'Wrench': Wrench,
+      'Hash': Hash,
+      'ArrowLeftRight': ArrowLeftRight,
+      'ArrowUpDown': ArrowUpDown
     };
 
     return iconMap[item.icon] || Settings;

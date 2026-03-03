@@ -15,6 +15,12 @@ use App\Http\Controllers\Api\MedicalRecordController;
 use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\BannerController;
 use App\Http\Controllers\Api\SettingsController;
+use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\InventoryController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -95,6 +101,31 @@ Route::prefix('v1')->group(function () {
         Route::post('/auth/logout', [AuthController::class, 'logout']);
         Route::get('/auth/me', [AuthController::class, 'me']);
         
+        // Dashboard
+        Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
+        Route::get('/dashboard/activities', [DashboardController::class, 'recentActivities']);
+        Route::get('/dashboard/revenue', [DashboardController::class, 'revenueChart']);
+        
+        // Notifications
+        Route::get('/notifications', [NotificationController::class, 'index']);
+        Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount']);
+        Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+        Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
+        Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
+        
+        // Payments
+        Route::get('/payments', [PaymentController::class, 'index']);
+        Route::post('/payments', [PaymentController::class, 'store']);
+        Route::get('/payments/{id}', [PaymentController::class, 'show']);
+        Route::put('/payments/{id}/status', [PaymentController::class, 'updateStatus']);
+        
+        // Reviews
+        Route::get('/reviews', [ReviewController::class, 'index']);
+        Route::post('/reviews', [ReviewController::class, 'store']);
+        Route::get('/reviews/{id}', [ReviewController::class, 'show']);
+        Route::put('/reviews/{id}', [ReviewController::class, 'update']);
+        Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);
+        
         // Appointments
         Route::get('/appointments', [AppointmentController::class, 'index']);
         Route::post('/appointments', [AppointmentController::class, 'store']);
@@ -134,6 +165,19 @@ Route::prefix('v1')->group(function () {
             Route::put('/products/{id}', [ProductController::class, 'update']);
             Route::post('/lab-tests', [LabTestController::class, 'store']);
             Route::put('/lab-tests/{id}', [LabTestController::class, 'update']);
+            
+            // Inventory Management
+            Route::get('/inventory', [InventoryController::class, 'index']);
+            Route::post('/inventory', [InventoryController::class, 'store']);
+            Route::get('/inventory/{id}', [InventoryController::class, 'show']);
+            Route::put('/inventory/{id}', [InventoryController::class, 'update']);
+            Route::get('/inventory/low-stock', [InventoryController::class, 'lowStock']);
+            
+            // Reports
+            Route::get('/reports/appointments', [ReportController::class, 'appointments']);
+            Route::get('/reports/sales', [ReportController::class, 'sales']);
+            Route::get('/reports/lab-tests', [ReportController::class, 'labTests']);
+            Route::get('/reports/users', [ReportController::class, 'users']);
             
             // Banner Management (Admin only)
             Route::post('/banners', [BannerController::class, 'store']);

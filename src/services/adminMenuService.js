@@ -8,33 +8,27 @@ class AdminMenuService {
     this.baseURL = '/api/v1/admin/menu'; // API endpoint
   }
 
-  // Get menu structure from API or cache
   async getMenuStructure() {
     try {
-      // Try to get from cache first
       const cached = this.getFromCache();
       if (cached) {
         return cached;
       }
 
-      // Fetch from API
       const response = await axios.get(this.baseURL);
       const menuData = this.transformMenuData(response.data);
       
-      // Cache the result
       this.setCache(menuData);
       
       return menuData;
     } catch (error) {
       console.warn('Failed to fetch menu from API, using fallback:', error.message);
       
-      // Return fallback menu structure
       const { user } = useAdminStore.getState();
       return this.getFallbackMenuStructure(user?.role, user?.permissions);
     }
   }
 
-  // Transform menu data to ensure consistent structure
   transformMenuData(rawData) {
     if (!rawData || !Array.isArray(rawData)) {
       return [];
@@ -55,11 +49,9 @@ class AdminMenuService {
     }));
   }
 
-  // Get valid Lucide icon name
   getValidIconName(iconName) {
     if (!iconName) return 'Settings';
     
-    // Map common icon names to Lucide icon names
     const iconMap = {
       'LayoutDashboard': 'LayoutDashboard',
       'Calculator': 'Calculator',
@@ -123,13 +115,18 @@ class AdminMenuService {
       'ChevronDown': 'ChevronDown',
       'Star': 'Star',
       'AlertCircle': 'AlertCircle',
-      'Zap': 'Zap'
+      'Zap': 'Zap',
+      'TrendingDown': 'TrendingDown',
+      'BookOpen': 'BookOpen',
+      'Wrench': 'Wrench',
+      'Hash': 'Hash',
+      'ArrowLeftRight': 'ArrowLeftRight',
+      'ArrowUpDown': 'ArrowUpDown'
     };
 
     return iconMap[iconName] || 'Settings';
   }
 
-  // Get Lucide React icon component by name
   getIconComponent(iconName) {
     const iconMap = {
       'layout-dashboard': 'LayoutDashboard',
@@ -191,28 +188,23 @@ class AdminMenuService {
     return iconMap[iconName.toLowerCase()] || 'Settings';
   }
 
-  // Filter menu based on user role and permissions
   filterMenuByPermissions(menuItems, userRole, permissions) {
     if (!menuItems || !Array.isArray(menuItems)) return [];
 
-    // If no user role or permissions provided, return all items
     if (!userRole && (!permissions || permissions.length === 0)) {
       return menuItems;
     }
 
     return menuItems
       .filter(item => {
-        // Check if item is visible
         if (item.visible === false) return false;
 
-        // Check role-based access
         if (item.roles && item.roles.length > 0 && userRole) {
           if (!item.roles.includes(userRole) && !item.roles.includes('admin')) {
             return false;
           }
         }
 
-        // Check permission-based access
         if (item.permissions && item.permissions.length > 0 && permissions && permissions.length > 0) {
           const hasPermission = item.permissions.some(permission => 
             permissions.includes(permission) || permissions.includes('admin')
@@ -229,7 +221,6 @@ class AdminMenuService {
       .filter(item => item.children.length > 0 || !item.children || item.children.length === 0);
   }
 
-  // Get fallback menu structure when API is unavailable
   getFallbackMenuStructure(userRole, permissions) {
     const baseMenu = [
       {
@@ -245,13 +236,135 @@ class AdminMenuService {
         icon: 'Calculator',
         order: 2,
         children: [
-          { id: 'create-group', label: 'Create Group', icon: 'Plus', path: '/admin/accounts/create-group', order: 1 },
-          { id: 'create-ledger', label: 'Create Ledger', icon: 'FileText', path: '/admin/accounts/create-ledger', order: 2 },
-          { id: 'chart-of-accounts', label: 'Chart of Accounts', icon: 'BarChart3', path: '/admin/accounts/chart-of-accounts', order: 3 },
-          { id: 'trial-balance', label: 'Trial Balance', icon: 'FileCheck', path: '/admin/accounts/trial-balance', order: 4 },
-          { id: 'balance-sheet', label: 'Balance Sheet', icon: 'FileSpreadsheet', path: '/admin/accounts/balance-sheet', order: 5 },
-          { id: 'income-statement', label: 'Income Statement', icon: 'TrendingUp', path: '/admin/accounts/income-statement', order: 6 },
-          { id: 'cash-flow', label: 'Cash Flow', icon: 'DollarSign', path: '/admin/accounts/cash-flow', order: 7 }
+          {
+            id: 'accounts-masters',
+            label: 'Masters',
+            icon: 'BookOpen',
+            order: 1,
+            children: [
+              { id: 'create-group', label: 'Create Group', icon: 'Plus', path: '/admin/accounts/create-group', order: 1 },
+              { id: 'create-ledger', label: 'Create Ledger', icon: 'FileText', path: '/admin/accounts/create-ledger', order: 2 },
+              { id: 'chart-of-accounts', label: 'Chart of Accounts', icon: 'BarChart3', path: '/admin/accounts/chart-of-accounts', order: 3 },
+              { id: 'cost-centers', label: 'Cost Centers', icon: 'Building', path: '/admin/accounts/cost-centers', order: 4 },
+              { id: 'budget-heads', label: 'Budget Heads', icon: 'Target', path: '/admin/accounts/budget-heads', order: 5 }
+            ]
+          },
+          {
+            id: 'transactions',
+            label: 'Transactions',
+            icon: 'RefreshCw',
+            order: 2,
+            children: [
+              { id: 'day-book', label: 'Day Book', icon: 'Calendar', path: '/admin/accounts/day-book', order: 1 },
+              { id: 'cash-book', label: 'Cash Book', icon: 'DollarSign', path: '/admin/accounts/cash-book', order: 2 },
+              { id: 'bank-book', label: 'Bank Book', icon: 'CreditCard', path: '/admin/accounts/bank-book', order: 3 },
+              { id: 'journal-entry', label: 'Journal Entry', icon: 'FileText', path: '/admin/accounts/journal-entry', order: 4 },
+              { id: 'contra-entry', label: 'Contra Entry', icon: 'ArrowLeftRight', path: '/admin/accounts/contra-entry', order: 5 },
+              { id: 'purchase-journal', label: 'Purchase Journal', icon: 'ShoppingCart', path: '/admin/accounts/purchase-journal', order: 6 },
+              { id: 'sales-journal', label: 'Sales Journal', icon: 'TrendingUp', path: '/admin/accounts/sales-journal', order: 7 }
+            ]
+          },
+          {
+            id: 'financial-reports',
+            label: 'Financial Reports',
+            icon: 'FileSpreadsheet',
+            order: 3,
+            children: [
+              { id: 'trial-balance', label: 'Trial Balance', icon: 'FileCheck', path: '/admin/accounts/trial-balance', order: 1 },
+              { id: 'balance-sheet', label: 'Balance Sheet', icon: 'FileSpreadsheet', path: '/admin/accounts/balance-sheet', order: 2 },
+              { id: 'income-statement', label: 'Income Statement', icon: 'TrendingUp', path: '/admin/accounts/income-statement', order: 3 },
+              { id: 'cash-flow', label: 'Cash Flow Statement', icon: 'DollarSign', path: '/admin/accounts/cash-flow', order: 4 },
+              { id: 'fund-flow', label: 'Fund Flow Statement', icon: 'ArrowUpDown', path: '/admin/accounts/fund-flow', order: 5 },
+              { id: 'ratio-analysis', label: 'Ratio Analysis', icon: 'PieChart', path: '/admin/accounts/ratio-analysis', order: 6 }
+            ]
+          },
+          {
+            id: 'budget-cost',
+            label: 'Budget & Cost',
+            icon: 'Target',
+            order: 4,
+            children: [
+              { id: 'budget-creation', label: 'Budget Creation', icon: 'Plus', path: '/admin/accounts/budget-creation', order: 1 },
+              { id: 'budget-monitoring', label: 'Budget Monitoring', icon: 'Activity', path: '/admin/accounts/budget-monitoring', order: 2 },
+              { id: 'budget-vs-actual', label: 'Budget vs Actual', icon: 'BarChart3', path: '/admin/accounts/budget-vs-actual', order: 3 },
+              { id: 'cost-analysis', label: 'Cost Analysis', icon: 'Calculator', path: '/admin/accounts/cost-analysis', order: 4 }
+            ]
+          },
+          {
+            id: 'payables',
+            label: 'Payables',
+            icon: 'CreditCard',
+            order: 5,
+            children: [
+              { id: 'accounts-payable', label: 'Accounts Payable', icon: 'Building', path: '/admin/accounts/payable', order: 1 },
+              { id: 'supplier-ledger', label: 'Supplier Ledger', icon: 'FileText', path: '/admin/accounts/supplier-ledger', order: 2 },
+              { id: 'supplier-payment', label: 'Supplier Payment', icon: 'DollarSign', path: '/admin/accounts/supplier-payment', order: 3 },
+              { id: 'payable-aging', label: 'Payable Aging', icon: 'Clock', path: '/admin/accounts/payable-aging', order: 4 }
+            ]
+          },
+          {
+            id: 'receivables',
+            label: 'Receivables',
+            icon: 'Receipt',
+            order: 6,
+            children: [
+              { id: 'accounts-receivable', label: 'Accounts Receivable', icon: 'Users', path: '/admin/accounts/receivable', order: 1 },
+              { id: 'customer-ledger', label: 'Customer Ledger', icon: 'FileText', path: '/admin/accounts/customer-ledger', order: 2 },
+              { id: 'customer-receipt', label: 'Customer Receipt', icon: 'DollarSign', path: '/admin/accounts/customer-receipt', order: 3 },
+              { id: 'receivable-aging', label: 'Receivable Aging', icon: 'Clock', path: '/admin/accounts/receivable-aging', order: 4 }
+            ]
+          },
+          {
+            id: 'tax-management',
+            label: 'Tax Management',
+            icon: 'Percent',
+            order: 7,
+            children: [
+              { id: 'gst-reports', label: 'GST Reports', icon: 'FileText', path: '/admin/accounts/gst-reports', order: 1 },
+              { id: 'gst-returns', label: 'GST Returns', icon: 'RefreshCw', path: '/admin/accounts/gst-returns', order: 2 },
+              { id: 'tds-management', label: 'TDS Management', icon: 'Calculator', path: '/admin/accounts/tds-management', order: 3 },
+              { id: 'tax-settings', label: 'Tax Settings', icon: 'Settings', path: '/admin/accounts/tax-settings', order: 4 }
+            ]
+          },
+          {
+            id: 'fixed-assets',
+            label: 'Fixed Assets',
+            icon: 'Building',
+            order: 8,
+            children: [
+              { id: 'asset-categories', label: 'Asset Categories', icon: 'FolderOpen', path: '/admin/accounts/asset-categories', order: 1 },
+              { id: 'asset-register', label: 'Asset Register', icon: 'FileText', path: '/admin/accounts/asset-register', order: 2 },
+              { id: 'asset-purchase', label: 'Asset Purchase', icon: 'ShoppingCart', path: '/admin/accounts/asset-purchase', order: 3 },
+              { id: 'asset-depreciation', label: 'Depreciation', icon: 'TrendingDown', path: '/admin/accounts/asset-depreciation', order: 4 },
+              { id: 'asset-maintenance', label: 'Asset Maintenance', icon: 'Wrench', path: '/admin/accounts/asset-maintenance', order: 5 },
+              { id: 'asset-disposal', label: 'Asset Disposal', icon: 'Trash2', path: '/admin/accounts/asset-disposal', order: 6 }
+            ]
+          },
+          {
+            id: 'audit-compliance',
+            label: 'Audit & Compliance',
+            icon: 'Shield',
+            order: 9,
+            children: [
+              { id: 'audit-trail', label: 'Audit Trail', icon: 'FileText', path: '/admin/accounts/audit-trail', order: 1 },
+              { id: 'voucher-approval', label: 'Voucher Approval', icon: 'CheckCircle', path: '/admin/accounts/voucher-approval', order: 2 },
+              { id: 'bank-reconciliation', label: 'Bank Reconciliation', icon: 'RefreshCw', path: '/admin/accounts/bank-reconciliation', order: 3 },
+              { id: 'party-reconciliation', label: 'Party Reconciliation', icon: 'ArrowLeftRight', path: '/admin/accounts/party-reconciliation', order: 4 }
+            ]
+          },
+          {
+            id: 'accounts-settings',
+            label: 'Settings',
+            icon: 'Settings',
+            order: 10,
+            children: [
+              { id: 'opening-balances', label: 'Opening Balances', icon: 'Plus', path: '/admin/accounts/opening-balances', order: 1 },
+              { id: 'fiscal-year', label: 'Fiscal Year', icon: 'Calendar', path: '/admin/accounts/fiscal-year', order: 2 },
+              { id: 'currency-settings', label: 'Currency Settings', icon: 'DollarSign', path: '/admin/accounts/currency-settings', order: 3 },
+              { id: 'voucher-numbering', label: 'Voucher Numbering', icon: 'Hash', path: '/admin/accounts/voucher-numbering', order: 4 },
+              { id: 'accounts-config', label: 'Configuration', icon: 'Settings', path: '/admin/accounts/config', order: 5 }
+            ]
+          }
         ]
       },
       {
@@ -465,7 +578,6 @@ class AdminMenuService {
     return this.filterMenuByPermissions(baseMenu, userRole, permissions);
   }
 
-  // Cache management
   setCache(data) {
     this.cache.set('menuStructure', {
       data,
@@ -477,7 +589,6 @@ class AdminMenuService {
     const cached = this.cache.get('menuStructure');
     if (!cached) return null;
 
-    // Check if cache is still valid
     if (Date.now() - cached.timestamp > this.cacheTimeout) {
       this.cache.delete('menuStructure');
       return null;
@@ -486,12 +597,10 @@ class AdminMenuService {
     return cached.data;
   }
 
-  // Clear cache
   clearCache() {
     this.cache.clear();
   }
 
-  // Search menu items
   searchMenuItems(menuItems, searchTerm) {
     if (!searchTerm || !menuItems) return menuItems;
 
@@ -505,7 +614,6 @@ class AdminMenuService {
           
           if (matchesLabel || matchesPath) return true;
           
-          // Check children
           if (item.children && item.children.length > 0) {
             const filteredChildren = filterItems(item.children);
             return filteredChildren.length > 0;
@@ -522,7 +630,6 @@ class AdminMenuService {
     return filterItems(menuItems);
   }
 
-  // Get menu statistics
   getMenuStats(menuItems) {
     if (!menuItems) return { totalItems: 0, visibleItems: 0, categories: 0 };
 
@@ -551,7 +658,6 @@ class AdminMenuService {
   }
 }
 
-// Create singleton instance
 const adminMenuService = new AdminMenuService();
 
 export default adminMenuService;

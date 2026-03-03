@@ -20,6 +20,7 @@ import {
   Image,
   FileText,
   TrendingUp,
+  TrendingDown,
   CreditCard,
   UserPlus,
   Clock,
@@ -85,6 +86,10 @@ import {
   Minimize2,
   Menu,
   X,
+  Wrench,
+  Hash,
+  ArrowLeftRight,
+  ArrowUpDown,
 } from 'lucide-react';
 import DynamicMenuItem from './DynamicMenuItem';
 import { useAdminMenu } from '../../hooks/useAdminMenu';
@@ -102,47 +107,379 @@ const menuStructure = [
     label: 'Accounts',
     icon: Calculator,
     children: [
+      // Masters Section
       {
-        id: 'create-group',
-        label: 'Create Group',
-        icon: Plus,
-        path: '/admin/accounts/create-group',
+        id: 'accounts-masters',
+        label: 'Masters',
+        icon: BookOpen,
+        children: [
+          {
+            id: 'create-group',
+            label: 'Create Group',
+            icon: Plus,
+            path: '/admin/accounts/create-group',
+          },
+          {
+            id: 'create-ledger',
+            label: 'Create Ledger',
+            icon: FileText,
+            path: '/admin/accounts/create-ledger',
+          },
+          {
+            id: 'chart-of-accounts',
+            label: 'Chart of Accounts',
+            icon: BarChart3,
+            path: '/admin/accounts/chart-of-accounts',
+          },
+          {
+            id: 'cost-centers',
+            label: 'Cost Centers',
+            icon: Building,
+            path: '/admin/accounts/cost-centers',
+          },
+          {
+            id: 'budget-heads',
+            label: 'Budget Heads',
+            icon: Target,
+            path: '/admin/accounts/budget-heads',
+          },
+        ],
       },
+      // Transactions Section
       {
-        id: 'create-ledger',
-        label: 'Create Ledger',
-        icon: FileText,
-        path: '/admin/accounts/create-ledger',
+        id: 'transactions',
+        label: 'Transactions',
+        icon: RefreshCw,
+        children: [
+          {
+            id: 'day-book',
+            label: 'Day Book',
+            icon: Calendar,
+            path: '/admin/accounts/day-book',
+          },
+          {
+            id: 'cash-book',
+            label: 'Cash Book',
+            icon: DollarSign,
+            path: '/admin/accounts/cash-book',
+          },
+          {
+            id: 'bank-book',
+            label: 'Bank Book',
+            icon: CreditCard,
+            path: '/admin/accounts/bank-book',
+          },
+          {
+            id: 'journal-entry',
+            label: 'Journal Entry',
+            icon: FileText,
+            path: '/admin/accounts/journal-entry',
+          },
+          {
+            id: 'contra-entry',
+            label: 'Contra Entry',
+            icon: ArrowLeftRight,
+            path: '/admin/accounts/contra-entry',
+          },
+          {
+            id: 'purchase-journal',
+            label: 'Purchase Journal',
+            icon: ShoppingCart,
+            path: '/admin/accounts/purchase-journal',
+          },
+          {
+            id: 'sales-journal',
+            label: 'Sales Journal',
+            icon: TrendingUp,
+            path: '/admin/accounts/sales-journal',
+          },
+        ],
       },
+      // Financial Reports Section
       {
-        id: 'chart-of-accounts',
-        label: 'Chart of Accounts',
-        icon: BarChart3,
-        path: '/admin/accounts/chart-of-accounts',
-      },
-      {
-        id: 'trial-balance',
-        label: 'Trial Balance',
-        icon: FileCheck,
-        path: '/admin/accounts/trial-balance',
-      },
-      {
-        id: 'balance-sheet',
-        label: 'Balance Sheet',
+        id: 'financial-reports',
+        label: 'Financial Reports',
         icon: FileSpreadsheet,
-        path: '/admin/accounts/balance-sheet',
+        children: [
+          {
+            id: 'trial-balance',
+            label: 'Trial Balance',
+            icon: FileCheck,
+            path: '/admin/accounts/trial-balance',
+          },
+          {
+            id: 'balance-sheet',
+            label: 'Balance Sheet',
+            icon: FileSpreadsheet,
+            path: '/admin/accounts/balance-sheet',
+          },
+          {
+            id: 'income-statement',
+            label: 'Income Statement',
+            icon: TrendingUp,
+            path: '/admin/accounts/income-statement',
+          },
+          {
+            id: 'cash-flow',
+            label: 'Cash Flow Statement',
+            icon: DollarSign,
+            path: '/admin/accounts/cash-flow',
+          },
+          {
+            id: 'fund-flow',
+            label: 'Fund Flow Statement',
+            icon: ArrowUpDown,
+            path: '/admin/accounts/fund-flow',
+          },
+          {
+            id: 'ratio-analysis',
+            label: 'Ratio Analysis',
+            icon: PieChart,
+            path: '/admin/accounts/ratio-analysis',
+          },
+        ],
       },
+      // Budget & Cost Section
       {
-        id: 'income-statement',
-        label: 'Income Statement',
-        icon: TrendingUp,
-        path: '/admin/accounts/income-statement',
+        id: 'budget-cost',
+        label: 'Budget & Cost',
+        icon: Target,
+        children: [
+          {
+            id: 'budget-creation',
+            label: 'Budget Creation',
+            icon: Plus,
+            path: '/admin/accounts/budget-creation',
+          },
+          {
+            id: 'budget-monitoring',
+            label: 'Budget Monitoring',
+            icon: Activity,
+            path: '/admin/accounts/budget-monitoring',
+          },
+          {
+            id: 'budget-vs-actual',
+            label: 'Budget vs Actual',
+            icon: BarChart3,
+            path: '/admin/accounts/budget-vs-actual',
+          },
+          {
+            id: 'cost-analysis',
+            label: 'Cost Analysis',
+            icon: Calculator,
+            path: '/admin/accounts/cost-analysis',
+          },
+        ],
       },
+      // Payables Section
       {
-        id: 'cash-flow',
-        label: 'Cash Flow',
-        icon: DollarSign,
-        path: '/admin/accounts/cash-flow',
+        id: 'payables',
+        label: 'Payables',
+        icon: CreditCard,
+        children: [
+          {
+            id: 'accounts-payable',
+            label: 'Accounts Payable',
+            icon: Building,
+            path: '/admin/accounts/payable',
+          },
+          {
+            id: 'supplier-ledger',
+            label: 'Supplier Ledger',
+            icon: FileText,
+            path: '/admin/accounts/supplier-ledger',
+          },
+          {
+            id: 'supplier-payment',
+            label: 'Supplier Payment',
+            icon: DollarSign,
+            path: '/admin/accounts/supplier-payment',
+          },
+          {
+            id: 'payable-aging',
+            label: 'Payable Aging',
+            icon: Clock,
+            path: '/admin/accounts/payable-aging',
+          },
+        ],
+      },
+      // Receivables Section
+      {
+        id: 'receivables',
+        label: 'Receivables',
+        icon: Receipt,
+        children: [
+          {
+            id: 'accounts-receivable',
+            label: 'Accounts Receivable',
+            icon: Users,
+            path: '/admin/accounts/receivable',
+          },
+          {
+            id: 'customer-ledger',
+            label: 'Customer Ledger',
+            icon: FileText,
+            path: '/admin/accounts/customer-ledger',
+          },
+          {
+            id: 'customer-receipt',
+            label: 'Customer Receipt',
+            icon: DollarSign,
+            path: '/admin/accounts/customer-receipt',
+          },
+          {
+            id: 'receivable-aging',
+            label: 'Receivable Aging',
+            icon: Clock,
+            path: '/admin/accounts/receivable-aging',
+          },
+        ],
+      },
+      // Tax Management Section
+      {
+        id: 'tax-management',
+        label: 'Tax Management',
+        icon: Percent,
+        children: [
+          {
+            id: 'gst-reports',
+            label: 'GST Reports',
+            icon: FileText,
+            path: '/admin/accounts/gst-reports',
+          },
+          {
+            id: 'gst-returns',
+            label: 'GST Returns',
+            icon: RefreshCw,
+            path: '/admin/accounts/gst-returns',
+          },
+          {
+            id: 'tds-management',
+            label: 'TDS Management',
+            icon: Calculator,
+            path: '/admin/accounts/tds-management',
+          },
+          {
+            id: 'tax-settings',
+            label: 'Tax Settings',
+            icon: Settings,
+            path: '/admin/accounts/tax-settings',
+          },
+        ],
+      },
+      // Fixed Assets Section
+      {
+        id: 'fixed-assets',
+        label: 'Fixed Assets',
+        icon: Building,
+        children: [
+          {
+            id: 'asset-categories',
+            label: 'Asset Categories',
+            icon: FolderOpen,
+            path: '/admin/accounts/asset-categories',
+          },
+          {
+            id: 'asset-register',
+            label: 'Asset Register',
+            icon: FileText,
+            path: '/admin/accounts/asset-register',
+          },
+          {
+            id: 'asset-purchase',
+            label: 'Asset Purchase',
+            icon: ShoppingCart,
+            path: '/admin/accounts/asset-purchase',
+          },
+          {
+            id: 'asset-depreciation',
+            label: 'Depreciation',
+            icon: TrendingDown,
+            path: '/admin/accounts/asset-depreciation',
+          },
+          {
+            id: 'asset-maintenance',
+            label: 'Asset Maintenance',
+            icon: Wrench,
+            path: '/admin/accounts/asset-maintenance',
+          },
+          {
+            id: 'asset-disposal',
+            label: 'Asset Disposal',
+            icon: Trash2,
+            path: '/admin/accounts/asset-disposal',
+          },
+        ],
+      },
+      // Audit & Compliance Section
+      {
+        id: 'audit-compliance',
+        label: 'Audit & Compliance',
+        icon: Shield,
+        children: [
+          {
+            id: 'audit-trail',
+            label: 'Audit Trail',
+            icon: FileText,
+            path: '/admin/accounts/audit-trail',
+          },
+          {
+            id: 'voucher-approval',
+            label: 'Voucher Approval',
+            icon: CheckCircle,
+            path: '/admin/accounts/voucher-approval',
+          },
+          {
+            id: 'bank-reconciliation',
+            label: 'Bank Reconciliation',
+            icon: RefreshCw,
+            path: '/admin/accounts/bank-reconciliation',
+          },
+          {
+            id: 'party-reconciliation',
+            label: 'Party Reconciliation',
+            icon: ArrowLeftRight,
+            path: '/admin/accounts/party-reconciliation',
+          },
+        ],
+      },
+      // Settings Section
+      {
+        id: 'accounts-settings',
+        label: 'Settings',
+        icon: Settings,
+        children: [
+          {
+            id: 'opening-balances',
+            label: 'Opening Balances',
+            icon: Plus,
+            path: '/admin/accounts/opening-balances',
+          },
+          {
+            id: 'fiscal-year',
+            label: 'Fiscal Year',
+            icon: Calendar,
+            path: '/admin/accounts/fiscal-year',
+          },
+          {
+            id: 'currency-settings',
+            label: 'Currency Settings',
+            icon: DollarSign,
+            path: '/admin/accounts/currency-settings',
+          },
+          {
+            id: 'voucher-numbering',
+            label: 'Voucher Numbering',
+            icon: Hash,
+            path: '/admin/accounts/voucher-numbering',
+          },
+          {
+            id: 'accounts-config',
+            label: 'Configuration',
+            icon: Settings,
+            path: '/admin/accounts/config',
+          },
+        ],
       },
     ],
   },
@@ -412,7 +749,7 @@ const menuStructure = [
         id: 'medical-devices',
         label: 'Medical Devices',
         icon: Syringe,
-        path: '/admin/pharmacy/devices',
+        path: '/admin/pharmacy/medical-devices',
       },
       {
         id: 'first-aid',

@@ -17,6 +17,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'role_id',
         'phone',
         'date_of_birth',
         'gender',
@@ -42,6 +43,11 @@ class User extends Authenticatable
     ];
 
     // Relationships
+    public function roleModel()
+    {
+        return $this->belongsTo(Role::class, 'role_id');
+    }
+
     public function doctor()
     {
         return $this->hasOne(Doctor::class);
@@ -70,5 +76,15 @@ class User extends Authenticatable
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function activityLogs()
+    {
+        return $this->hasMany(ActivityLog::class);
     }
 }

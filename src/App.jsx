@@ -95,6 +95,9 @@ import FirstAid from './pages/admin/pharmacy/FirstAid';
 import PrescriptionOrders from './pages/admin/pharmacy/PrescriptionOrders';
 import Suppliers from './pages/admin/pharmacy/Suppliers';
 import Sales from './pages/admin/pharmacy/Sales';
+import MedicalDevicesEnhanced from './pages/admin/pharmacy/MedicalDevicesEnhanced';
+import PrescriptionOrdersEnhanced from './pages/admin/pharmacy/PrescriptionOrdersEnhanced';
+import StockManagementEnhanced from './pages/admin/pharmacy/StockManagementEnhanced';
 
 // Medical
 import Diagnostic from './pages/admin/medical/Diagnostic';
@@ -225,9 +228,10 @@ function App() {
           {/* Pharmacy Routes */}
           <Route path="pharmacy/medicines" element={<Medicines />} />
           <Route path="pharmacy/supplements" element={<Supplements />} />
-          <Route path="pharmacy/medical-devices" element={<MedicalDevices />} />
+          <Route path="pharmacy/medical-devices" element={<MedicalDevicesEnhanced />} />
           <Route path="pharmacy/first-aid" element={<FirstAid />} />
-          <Route path="pharmacy/prescription-orders" element={<PrescriptionOrders />} />
+          <Route path="pharmacy/prescription-orders" element={<PrescriptionOrdersEnhanced />} />
+          <Route path="pharmacy/stock" element={<StockManagementEnhanced />} />
           <Route path="pharmacy/suppliers" element={<Suppliers />} />
           <Route path="pharmacy/sales" element={<Sales />} />
           <Route path="pharmacy/*" element={<AdminSettings />} />
