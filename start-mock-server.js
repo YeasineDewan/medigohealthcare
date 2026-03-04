@@ -405,6 +405,58 @@ app.get('/api/v1/admin/menu', (req, res) => {
   res.json(adminMenu);
 });
 
+// Prescription endpoints
+app.get('/api/v1/prescriptions/search', (req, res) => {
+  console.log('🎯 Mock API: GET /api/v1/prescriptions/search');
+  const query = req.query.q || '';
+  
+  // Mock prescription data
+  const mockPrescriptions = [
+    {
+      id: 1,
+      patient: { name: 'John Doe' },
+      doctor: { user: { name: 'Dr. Smith' } },
+      status: 'pending_verification',
+      priority: 'normal',
+      created_at: new Date().toISOString()
+    },
+    {
+      id: 2,
+      patient: { name: 'Jane Smith' },
+      doctor: { user: { name: 'Dr. Johnson' } },
+      status: 'verified',
+      priority: 'urgent',
+      created_at: new Date().toISOString()
+    }
+  ];
+  
+  // Filter by query if provided
+  const filtered = query ? 
+    mockPrescriptions.filter(p => 
+      p.patient.name.toLowerCase().includes(query.toLowerCase()) ||
+      p.id.toString().includes(query)
+    ) : mockPrescriptions;
+  
+  res.json(filtered);
+});
+
+app.get('/api/v1/prescriptions/analytics', (req, res) => {
+  console.log('🎯 Mock API: GET /api/v1/prescriptions/analytics');
+  const range = req.query.range || '30d';
+  
+  // Mock analytics data
+  const mockAnalytics = {
+    total: 150,
+    pending: 25,
+    verified: 75,
+    completed: 45,
+    rejected: 5,
+    range: range
+  };
+  
+  res.json(mockAnalytics);
+});
+
 // Root endpoint
 app.get('/', (req, res) => {
   res.json({
@@ -419,6 +471,11 @@ app.get('/', (req, res) => {
       admin: '/api/v1/admin/menu'
     }
   });
+});
+
+// Favicon endpoint
+app.get('/favicon.ico', (req, res) => {
+  res.status(204).end();
 });
 
 // Error handling middleware

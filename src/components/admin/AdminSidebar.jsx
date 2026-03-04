@@ -1068,6 +1068,43 @@ const menuStructure = [
     ],
   },
   {
+    id: 'analysis-setup',
+    label: 'Analysis Setup',
+    icon: Microscope,
+    children: [
+      {
+        id: 'analysis-overview',
+        label: 'Overview',
+        icon: BarChart3,
+        path: '/admin/analysis',
+      },
+      {
+        id: 'analysis-department',
+        label: 'Analysis Department',
+        icon: Building,
+        path: '/admin/analysis/departments',
+      },
+      {
+        id: 'test-service-entry',
+        label: 'Test/Service Entry',
+        icon: TestTube,
+        path: '/admin/analysis/tests',
+      },
+      {
+        id: 'analysis-specimen',
+        label: 'Analysis Specimen',
+        icon: FlaskConical,
+        path: '/admin/analysis/specimens',
+      },
+      {
+        id: 'sample-collection-room',
+        label: 'Sample Collection Room',
+        icon: Activity,
+        path: '/admin/analysis/collection',
+      },
+    ],
+  },
+  {
     id: 'settings',
     label: 'Settings',
     icon: Settings,

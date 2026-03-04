@@ -78,6 +78,13 @@ import DailyAttendance from './pages/admin/hr/attendance/DailyAttendance';
 import MonthlyAttendance from './pages/admin/hr/attendance/MonthlyAttendance';
 import AttendanceReport from './pages/admin/hr/attendance/AttendanceReport';
 
+// Analysis Setup
+import AnalysisSetup from './pages/admin/analysis/AnalysisSetup';
+import AnalysisDepartment from './pages/admin/analysis/AnalysisDepartment';
+import TestServiceEntry from './pages/admin/analysis/TestServiceEntry';
+import AnalysisSpecimen from './pages/admin/analysis/AnalysisSpecimen';
+import SampleCollectionRoom from './pages/admin/analysis/SampleCollectionRoom';
+
 // Emergency
 import EmergencyCases from './pages/admin/emergency/EmergencyCases';
 
@@ -264,6 +271,14 @@ function App() {
           {/* Communications Routes */}
           <Route path="communications/notifications" element={<Notifications />} />
           <Route path="communications/*" element={<AdminSettings />} />
+          
+          {/* Analysis Setup Routes */}
+          <Route path="analysis" element={<AnalysisSetup />} />
+          <Route path="analysis/departments" element={<AnalysisDepartment />} />
+          <Route path="analysis/tests" element={<TestServiceEntry />} />
+          <Route path="analysis/specimens" element={<AnalysisSpecimen />} />
+          <Route path="analysis/collection" element={<SampleCollectionRoom />} />
+          <Route path="analysis/*" element={<AdminSettings />} />
         </Route>
 
         <Route path="/doctor" element={<DoctorLayout />}>

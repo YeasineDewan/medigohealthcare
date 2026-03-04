@@ -600,7 +600,37 @@ app.get('/api/v1/prescriptions/customer/:customerId', (req, res) => {
   res.json(customerPrescriptions);
 });
 
-// Get prescription by ID
+// Search prescriptions - MUST be before parameterized routes
+app.get('/api/v1/prescriptions/search', (req, res) => {
+  console.log('🎯 Mock API: GET /api/v1/prescriptions/search');
+  
+  const query = req.query.q?.toLowerCase() || '';
+  const status = req.query.status || '';
+  const urgency = req.query.urgency || '';
+  
+  let filteredPrescriptions = prescriptions;
+  
+  if (query) {
+    filteredPrescriptions = filteredPrescriptions.filter(p => 
+      p.id.toLowerCase().includes(query) ||
+      p.customerId.toLowerCase().includes(query) ||
+      p.doctorName.toLowerCase().includes(query) ||
+      p.notes.toLowerCase().includes(query)
+    );
+  }
+  
+  if (status) {
+    filteredPrescriptions = filteredPrescriptions.filter(p => p.status === status);
+  }
+  
+  if (urgency) {
+    filteredPrescriptions = filteredPrescriptions.filter(p => p.urgency === urgency);
+  }
+  
+  res.json(filteredPrescriptions);
+});
+
+// Get prescription by ID - MUST be after search route
 app.get('/api/v1/prescriptions/:prescriptionId', (req, res) => {
   console.log(`🎯 Mock API: GET /api/v1/prescriptions/${req.params.prescriptionId}`);
   
@@ -684,36 +714,6 @@ app.post('/api/v1/prescriptions/:prescriptionId/process', (req, res) => {
     orderId: orderId,
     message: 'Prescription processed successfully'
   });
-});
-
-// Search prescriptions
-app.get('/api/v1/prescriptions/search', (req, res) => {
-  console.log('🎯 Mock API: GET /api/v1/prescriptions/search');
-  
-  const query = req.query.q?.toLowerCase() || '';
-  const status = req.query.status || '';
-  const urgency = req.query.urgency || '';
-  
-  let filteredPrescriptions = prescriptions;
-  
-  if (query) {
-    filteredPrescriptions = filteredPrescriptions.filter(p => 
-      p.id.toLowerCase().includes(query) ||
-      p.customerId.toLowerCase().includes(query) ||
-      p.doctorName.toLowerCase().includes(query) ||
-      p.notes.toLowerCase().includes(query)
-    );
-  }
-  
-  if (status) {
-    filteredPrescriptions = filteredPrescriptions.filter(p => p.status === status);
-  }
-  
-  if (urgency) {
-    filteredPrescriptions = filteredPrescriptions.filter(p => p.urgency === urgency);
-  }
-  
-  res.json(filteredPrescriptions);
 });
 
 // Get prescription analytics
