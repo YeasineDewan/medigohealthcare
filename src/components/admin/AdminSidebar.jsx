@@ -968,7 +968,7 @@ const menuStructure = [
       },
     ],
   },
-  {
+{
     id: 'services',
     label: 'Services',
     icon: Heart,
@@ -1200,11 +1200,45 @@ export default function AdminSidebar() {
   };
 
   const handleExpandAll = () => {
-    expandAll();
+    // Add smooth animation for expand all
+    const allItemIds = [];
+    const collectIds = (items) => {
+      items.forEach(item => {
+        if (item.children && item.children.length > 0) {
+          allItemIds.push(item.id);
+          collectIds(item.children);
+        }
+      });
+    };
+    collectIds(menuItems);
+    
+    // Stagger the expansion for smooth animation
+    allItemIds.forEach((id, index) => {
+      setTimeout(() => {
+        toggleExpanded(id, true);
+      }, index * 50); // 50ms delay between each expansion
+    });
   };
 
   const handleCollapseAll = () => {
-    collapseAll();
+    // Add smooth animation for collapse all
+    const allItemIds = [];
+    const collectIds = (items) => {
+      items.forEach(item => {
+        if (item.children && item.children.length > 0) {
+          allItemIds.push(item.id);
+          collectIds(item.children);
+        }
+      });
+    };
+    collectIds(menuItems);
+    
+    // Stagger the collapse for smooth animation
+    allItemIds.forEach((id, index) => {
+      setTimeout(() => {
+        toggleExpanded(id, false);
+      }, index * 30); // 30ms delay between each collapse
+    });
   };
 
   return (
@@ -1284,29 +1318,50 @@ export default function AdminSidebar() {
 
         {/* Menu Controls - Only show when not collapsed */}
         {!sidebarCollapsed && !loading && !error && menuItems.length > 0 && (
-          <div className="mb-4 flex items-center gap-2 p-2 bg-white/5 rounded-lg">
-            <button
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mb-4 flex items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm"
+          >
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={handleExpandAll}
-              className="flex-1 text-xs text-white/70 hover:text-white transition-colors flex items-center justify-center gap-1 py-1 rounded hover:bg-white/10"
+              className="flex-1 text-xs text-white/70 hover:text-white hover:bg-white/10 transition-all duration-200 flex items-center justify-center gap-1.5 py-2 rounded-lg font-medium"
             >
-              <Expand className="w-3 h-3" />
+              <motion.div
+                animate={{ rotate: [0, 5, -5, 0] }}
+                transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 3 }}
+              >
+                <Expand className="w-3.5 h-3.5" />
+              </motion.div>
               Expand All
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={handleCollapseAll}
-              className="flex-1 text-xs text-white/70 hover:text-white transition-colors flex items-center justify-center gap-1 py-1 rounded hover:bg-white/10"
+              className="flex-1 text-xs text-white/70 hover:text-white hover:bg-white/10 transition-all duration-200 flex items-center justify-center gap-1.5 py-2 rounded-lg font-medium"
             >
-              <Minimize2 className="w-3 h-3" />
+              <motion.div
+                animate={{ rotate: [0, -5, 5, 0] }}
+                transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 3 }}
+              >
+                <Minimize2 className="w-3.5 h-3.5" />
+              </motion.div>
               Collapse All
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.1, rotate: 180 }}
+              whileTap={{ scale: 0.9 }}
               onClick={handleRefresh}
-              className="p-1 text-xs text-white/70 hover:text-white transition-colors rounded hover:bg-white/10"
+              className="p-2 text-xs text-white/70 hover:text-white hover:bg-white/10 transition-all duration-200 rounded-lg"
               title="Refresh menu"
             >
-              <RefreshCw className="w-3 h-3" />
-            </button>
-          </div>
+              <RefreshCw className="w-3.5 h-3.5" />
+            </motion.button>
+          </motion.div>
         )}
 
         {/* Menu Items */}

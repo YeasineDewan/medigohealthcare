@@ -18,6 +18,8 @@ use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\MedicalDeviceController;
+use App\Http\Controllers\Api\PharmacyOrderController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\InventoryController;
@@ -160,6 +162,30 @@ Route::prefix('v1')->group(function () {
         Route::get('/medical-records', [MedicalRecordController::class, 'index']);
         Route::post('/medical-records', [MedicalRecordController::class, 'store']);
         Route::get('/medical-records/{id}', [MedicalRecordController::class, 'show']);
+        
+        // Medical Devices
+        Route::get('/medical-devices', [MedicalDeviceController::class, 'index']);
+        Route::post('/medical-devices', [MedicalDeviceController::class, 'store']);
+        Route::get('/medical-devices/{id}', [MedicalDeviceController::class, 'show']);
+        Route::put('/medical-devices/{id}', [MedicalDeviceController::class, 'update']);
+        Route::delete('/medical-devices/{id}', [MedicalDeviceController::class, 'destroy']);
+        Route::get('/medical-devices/categories', [MedicalDeviceController::class, 'getCategories']);
+        Route::get('/medical-devices/manufacturers', [MedicalDeviceController::class, 'getManufacturers']);
+        Route::get('/medical-devices/low-stock', [MedicalDeviceController::class, 'getLowStock']);
+        Route::get('/medical-devices/critical-stock', [MedicalDeviceController::class, 'getCriticalStock']);
+        Route::get('/medical-devices/expiring-soon', [MedicalDeviceController::class, 'getExpiringSoon']);
+        Route::get('/medical-devices/stats', [MedicalDeviceController::class, 'getStats']);
+        
+        // Pharmacy Orders
+        Route::get('/pharmacy-orders', [PharmacyOrderController::class, 'index']);
+        Route::post('/pharmacy-orders', [PharmacyOrderController::class, 'store']);
+        Route::get('/pharmacy-orders/{id}', [PharmacyOrderController::class, 'show']);
+        Route::put('/pharmacy-orders/{id}', [PharmacyOrderController::class, 'update']);
+        Route::delete('/pharmacy-orders/{id}', [PharmacyOrderController::class, 'destroy']);
+        Route::get('/pharmacy-orders/stats', [PharmacyOrderController::class, 'getStats']);
+        Route::post('/pharmacy-orders/{id}/process', [PharmacyOrderController::class, 'processOrder']);
+        Route::post('/pharmacy-orders/{id}/complete', [PharmacyOrderController::class, 'completeOrder']);
+        Route::post('/pharmacy-orders/{id}/cancel', [PharmacyOrderController::class, 'cancelOrder']);
         
         // Admin/Doctor Routes
         Route::middleware(['role:admin,doctor'])->group(function () {

@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, Suspense, lazy } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Layout from './components/layout/Layout';
@@ -46,87 +46,139 @@ import AdminSettings from './pages/admin/AdminSettings';
 import AdminInventory from './pages/admin/AdminInventory';
 import AdminCategories from './pages/admin/AdminCategories';
 import AdminBanners from './pages/admin/AdminBanners';
-import GeneralSettings from './pages/admin/settings/General';
-import UserManagement from './pages/admin/settings/UserManagement';
-import RolePermissions from './pages/admin/settings/RolePermissions';
-import SystemConfig from './pages/admin/settings/SystemConfig';
-import BackupRestore from './pages/admin/settings/BackupRestore';
 
-// Accounts
-import CreateGroup from './pages/admin/accounts/CreateGroup';
-import CreateLedger from './pages/admin/accounts/CreateLedger';
-import ChartOfAccounts from './pages/admin/accounts/ChartOfAccounts';
-import TrialBalance from './pages/admin/accounts/TrialBalance';
-import BalanceSheet from './pages/admin/accounts/BalanceSheet';
-import IncomeStatement from './pages/admin/accounts/IncomeStatement';
+// Lazy load settings
+const GeneralSettings = lazy(() => import('./pages/admin/settings/General'));
+const UserManagement = lazy(() => import('./pages/admin/settings/UserManagement'));
+const RolePermissions = lazy(() => import('./pages/admin/settings/RolePermissions'));
+const SystemConfig = lazy(() => import('./pages/admin/settings/SystemConfig'));
+const BackupRestore = lazy(() => import('./pages/admin/settings/BackupRestore'));
 
-// Reports
-import PatientReports from './pages/admin/reports/PatientReports';
+// Lazy load accounts
+const CreateGroup = lazy(() => import('./pages/admin/accounts/CreateGroup'));
+const CreateLedger = lazy(() => import('./pages/admin/accounts/CreateLedger'));
+const ChartOfAccounts = lazy(() => import('./pages/admin/accounts/ChartOfAccounts'));
+const TrialBalance = lazy(() => import('./pages/admin/accounts/TrialBalance'));
+const BalanceSheet = lazy(() => import('./pages/admin/accounts/BalanceSheet'));
+const IncomeStatement = lazy(() => import('./pages/admin/accounts/IncomeStatement'));
 
-// Marketing
-import Promotions from './pages/admin/marketing/Promotions';
+// Lazy load reports
+const ReportsHub = lazy(() => import('./pages/admin/reports/ReportsHub.jsx'));
+const PatientReports = lazy(() => import('./pages/admin/reports/PatientReports.jsx'));
+const DoctorReports = lazy(() => import('./pages/admin/reports/DoctorReports.jsx'));
+const AppointmentReports = lazy(() => import('./pages/admin/reports/AppointmentReports.jsx'));
+const FinancialReports = lazy(() => import('./pages/admin/reports/FinancialReports.jsx'));
+const InventoryReports = lazy(() => import('./pages/admin/reports/InventoryReports.jsx'));
+const LabReports = lazy(() => import('./pages/admin/reports/LabReports.jsx'));
+const EmergencyReports = lazy(() => import('./pages/admin/reports/EmergencyReports.jsx'));
+const SalesReports = lazy(() => import('./pages/admin/reports/SalesReports.jsx'));
+const ServiceReports = lazy(() => import('./pages/admin/reports/ServiceReports.jsx'));
+const CustomReports = lazy(() => import('./pages/admin/reports/CustomReports.jsx'));
 
-// Communications
-import Notifications from './pages/admin/communications/Notifications';
+// Lazy load marketing
+const Promotions = lazy(() => import('./pages/admin/marketing/Promotions'));
 
-// HR
-import SalaryProcess from './pages/admin/hr/SalaryProcess';
-import EmployeeEntry from './pages/admin/hr/EmployeeEntry';
-import SalaryPayment from './pages/admin/hr/SalaryPayment';
-import HRLedger from './pages/admin/hr/HRLedger';
-import DailyAttendance from './pages/admin/hr/attendance/DailyAttendance';
-import MonthlyAttendance from './pages/admin/hr/attendance/MonthlyAttendance';
-import AttendanceReport from './pages/admin/hr/attendance/AttendanceReport';
+// Lazy load communications
+const Notifications = lazy(() => import('./pages/admin/communications/Notifications'));
 
-// Analysis Setup
-import AnalysisSetup from './pages/admin/analysis/AnalysisSetup';
-import AnalysisDepartment from './pages/admin/analysis/AnalysisDepartment';
-import TestServiceEntry from './pages/admin/analysis/TestServiceEntry';
-import AnalysisSpecimen from './pages/admin/analysis/AnalysisSpecimen';
-import SampleCollectionRoom from './pages/admin/analysis/SampleCollectionRoom';
+// Lazy load HR
+const SalaryProcess = lazy(() => import('./pages/admin/hr/SalaryProcess'));
+const EmployeeEntry = lazy(() => import('./pages/admin/hr/EmployeeEntry'));
+const SalaryPayment = lazy(() => import('./pages/admin/hr/SalaryPayment'));
+const HRLedger = lazy(() => import('./pages/admin/hr/HRLedger'));
+const DailyAttendance = lazy(() => import('./pages/admin/hr/attendance/DailyAttendance'));
+const MonthlyAttendance = lazy(() => import('./pages/admin/hr/attendance/MonthlyAttendance'));
+const AttendanceReport = lazy(() => import('./pages/admin/hr/attendance/AttendanceReport'));
 
-// Emergency
-import EmergencyCases from './pages/admin/emergency/EmergencyCases';
+// Lazy load analysis
+const AnalysisSetup = lazy(() => import('./pages/admin/analysis/AnalysisSetup'));
+const AnalysisDepartment = lazy(() => import('./pages/admin/analysis/AnalysisDepartment'));
+const TestServiceEntry = lazy(() => import('./pages/admin/analysis/TestServiceEntry'));
+const AnalysisSpecimen = lazy(() => import('./pages/admin/analysis/AnalysisSpecimen'));
+const SampleCollectionRoom = lazy(() => import('./pages/admin/analysis/SampleCollectionRoom'));
 
-// Inventory
-import StockManagement from './pages/admin/inventory/StockManagement';
+// Lazy load emergency
+const EmergencyCases = lazy(() => import('./pages/admin/emergency/EmergencyCases'));
 
-// Lab
-import LabTestsAdmin from './pages/admin/lab/LabTests';
+// Lazy load inventory
+const StockManagement = lazy(() => import('./pages/admin/inventory/StockManagement'));
 
-// Pharmacy
-import Medicines from './pages/admin/pharmacy/Medicines';
-import Supplements from './pages/admin/pharmacy/Supplements';
-import MedicalDevices from './pages/admin/pharmacy/MedicalDevices';
-import FirstAid from './pages/admin/pharmacy/FirstAid';
-import PrescriptionOrders from './pages/admin/pharmacy/PrescriptionOrders';
-import Suppliers from './pages/admin/pharmacy/Suppliers';
-import Sales from './pages/admin/pharmacy/Sales';
-import MedicalDevicesEnhanced from './pages/admin/pharmacy/MedicalDevicesEnhanced';
-import PrescriptionOrdersEnhanced from './pages/admin/pharmacy/PrescriptionOrdersEnhanced';
-import StockManagementEnhanced from './pages/admin/pharmacy/StockManagementEnhanced';
+// Lazy load lab
+const LabTestsAdmin = lazy(() => import('./pages/admin/lab/LabTests'));
 
-// Medical
-import Diagnostic from './pages/admin/medical/Diagnostic';
+// Lazy load pharmacy
+const Medicines = lazy(() => import('./pages/admin/pharmacy/Medicines'));
+const Supplements = lazy(() => import('./pages/admin/pharmacy/Supplements'));
+const MedicalDevices = lazy(() => import('./pages/admin/pharmacy/MedicalDevices'));
+const FirstAid = lazy(() => import('./pages/admin/pharmacy/FirstAid'));
+const PrescriptionOrders = lazy(() => import('./pages/admin/pharmacy/PrescriptionOrders'));
+const Suppliers = lazy(() => import('./pages/admin/pharmacy/Suppliers'));
+const Sales = lazy(() => import('./pages/admin/pharmacy/Sales'));
+const MedicalDevicesEnhanced = lazy(() => import('./pages/admin/pharmacy/MedicalDevicesEnhanced'));
+const PrescriptionOrdersEnhanced = lazy(() => import('./pages/admin/pharmacy/PrescriptionOrdersEnhanced'));
+const StockManagementEnhanced = lazy(() => import('./pages/admin/pharmacy/StockManagementEnhanced'));
 
-import DoctorLayout from './components/doctor/DoctorLayout';
-import DoctorDashboard from './pages/doctor/DoctorDashboard';
-import DoctorSchedule from './pages/doctor/DoctorSchedule';
-import DoctorLiveConsult from './pages/doctor/DoctorLiveConsult';
-import DoctorPatients from './pages/doctor/DoctorPatients';
-import DoctorEarnings from './pages/doctor/DoctorEarnings';
-import DoctorProfile from './pages/doctor/DoctorProfile';
-import PatientLayout from './components/patient/PatientLayout';
-import PatientDashboard from './pages/patient/PatientDashboard';
-import PatientBook from './pages/patient/PatientBook';
-import PatientLiveConsult from './pages/patient/PatientLiveConsult';
-import PatientAppointments from './pages/patient/PatientAppointments';
-import PatientOrders from './pages/patient/PatientOrders';
-import PatientRecords from './pages/patient/PatientRecords';
-import PatientPrescriptions from './pages/patient/PatientPrescriptions';
-import PatientProfile from './pages/patient/PatientProfile';
+// Lazy load services
+const ServiceCategories = lazy(() => import('./pages/admin/services/ServiceCategories'));
+const ServiceList = lazy(() => import('./pages/admin/services/ServiceList'));
+const ServicePricing = lazy(() => import('./pages/admin/services/ServicePricing'));
+const ServicePackages = lazy(() => import('./pages/admin/services/ServicePackages'));
+
+// Lazy load medical
+const Diagnostic = lazy(() => import('./pages/admin/medical/Diagnostic'));
+
+// Lazy load Medical Check-Up
+const MedicalCheckupRegistration = lazy(() => import('./pages/admin/medicalCheckup/Registration'));
+const BillList = lazy(() => import('./pages/admin/medicalCheckup/BillList'));
+const PendingReportList = lazy(() => import('./pages/admin/medicalCheckup/PendingReportList'));
+const CompleteReportList = lazy(() => import('./pages/admin/medicalCheckup/CompleteReportList'));
+const DueCollection = lazy(() => import('./pages/admin/medicalCheckup/DueCollection'));
+const DueCollectionHistory = lazy(() => import('./pages/admin/medicalCheckup/DueCollectionHistory'));
+const AllValueEntry = lazy(() => import('./pages/admin/medicalCheckup/AllValueEntry'));
+const MedicalExaminationReport = lazy(() => import('./pages/admin/medicalCheckup/MedicalExaminationReport'));
+
+// Lazy load Patient Management - ADMIN
+const PatientRegistration = lazy(() => import('./pages/admin/patients/PatientRegistration'));
+const PatientRegistrationForm = lazy(() => import('./pages/admin/patients/PatientRegistrationForm'));
+const PatientRecords = lazy(() => import('./pages/admin/patients/PatientRecords'));
+const MedicalHistory = lazy(() => import('./pages/admin/patients/MedicalHistory'));
+const PatientAppointments = lazy(() => import('./pages/admin/patients/PatientAppointments'));
+const PatientBilling = lazy(() => import('./pages/admin/patients/PatientBilling'));
+const AppointmentBooking = lazy(() => import('./pages/admin/patients/AppointmentBooking'));
+
+// Lazy load Doctor
+const DoctorLayout = lazy(() => import('./components/doctor/DoctorLayout'));
+const DoctorDashboard = lazy(() => import('./pages/doctor/DoctorDashboard'));
+const DoctorSchedule = lazy(() => import('./pages/doctor/DoctorSchedule'));
+const DoctorLiveConsult = lazy(() => import('./pages/doctor/DoctorLiveConsult'));
+const DoctorPatients = lazy(() => import('./pages/doctor/DoctorPatients'));
+const DoctorPrescriptions = lazy(() => import('./pages/doctor/DoctorPrescriptions'));
+const DoctorReportsPage = lazy(() => import('./pages/doctor/DoctorReports'));
+const DoctorEarnings = lazy(() => import('./pages/doctor/DoctorEarnings'));
+const DoctorProfile = lazy(() => import('./pages/doctor/DoctorProfile'));
+const EnhancedPrescriptionSystem = lazy(() => import('./pages/doctor/EnhancedPrescriptionSystem'));
+const EnhancedAppointmentSystem = lazy(() => import('./pages/doctor/EnhancedAppointmentSystem'));
+const EnhancedReportsSystem = lazy(() => import('./pages/doctor/EnhancedReportsSystem'));
+
+// Lazy load Patient
+const PatientLayout = lazy(() => import('./components/patient/PatientLayout'));
+const PatientDashboard = lazy(() => import('./pages/patient/PatientDashboard'));
+const PatientBook = lazy(() => import('./pages/patient/PatientBook'));
+const PatientLiveConsult = lazy(() => import('./pages/patient/PatientLiveConsult'));
+const PatientOrders = lazy(() => import('./pages/patient/PatientOrders'));
+const PatientPrescriptions = lazy(() => import('./pages/patient/PatientPrescriptions'));
+const PatientProfile = lazy(() => import('./pages/patient/PatientProfile'));
+
+// Public pages
 import JoinAsDoctor from './pages/JoinAsDoctor';
 import PartnerHospital from './pages/PartnerHospital';
+
+// Loading component
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center h-64">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#5DBB63]"></div>
+  </div>
+);
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -222,8 +274,29 @@ function App() {
           <Route path="hr/*" element={<AdminSettings />} />
           
           {/* Reports Routes */}
-          <Route path="reports/patients" element={<PatientReports />} />
+          <Route path="reports" element={<Suspense fallback={<LoadingSpinner />}><ReportsHub /></Suspense>} />
+          <Route path="reports/patients" element={<Suspense fallback={<LoadingSpinner />}><PatientReports /></Suspense>} />
+          <Route path="reports/doctors" element={<Suspense fallback={<LoadingSpinner />}><DoctorReports /></Suspense>} />
+          <Route path="reports/appointments" element={<Suspense fallback={<LoadingSpinner />}><AppointmentReports /></Suspense>} />
+          <Route path="reports/financial" element={<Suspense fallback={<LoadingSpinner />}><FinancialReports /></Suspense>} />
+          <Route path="reports/inventory" element={<Suspense fallback={<LoadingSpinner />}><InventoryReports /></Suspense>} />
+          <Route path="reports/lab" element={<Suspense fallback={<LoadingSpinner />}><LabReports /></Suspense>} />
+          <Route path="reports/emergency" element={<Suspense fallback={<LoadingSpinner />}><EmergencyReports /></Suspense>} />
+          <Route path="reports/sales" element={<Suspense fallback={<LoadingSpinner />}><SalesReports /></Suspense>} />
+          <Route path="reports/services" element={<Suspense fallback={<LoadingSpinner />}><ServiceReports /></Suspense>} />
+          <Route path="reports/custom" element={<Suspense fallback={<LoadingSpinner />}><CustomReports /></Suspense>} />
           <Route path="reports/*" element={<AdminSettings />} />
+          
+          {/* Medical Check-Up Routes */}
+          <Route path="medical-checkup/registration" element={<Suspense fallback={<LoadingSpinner />}><MedicalCheckupRegistration /></Suspense>} />
+          <Route path="medical-checkup/bill-list" element={<Suspense fallback={<LoadingSpinner />}><BillList /></Suspense>} />
+          <Route path="medical-checkup/pending-reports" element={<Suspense fallback={<LoadingSpinner />}><PendingReportList /></Suspense>} />
+          <Route path="medical-checkup/complete-reports" element={<Suspense fallback={<LoadingSpinner />}><CompleteReportList /></Suspense>} />
+          <Route path="medical-checkup/due-collection" element={<Suspense fallback={<LoadingSpinner />}><DueCollection /></Suspense>} />
+          <Route path="medical-checkup/due-collection-history" element={<Suspense fallback={<LoadingSpinner />}><DueCollectionHistory /></Suspense>} />
+          <Route path="medical-checkup/value-entry/:candidateId?" element={<Suspense fallback={<LoadingSpinner />}><AllValueEntry /></Suspense>} />
+          <Route path="medical-checkup/report/:reportId" element={<Suspense fallback={<LoadingSpinner />}><MedicalExaminationReport /></Suspense>} />
+          <Route path="medical-checkup/*" element={<AdminSettings />} />
           
           {/* Medical Routes */}
           <Route path="medical/diagnostic" element={<Diagnostic />} />
@@ -248,6 +321,13 @@ function App() {
           <Route path="lab/*" element={<AdminSettings />} />
           
           {/* Patients sub-routes */}
+          <Route path="patients/registration" element={<Suspense fallback={<LoadingSpinner />}><PatientRegistration /></Suspense>} />
+          <Route path="patients/registration-form" element={<Suspense fallback={<LoadingSpinner />}><PatientRegistrationForm /></Suspense>} />
+          <Route path="patients/appointments" element={<Suspense fallback={<LoadingSpinner />}><PatientAppointments /></Suspense>} />
+          <Route path="patients/book-appointment" element={<Suspense fallback={<LoadingSpinner />}><AppointmentBooking /></Suspense>} />
+          <Route path="patients/records" element={<Suspense fallback={<LoadingSpinner />}><PatientRecords /></Suspense>} />
+          <Route path="patients/history" element={<Suspense fallback={<LoadingSpinner />}><MedicalHistory /></Suspense>} />
+          <Route path="patients/billing" element={<Suspense fallback={<LoadingSpinner />}><PatientBilling /></Suspense>} />
           <Route path="patients/*" element={<AdminSettings />} />
           
           {/* Doctors sub-routes */}
@@ -262,6 +342,10 @@ function App() {
           <Route path="emergency/*" element={<AdminSettings />} />
           
           {/* Services sub-routes */}
+          <Route path="services/categories" element={<Suspense fallback={<LoadingSpinner />}><ServiceCategories /></Suspense>} />
+          <Route path="services/list" element={<Suspense fallback={<LoadingSpinner />}><ServiceList /></Suspense>} />
+          <Route path="services/pricing" element={<Suspense fallback={<LoadingSpinner />}><ServicePricing /></Suspense>} />
+          <Route path="services/packages" element={<Suspense fallback={<LoadingSpinner />}><ServicePackages /></Suspense>} />
           <Route path="services/*" element={<AdminSettings />} />
           
           {/* Marketing Routes */}
@@ -286,6 +370,10 @@ function App() {
           <Route path="schedule" element={<DoctorSchedule />} />
           <Route path="live-consult" element={<DoctorLiveConsult />} />
           <Route path="patients" element={<DoctorPatients />} />
+          <Route path="prescriptions" element={<DoctorPrescriptions />} />
+          <Route path="schedule/enhanced" element={<Suspense fallback={<LoadingSpinner />}><EnhancedAppointmentSystem /></Suspense>} />
+          <Route path="reports" element={<DoctorReportsPage />} />
+          <Route path="reports/enhanced" element={<Suspense fallback={<LoadingSpinner />}><EnhancedReportsSystem /></Suspense>} />
           <Route path="earnings" element={<DoctorEarnings />} />
           <Route path="profile" element={<DoctorProfile />} />
         </Route>
@@ -294,9 +382,7 @@ function App() {
           <Route index element={<PatientDashboard />} />
           <Route path="book" element={<PatientBook />} />
           <Route path="live-consult" element={<PatientLiveConsult />} />
-          <Route path="appointments" element={<PatientAppointments />} />
           <Route path="orders" element={<PatientOrders />} />
-          <Route path="records" element={<PatientRecords />} />
           <Route path="prescriptions" element={<PatientPrescriptions />} />
           <Route path="profile" element={<PatientProfile />} />
         </Route>

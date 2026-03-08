@@ -57,6 +57,7 @@ import {
   Camera
 } from 'lucide-react';
 import { exportToPDF, exportToWord, exportToCSV } from '../../../utils/exportUtils';
+import { medicalDevicesApi } from '../../../services/apiService';
 
 const MedicalDevicesEnhanced = () => {
   const [devices, setDevices] = useState([]);
@@ -269,53 +270,87 @@ const MedicalDevicesEnhanced = () => {
     }
   ];
 
+  // Fetch devices from API
+  const fetchDevices = async () => {
+    try {
+      setLoading(true);
+      const response = await medicalDevicesApi.getDevices({
+        search: searchTerm,
+        category: filters.category,
+        status: filters.status,
+        manufacturer: filters.manufacturer,
+      });
+      setDevices(response.data.data.data || []);
+    } catch (error) {
+      console.error('Error fetching devices:', error);
+      // Fallback to mock data if API fails
+      setDevices(mockDevices);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    // Simulate API call
-    const timer = setTimeout(() => {
-      try {
-        setDevices(mockDevices);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error loading medical devices:', error);
-        setLoading(false);
-      }
-    }, 1000);
-    
-    return () => clearTimeout(timer);
-  }, []);
+    fetchDevices();
+  }, [searchTerm, filters]);
 
   // Enhanced CRUD operations
-  const handleAddDevice = () => {
-    const newDevice = {
-      id: Date.now(),
-      ...formData,
-      createdAt: new Date().toISOString(),
-      status: 'Active',
-      rating: 0,
-      reviews: 0
-    };
-    setDevices([...devices, newDevice]);
-    setShowAddModal(false);
-    setFormData({});
-    setImagePreview(null);
-    addNotification('Device added successfully', 'success');
+  const handleAddDevice = async () => {
+    try {
+      const formDataToSubmit = new FormData();
+      Object.keys(formData).forEach(key => {
+        if (key === 'image' && formData[key] instanceof File) {
+          formDataToSubmit.append('image', formData[key]);
+        } else {
+          formDataToSubmit.append(key, formData[key]);
+        }
+      });
+      
+      await medicalDevicesApi.createDevice(formDataToSubmit);
+      fetchDevices();
+      setShowAddModal(false);
+      setFormData({});
+      setImagePreview(null);
+      addNotification('Device added successfully', 'success');
+    } catch (error) {
+      console.error('Error adding device:', error);
+      addNotification('Error adding device', 'error');
+    }
   };
 
-  const handleEditDevice = () => {
-    const updatedDevices = devices.map(device =>
-      device.id === editingDevice.id ? { ...device, ...formData, updatedAt: new Date().toISOString() } : device
-    );
-    setDevices(updatedDevices);
-    setShowAddModal(false);
-    setEditingDevice(null);
-    setFormData({});
-    setImagePreview(null);
-    addNotification('Device updated successfully', 'success');
+  const handleEditDevice = async () => {
+    try {
+      const formDataToSubmit = new FormData();
+      Object.keys(formData).forEach(key => {
+        if (key === 'image' && formData[key] instanceof File) {
+          formDataToSubmit.append('image', formData[key]);
+        } else {
+          formDataToSubmit.append(key, formData[key]);
+        }
+      });
+      
+      await medicalDevicesApi.updateDevice(editingDevice.id, formDataToSubmit);
+      fetchDevices();
+      setShowAddModal(false);
+      setEditingDevice(null);
+      setFormData({});
+      setImagePreview(null);
+      addNotification('Device updated successfully', 'success');
+    } catch (error) {
+      console.error('Error updating device:', error);
+      addNotification('Error updating device', 'error');
+    }
   };
 
-  const handleDeleteDevice = (deviceId) => {
-    setDevices(devices.filter(device => device.id !== deviceId));
-    addNotification('Device deleted successfully', 'error');
+  const handleDeleteDevice = async (deviceId) => {
+    try {
+      await medicalDevicesApi.deleteDevice(deviceId);
+      fetchDevices();
+      addNotification('Device deleted successfully', 'error');
+    } catch (error) {
+      console.error('Error deleting device:', error);
+      addNotification('Error deleting device', 'error');
+    }
   };
 
   const handleBulkAction = () => {

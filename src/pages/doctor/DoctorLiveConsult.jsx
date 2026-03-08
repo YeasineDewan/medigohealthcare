@@ -3,7 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Video, VideoOff, Mic, MicOff, PhoneOff, Users, Radio, MessageSquare, 
   FileText, Monitor, Download, Clock, CheckCircle, X, Send, Paperclip,
-  Plus, Stethoscope, Heart, Thermometer, Activity, Calendar, User, Settings, Bell
+  Plus, Stethoscope, Heart, Thermometer, Activity, Calendar, User, Settings, Bell,
+  Wifi, WifiOff, AlertCircle, Award, Zap, Shield, Star, TrendingUp, Volume2,
+  Camera, CameraOff, Share2, Square, Play, Pause, SkipForward, SkipBack,
+  Headphones, Maximize2, Grid, List, Filter, Search, ChevronDown, ChevronUp,
+  ArrowUp, ArrowDown, RefreshCw, Loader, Check, XCircle
 } from 'lucide-react';
 
 const waitingPatients = [
@@ -60,6 +64,9 @@ export default function DoctorLiveConsult() {
     instructions: '',
     followUp: ''
   });
+  const [connectionQuality, setConnectionQuality] = useState('excellent');
+  const [isRecording, setIsRecording] = useState(false);
+  const [selectedTool, setSelectedTool] = useState(null);
   const chatRef = useRef(null);
 
   useEffect(() => {
@@ -153,29 +160,62 @@ export default function DoctorLiveConsult() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-6 mb-6">
+        <div className="bg-white rounded-3xl border border-gray-200 shadow-2xl p-8 mb-8 backdrop-blur-xl bg-white/95">
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">
-                <Video className="w-6 h-6 text-white" />
+            <div className="flex items-center gap-6">
+              <div className="relative">
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 p-1">
+                  <div className="w-full h-full rounded-2xl bg-white flex items-center justify-center">
+                    <Video className="w-10 h-10 text-transparent bg-gradient-to-br from-blue-600 to-purple-600" />
+                  </div>
+                </div>
+                <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center border-4 border-white">
+                  <div className="w-3 h-3 bg-white rounded-full animate-pulse" />
+                </div>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Advanced Live Consultation</h1>
-                <p className="text-gray-600">Professional telemedicine platform with comprehensive features</p>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Advanced Live Consultation Suite</h1>
+                <p className="text-gray-600 mt-2">Enterprise-grade telemedicine platform with AI-powered features</p>
+                <div className="flex items-center gap-4 mt-3">
+                  <div className="flex items-center gap-2 px-3 py-1 bg-green-100 rounded-full">
+                    <Wifi className="w-4 h-4 text-green-600" />
+                    <span className="text-sm font-medium text-green-700">Connection: {connectionQuality}</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-1 bg-blue-100 rounded-full">
+                    <Shield className="w-4 h-4 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-700">HIPAA Compliant</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-1 bg-purple-100 rounded-full">
+                    <Zap className="w-4 h-4 text-purple-600" />
+                    <span className="text-sm font-medium text-purple-700">HD Quality</span>
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
-                <Bell className="w-5 h-5 text-gray-600" />
+            <div className="flex items-center gap-4">
+              <button className="relative group p-3 rounded-xl hover:bg-gray-100 transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl opacity-0 group-hover:opacity-10 transition-opacity" />
+                <Bell className="w-6 h-6 text-gray-700 relative z-10" />
+                <span className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full animate-pulse border-2 border-white" />
               </button>
-              <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
-                <Settings className="w-5 h-5 text-gray-600" />
+              <button className="relative group p-3 rounded-xl hover:bg-gray-100 transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl opacity-0 group-hover:opacity-10 transition-opacity" />
+                <Settings className="w-6 h-6 text-gray-700 relative z-10" />
               </button>
-              <div className={`px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2 ${
-                isLive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+              <div className={`px-6 py-3 rounded-full text-sm font-bold flex items-center gap-3 transition-all duration-300 ${
+                isLive 
+                  ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/25' 
+                  : 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-600'
               }`}>
-                <div className={`w-2 h-2 rounded-full ${isLive ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`} />
-                {isLive ? 'Live' : 'Offline'}
+                <div className={`w-3 h-3 rounded-full ${isLive ? 'bg-white animate-pulse' : 'bg-gray-400'}`} />
+                <span className="font-bold">{isLive ? 'LIVE NOW' : 'OFFLINE'}</span>
+                {isLive && (
+                  <div className="flex items-center gap-1">
+                    <div className="w-1 h-1 bg-white rounded-full animate-pulse" />
+                    <div className="w-1 h-1 bg-white rounded-full animate-pulse delay-75" />
+                    <div className="w-1 h-1 bg-white rounded-full animate-pulse delay-150" />
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -184,37 +224,79 @@ export default function DoctorLiveConsult() {
         <div className="grid lg:grid-cols-4 gap-6">
           {/* Waiting Queue */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
-              <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-4 py-3 border-b border-gray-200">
-                <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                  <Users className="w-4 h-4 text-blue-600" />
-                  Waiting Queue ({waitingPatients.length})
-                </h3>
+            <div className="bg-white rounded-3xl border border-gray-200 shadow-2xl overflow-hidden backdrop-blur-xl bg-white/95">
+              <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 px-6 py-4 border-b border-gray-200">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold text-white flex items-center gap-3">
+                    <div className="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center">
+                      <Users className="w-5 h-5 text-white" />
+                    </div>
+                    Patient Queue
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    <div className="px-3 py-1 bg-white/20 rounded-full">
+                      <span className="text-white font-bold text-sm">{waitingPatients.length}</span>
+                    </div>
+                    <button className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition-colors">
+                      <RefreshCw className="w-4 h-4 text-white" />
+                    </button>
+                  </div>
+                </div>
               </div>
               <div className="max-h-96 overflow-y-auto">
-                {waitingPatients.map((patient) => (
-                  <div key={patient.id} className="p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <h4 className="font-medium text-gray-900">{patient.name}</h4>
-                        <p className="text-sm text-gray-500">{patient.age} years, {patient.gender}</p>
+                {waitingPatients.map((patient, index) => (
+                  <motion.div
+                    key={patient.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="p-5 border-b border-gray-100 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-300 cursor-pointer group"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="relative">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                            <User className="w-6 h-6 text-white" />
+                          </div>
+                          <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${
+                            patient.urgency === 'high' ? 'bg-red-500' :
+                            patient.urgency === 'medium' ? 'bg-yellow-500' : 'bg-green-500'
+                          }`} />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{patient.name}</h4>
+                          <p className="text-sm text-gray-500">{patient.age} years, {patient.gender}</p>
+                        </div>
                       </div>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getUrgencyColor(patient.urgency)}`}>
-                        {patient.urgency}
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold border transition-all duration-300 ${
+                        getUrgencyColor(patient.urgency)
+                      }`}>
+                        {patient.urgency.toUpperCase()}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 mb-2 line-clamp-2">{patient.symptoms}</p>
+                    <p className="text-sm text-gray-600 mb-3 line-clamp-2 group-hover:text-gray-700 transition-colors">{patient.symptoms}</p>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-500">Wait: {patient.waitTime}</span>
-                      <button
+                      <div className="flex items-center gap-3 text-xs text-gray-500">
+                        <div className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          <span>Wait: {patient.waitTime}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          <span>Visits: {patient.previousVisits}</span>
+                        </div>
+                      </div>
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                         onClick={() => acceptPatient(patient)}
                         disabled={isLive}
-                        className="px-3 py-1 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-xs rounded-xl hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 font-bold shadow-lg shadow-blue-500/25"
                       >
-                        Accept
-                      </button>
+                        {isLive ? 'In Session' : 'Accept'}
+                      </motion.button>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
@@ -222,99 +304,203 @@ export default function DoctorLiveConsult() {
 
           {/* Main Consultation Area */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
+            <div className="bg-white rounded-3xl border border-gray-200 shadow-2xl overflow-hidden backdrop-blur-xl bg-white/95">
               {/* Video Area */}
-              <div className="relative bg-gray-900 aspect-video">
+              <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-black aspect-video">
                 {isLive && currentPatient ? (
                   <div className="absolute inset-0">
                     {/* Patient Video */}
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-center text-white">
-                        <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mx-auto mb-4">
-                          <User className="w-16 h-16" />
-                        </div>
-                        <p className="font-semibold text-lg">{currentPatient.name}</p>
-                        <p className="text-sm text-white/70">Patient • Connected</p>
+                      <div className="text-center text-white p-8">
+                        <motion.div 
+                          initial={{ scale: 0.8, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          transition={{ duration: 0.5 }}
+                          className="w-40 h-40 rounded-full bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 p-1 mx-auto mb-6"
+                        >
+                          <div className="w-full h-full rounded-full bg-gray-900 flex items-center justify-center">
+                            <User className="w-20 h-20 text-white" />
+                          </div>
+                        </motion.div>
+                        <motion.h2 
+                          initial={{ y: 20, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          transition={{ delay: 0.2 }}
+                          className="font-bold text-2xl mb-2"
+                        >
+                          {currentPatient.name}
+                        </motion.h2>
+                        <motion.div 
+                          initial={{ y: 20, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          transition={{ delay: 0.3 }}
+                          className="flex items-center justify-center gap-4 text-sm text-white/70"
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                            <span>Patient • Connected</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Wifi className="w-4 h-4" />
+                            <span>HD Quality</span>
+                          </div>
+                        </motion.div>
                       </div>
                     </div>
 
                     {/* Doctor Video (PiP) */}
-                    <div className="absolute top-4 right-4 w-32 h-24 bg-gray-800 rounded-lg border-2 border-white shadow-lg">
-                      <div className="w-full h-full flex items-center justify-center">
+                    <motion.div 
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 0.4 }}
+                      className="absolute top-6 right-6 w-40 h-28 bg-gray-800 rounded-2xl border-2 border-white shadow-2xl overflow-hidden"
+                    >
+                      <div className="w-full h-full flex items-center justify-center relative">
                         {videoOff ? (
-                          <VideoOff className="w-8 h-8 text-gray-400" />
+                          <div className="text-center">
+                            <VideoOff className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                            <p className="text-xs text-gray-400">Camera Off</p>
+                          </div>
                         ) : (
-                          <div className="w-full h-full rounded-lg bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center">
-                            <Stethoscope className="w-8 h-8 text-white" />
+                          <div className="w-full h-full rounded-2xl bg-gradient-to-br from-purple-600 via-blue-600 to-pink-600 flex items-center justify-center">
+                            <Stethoscope className="w-12 h-12 text-white" />
                           </div>
                         )}
+                        <div className="absolute top-2 left-2 flex items-center gap-1">
+                          <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                          <span className="text-xs text-white font-medium">REC</span>
+                        </div>
                       </div>
-                    </div>
+                    </motion.div>
 
                     {/* Consultation Info */}
-                    <div className="absolute top-4 left-4 bg-black/50 backdrop-blur-sm rounded-lg px-3 py-2">
-                      <div className="flex items-center gap-2 text-white text-sm">
-                        <Clock className="w-4 h-4" />
-                        <span>{formatTime(consultationDuration)}</span>
+                    <motion.div 
+                      initial={{ y: -20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.5 }}
+                      className="absolute top-6 left-6 bg-black/60 backdrop-blur-xl rounded-2xl px-6 py-3 border border-white/20"
+                    >
+                      <div className="flex items-center gap-3 text-white">
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-5 h-5" />
+                          <span className="font-bold text-lg">{formatTime(consultationDuration)}</span>
+                        </div>
+                        <div className="w-px h-6 bg-white/30" />
+                        <div className="flex items-center gap-2">
+                          <Zap className="w-4 h-4 text-green-400" />
+                          <span className="text-sm">HD</span>
+                        </div>
                       </div>
-                    </div>
+                    </motion.div>
 
                     {/* Controls */}
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-black/50 backdrop-blur-sm rounded-full px-4 py-2">
-                      <button
+                    <motion.div 
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.6 }}
+                      className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-black/60 backdrop-blur-xl rounded-full px-8 py-4 border border-white/20"
+                    >
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
                         onClick={() => setMuted(!muted)}
-                        className={`p-3 rounded-full transition-colors ${
-                          muted ? 'bg-red-500 text-white' : 'bg-white/20 text-white hover:bg-white/30'
+                        className={`p-4 rounded-full transition-all duration-300 ${
+                          muted 
+                            ? 'bg-red-500 text-white shadow-lg shadow-red-500/50' 
+                            : 'bg-white/20 text-white hover:bg-white/30'
                         }`}
                       >
-                        {muted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-                      </button>
-                      <button
+                        {muted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
                         onClick={() => setVideoOff(!videoOff)}
-                        className={`p-3 rounded-full transition-colors ${
-                          videoOff ? 'bg-red-500 text-white' : 'bg-white/20 text-white hover:bg-white/30'
+                        className={`p-4 rounded-full transition-all duration-300 ${
+                          videoOff 
+                            ? 'bg-red-500 text-white shadow-lg shadow-red-500/50' 
+                            : 'bg-white/20 text-white hover:bg-white/30'
                         }`}
                       >
-                        {videoOff ? <VideoOff className="w-5 h-5" /> : <Video className="w-5 h-5" />}
-                      </button>
-                      <button
+                        {videoOff ? <VideoOff className="w-6 h-6" /> : <Video className="w-6 h-6" />}
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
                         onClick={() => setScreenSharing(!screenSharing)}
-                        className={`p-3 rounded-full transition-colors ${
-                          screenSharing ? 'bg-blue-500 text-white' : 'bg-white/20 text-white hover:bg-white/30'
+                        className={`p-4 rounded-full transition-all duration-300 ${
+                          screenSharing 
+                            ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/50' 
+                            : 'bg-white/20 text-white hover:bg-white/30'
                         }`}
                       >
-                        <Monitor className="w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={endConsultation}
-                        className="p-3 rounded-full bg-red-500 text-white hover:bg-red-600 transition-colors"
+                        <Monitor className="w-6 h-6" />
+                      </motion.button>
+                      <div className="w-px h-8 bg-white/30" />
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => setIsRecording(!isRecording)}
+                        className={`p-4 rounded-full transition-all duration-300 ${
+                          isRecording 
+                            ? 'bg-red-500 text-white shadow-lg shadow-red-500/50 animate-pulse' 
+                            : 'bg-white/20 text-white hover:bg-white/30'
+                        }`}
                       >
-                        <PhoneOff className="w-5 h-5" />
-                      </button>
-                    </div>
+                        <Camera className="w-6 h-6" />
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={endConsultation}
+                        className="p-4 rounded-full bg-red-500 text-white hover:bg-red-600 transition-all duration-300 shadow-lg shadow-red-500/50"
+                      >
+                        <PhoneOff className="w-6 h-6" />
+                      </motion.button>
+                    </motion.div>
                   </div>
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center text-white p-8">
-                      <Radio className="w-24 h-24 mx-auto mb-6 text-blue-400" />
-                      <h2 className="text-2xl font-bold mb-2">Ready for Consultations</h2>
-                      <p className="text-white/70 mb-8">Accept patients from the waiting queue to begin</p>
-                      <div className="flex flex-col gap-4">
-                        <div className="flex items-center justify-center gap-4 text-sm text-white/60">
-                          <div className="flex items-center gap-2">
-                            <CheckCircle className="w-4 h-4 text-green-400" />
-                            <span>HD Video Quality</span>
+                    <div className="text-center text-white p-12">
+                      <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.5 }}
+                      >
+                        <Radio className="w-32 h-32 mx-auto mb-8 text-blue-400" />
+                        <h2 className="text-3xl font-bold mb-4">Ready for Consultations</h2>
+                        <p className="text-white/70 mb-12 text-lg">Accept patients from the waiting queue to begin professional telemedicine sessions</p>
+                        <div className="grid grid-cols-3 gap-8 mb-12">
+                          <div className="flex flex-col items-center gap-3">
+                            <div className="w-16 h-16 bg-green-500/20 rounded-2xl flex items-center justify-center">
+                              <CheckCircle className="w-8 h-8 text-green-400" />
+                            </div>
+                            <span className="text-white/80 font-medium">HD Video Quality</span>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <CheckCircle className="w-4 h-4 text-green-400" />
-                            <span>Screen Sharing</span>
+                          <div className="flex flex-col items-center gap-3">
+                            <div className="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center">
+                              <Monitor className="w-8 h-8 text-blue-400" />
+                            </div>
+                            <span className="text-white/80 font-medium">Screen Sharing</span>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <CheckCircle className="w-4 h-4 text-green-400" />
-                            <span>E-Prescription</span>
+                          <div className="flex flex-col items-center gap-3">
+                            <div className="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center">
+                              <FileText className="w-8 h-8 text-purple-400" />
+                            </div>
+                            <span className="text-white/80 font-medium">E-Prescription</span>
                           </div>
                         </div>
-                      </div>
+                        <div className="flex items-center justify-center gap-4">
+                          <div className="flex items-center gap-2 text-sm text-white/60">
+                            <Shield className="w-4 h-4" />
+                            <span>HIPAA Compliant</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-white/60">
+                            <Wifi className="w-4 h-4" />
+                            <span>Encrypted Connection</span>
+                          </div>
+                        </div>
+                      </motion.div>
                     </div>
                   </div>
                 )}
@@ -322,35 +508,56 @@ export default function DoctorLiveConsult() {
 
               {/* Action Buttons */}
               {isLive && (
-                <div className="p-4 border-t border-gray-200 bg-gray-50">
-                  <div className="flex items-center gap-3">
-                    <button
+                <div className="p-6 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
+                  <div className="grid grid-cols-3 gap-4">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       onClick={() => setShowChat(!showChat)}
-                      className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-                        showChat ? 'bg-blue-600 text-white' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                      className={`flex items-center justify-center gap-3 px-6 py-4 rounded-2xl font-bold transition-all duration-300 ${
+                        showChat 
+                          ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/25' 
+                          : 'bg-white border-2 border-gray-200 text-gray-700 hover:border-blue-500 hover:bg-blue-50'
                       }`}
                     >
-                      <MessageSquare className="w-4 h-4" />
-                      Chat
-                    </button>
-                    <button
+                      <MessageSquare className="w-5 h-5" />
+                      <span>Live Chat</span>
+                      {showChat && (
+                        <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                      )}
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       onClick={() => setShowPatientInfo(!showPatientInfo)}
-                      className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-                        showPatientInfo ? 'bg-blue-600 text-white' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                      className={`flex items-center justify-center gap-3 px-6 py-4 rounded-2xl font-bold transition-all duration-300 ${
+                        showPatientInfo 
+                          ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg shadow-green-500/25' 
+                          : 'bg-white border-2 border-gray-200 text-gray-700 hover:border-green-500 hover:bg-green-50'
                       }`}
                     >
-                      <User className="w-4 h-4" />
-                      Patient Info
-                    </button>
-                    <button
+                      <User className="w-5 h-5" />
+                      <span>Patient Info</span>
+                      {showPatientInfo && (
+                        <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                      )}
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       onClick={() => setShowPrescription(!showPrescription)}
-                      className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-                        showPrescription ? 'bg-blue-600 text-white' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                      className={`flex items-center justify-center gap-3 px-6 py-4 rounded-2xl font-bold transition-all duration-300 ${
+                        showPrescription 
+                          ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/25' 
+                          : 'bg-white border-2 border-gray-200 text-gray-700 hover:border-purple-500 hover:bg-purple-50'
                       }`}
                     >
-                      <FileText className="w-4 h-4" />
-                      Prescription
-                    </button>
+                      <FileText className="w-5 h-5" />
+                      <span>E-Prescription</span>
+                      {showPrescription && (
+                        <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                      )}
+                    </motion.button>
                   </div>
                 </div>
               )}

@@ -1,29 +1,18 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import {
   Search,
-  Filter,
   Download,
   Calendar,
   Printer,
+  ArrowLeft,
   Users,
   UserPlus,
   UserCheck,
   CalendarCheck,
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-  ArrowUpRight,
-  ArrowDownRight,
   FileText,
   BarChart3,
-  PieChart,
-  RefreshCw,
-  ChevronDown,
-  ChevronRight,
-  Activity,
-  Heart,
-  AlertCircle
 } from 'lucide-react';
 
 // Mock patient data
@@ -61,9 +50,14 @@ export default function PatientReports() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Patient Reports</h1>
-          <p className="text-gray-500 mt-1">Comprehensive patient analytics and statistics</p>
+        <div className="flex items-center gap-3">
+          <Link to="/admin/reports" className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-600" title="Back to Reports">
+            <ArrowLeft className="w-5 h-5" />
+          </Link>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Patient Reports</h1>
+            <p className="text-gray-500 mt-1">Comprehensive patient analytics and statistics</p>
+          </div>
         </div>
         <div className="flex gap-3">
           <div className="relative">

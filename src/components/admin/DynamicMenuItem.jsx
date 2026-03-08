@@ -128,6 +128,23 @@ const DynamicMenuItem = ({
     }
   }, [isChildActive, expandedItems, item, location.pathname]);
 
+  // Auto-collapse inactive sections after navigation
+  useEffect(() => {
+    if (!hasChildren) return;
+    
+    // Check if this section or any of its children are active
+    const isSectionActive = isChildActive || (item.path && location.pathname === item.path);
+    
+    // Auto-collapse if section is not active and not manually expanded
+    if (!isSectionActive && !expandedItems.has(item.id) && isExpanded) {
+      const timer = setTimeout(() => {
+        setIsExpanded(false);
+      }, 300); // Small delay for smooth transition
+      
+      return () => clearTimeout(timer);
+    }
+  }, [location.pathname, isChildActive, expandedItems, hasChildren, item.path, isExpanded]);
+
   // Handle click events
   const handleClick = () => {
     if (hasChildren) {
@@ -267,24 +284,81 @@ const DynamicMenuItem = ({
     return `${basePadding} ${indentPadding}`;
   };
 
-  // Animation variants
+  // Animation variants with enhanced smooth transitions
   const containerVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: { opacity: 1, x: 0 },
-    exit: { opacity: 0, x: -20 }
+    hidden: { 
+      opacity: 0, 
+      x: -20,
+      scale: 0.95
+    },
+    visible: { 
+      opacity: 1, 
+      x: 0,
+      scale: 1,
+      transition: {
+        type: 'spring',
+        stiffness: 300,
+        damping: 30,
+        duration: 0.3
+      }
+    },
+    exit: { 
+      opacity: 0, 
+      x: -20,
+      scale: 0.95,
+      transition: {
+        duration: 0.2,
+        ease: 'easeInOut'
+      }
+    }
   };
 
   const childrenVariants = {
-    hidden: { height: 0, opacity: 0 },
+    hidden: { 
+      height: 0, 
+      opacity: 0,
+      scale: 0.95,
+      transition: {
+        duration: 0.25,
+        ease: [0.4, 0, 0.2, 1]
+      }
+    },
     visible: { 
       height: 'auto', 
       opacity: 1,
-      transition: { duration: 0.3, ease: 'easeInOut' }
+      scale: 1,
+      transition: {
+        duration: 0.3,
+        ease: [0.4, 0, 0.2, 1],
+        staggerChildren: 0.05
+      }
     },
     exit: { 
       height: 0, 
       opacity: 0,
-      transition: { duration: 0.2, ease: 'easeInOut' }
+      scale: 0.95,
+      transition: {
+        duration: 0.2,
+        ease: [0.4, 0, 0.2, 1]
+      }
+    }
+  };
+
+  const childItemVariants = {
+    hidden: {
+      opacity: 0,
+      x: -10,
+      transition: {
+        duration: 0.2
+      }
+    },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: 0.2,
+        delay: 0.05
+      }
     }
   };
 
@@ -317,9 +391,9 @@ const DynamicMenuItem = ({
           onClick={handleClick}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className={`w-full flex items-center gap-3 rounded-xl transition-all duration-200 ${getBackgroundStyles()} ${getTextStyles()} ${getPaddingStyles()}`}
+          className={`w-full flex items-center gap-3 rounded-xl transition-all duration-300 ease-out ${getBackgroundStyles()} ${getTextStyles()} ${getPaddingStyles()}`}
           style={{
-            transform: isHovered ? 'translateX(2px)' : 'translateX(0)',
+            transform: isHovered ? 'translateX(4px) scale(1.02)' : 'translateX(0) scale(1)',
           }}
         >
           {/* Icon */}
@@ -350,8 +424,15 @@ const DynamicMenuItem = ({
           {/* Expand/Collapse Icon */}
           {hasChildren && (
             <motion.div
-              animate={{ rotate: isExpanded ? 90 : 0 }}
-              transition={{ duration: 0.2 }}
+              animate={{ 
+                rotate: isExpanded ? 90 : 0,
+                scale: isHovered ? 1.1 : 1
+              }}
+              transition={{ 
+                duration: 0.3,
+                ease: [0.4, 0, 0.2, 1],
+                type: 'spring'
+              }}
               className="flex-shrink-0"
             >
               <ChevronRight className="w-4 h-4" />
@@ -383,19 +464,26 @@ const DynamicMenuItem = ({
           >
             <div className="mt-1 space-y-1">
               {item.children.map((child, index) => (
-                <DynamicMenuItem
+                <motion.div
                   key={child.id || index}
-                  item={child}
-                  level={level + 1}
-                  isNested={true}
-                  expandedItems={expandedItems}
-                  onToggleExpand={onToggleExpand}
-                  searchTerm={searchTerm}
-                  userRole={userRole}
-                  permissions={permissions}
-                  showBadges={showBadges}
-                  animationEnabled={animationEnabled}
-                />
+                  variants={animationEnabled ? childItemVariants : undefined}
+                  initial="hidden"
+                  animate="visible"
+                  transition={{ delay: index * 0.03 }}
+                >
+                  <DynamicMenuItem
+                    item={child}
+                    level={level + 1}
+                    isNested={true}
+                    expandedItems={expandedItems}
+                    onToggleExpand={onToggleExpand}
+                    searchTerm={searchTerm}
+                    userRole={userRole}
+                    permissions={permissions}
+                    showBadges={showBadges}
+                    animationEnabled={animationEnabled}
+                  />
+                </motion.div>
               ))}
             </div>
           </motion.div>

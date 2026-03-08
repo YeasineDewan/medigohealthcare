@@ -28,6 +28,22 @@ class Doctor extends Model
         'end_time',
         'is_available',
         'accepts_video_consultation',
+        'emergency_contact',
+        'marital_status',
+        'website',
+        'linkedin',
+        'department',
+        'designation',
+        'npi_number',
+        'dea_number',
+        'languages',
+        'areas_of_expertise',
+        'services_offered',
+        'awards',
+        'publications',
+        'memberships',
+        'research_interests',
+        'profile_views',
     ];
 
     protected $casts = [
@@ -37,6 +53,13 @@ class Doctor extends Model
         'rating' => 'decimal:2',
         'is_available' => 'boolean',
         'accepts_video_consultation' => 'boolean',
+        'languages' => 'array',
+        'areas_of_expertise' => 'array',
+        'services_offered' => 'array',
+        'awards' => 'array',
+        'publications' => 'array',
+        'memberships' => 'array',
+        'research_interests' => 'array',
     ];
 
     // Relationships

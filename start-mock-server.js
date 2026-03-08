@@ -256,12 +256,27 @@ const adminMenu = [
     children: [
       { id: 'medicines', label: 'Medicines', icon: 'Pill', path: '/admin/pharmacy/medicines', order: 1 },
       { id: 'supplements', label: 'Supplements', icon: 'Package', path: '/admin/pharmacy/supplements', order: 2 },
-      { id: 'medical-devices', label: 'Medical Devices', icon: 'Syringe', path: '/admin/pharmacy/devices', order: 3 },
+      { id: 'medical-devices', label: 'Medical Devices', icon: 'Syringe', path: '/admin/pharmacy/medical-devices', order: 3 },
       { id: 'first-aid', label: 'First Aid', icon: 'Bandage', path: '/admin/pharmacy/first-aid', order: 4 },
-      { id: 'prescription-orders', label: 'Prescription Orders', icon: 'FileText', path: '/admin/pharmacy/prescriptions', order: 5 },
+      { id: 'prescription-orders', label: 'Prescription Orders', icon: 'FileText', path: '/admin/pharmacy/prescription-orders', order: 5 },
       { id: 'stock-management', label: 'Stock Management', icon: 'Package', path: '/admin/pharmacy/stock', order: 6 },
       { id: 'suppliers', label: 'Suppliers', icon: 'Building', path: '/admin/pharmacy/suppliers', order: 7 },
       { id: 'pharmacy-sales', label: 'Sales', icon: 'ShoppingCart', path: '/admin/pharmacy/sales', order: 8 }
+    ]
+  },
+  {
+    id: 'analysis',
+    label: 'Analysis',
+    icon: 'FlaskConical',
+    order: 8,
+    visible: true,
+    roles: ['admin'],
+    children: [
+      { id: 'analysis-setup', label: 'Analysis Setup', icon: 'Settings', path: '/admin/analysis', order: 1 },
+      { id: 'analysis-departments', label: 'Departments', icon: 'Building', path: '/admin/analysis/departments', order: 2 },
+      { id: 'analysis-tests', label: 'Test Services', icon: 'FileText', path: '/admin/analysis/tests', order: 3 },
+      { id: 'analysis-specimens', label: 'Specimens', icon: 'TestTube', path: '/admin/analysis/specimens', order: 4 },
+      { id: 'analysis-collection', label: 'Sample Collection', icon: 'Droplet', path: '/admin/analysis/collection', order: 5 }
     ]
   },
   {
@@ -488,6 +503,200 @@ app.use((err, req, res, next) => {
   });
 });
 
+// Medical Devices API Mock Endpoints
+const medicalDevices = [
+  { id: 1, name: 'Digital Thermometer', category: 'Monitoring', manufacturer: 'MedTech', current_stock: 150, unit_price: 25.00, status: 'active', expiry_date: '2026-12-31' },
+  { id: 2, name: 'Blood Pressure Monitor', category: 'Monitoring', manufacturer: 'HealthCorp', current_stock: 45, unit_price: 89.99, status: 'active', expiry_date: '2026-06-30' },
+  { id: 3, name: 'Glucometer', category: 'Diagnostic', manufacturer: 'DiabCare', current_stock: 80, unit_price: 45.50, status: 'active', expiry_date: '2025-12-31' },
+  { id: 4, name: 'Pulse Oximeter', category: 'Monitoring', manufacturer: 'MedTech', current_stock: 12, unit_price: 35.00, status: 'low_stock', expiry_date: '2026-03-31' },
+  { id: 5, name: 'Nebulizer', category: 'Therapeutic', manufacturer: 'BreathEasy', current_stock: 30, unit_price: 120.00, status: 'active', expiry_date: '2026-09-30' },
+  { id: 6, name: 'Stethoscope', category: 'Diagnostic', manufacturer: 'MedTech', current_stock: 5, unit_price: 75.00, status: 'critical_stock', expiry_date: '2027-01-31' },
+  { id: 7, name: 'ECG Machine', category: 'Diagnostic', manufacturer: 'HealthCorp', current_stock: 8, unit_price: 2500.00, status: 'active', expiry_date: '2025-12-31' },
+  { id: 8, name: 'Surgical Masks', category: 'Consumables', manufacturer: 'SafetyFirst', current_stock: 5000, unit_price: 0.50, status: 'active', expiry_date: '2024-12-31' },
+  { id: 9, name: 'Infrared Thermometer', category: 'Monitoring', manufacturer: 'MedTech', current_stock: 200, unit_price: 45.00, status: 'active', expiry_date: '2026-08-31' },
+  { id: 10, name: 'Oxygen Concentrator', category: 'Therapeutic', manufacturer: 'BreathEasy', current_stock: 3, unit_price: 899.00, status: 'critical_stock', expiry_date: '2026-04-30' }
+];
+
+app.get('/api/v1/medical-devices', (req, res) => {
+  console.log('🎯 Mock API: GET /api/v1/medical-devices');
+  const { search, category, status, manufacturer } = req.query;
+  
+  let filtered = [...medicalDevices];
+  
+  if (search) {
+    filtered = filtered.filter(d => d.name.toLowerCase().includes(search.toLowerCase()));
+  }
+  if (category) {
+    filtered = filtered.filter(d => d.category === category);
+  }
+  if (status) {
+    filtered = filtered.filter(d => d.status === status);
+  }
+  if (manufacturer) {
+    filtered = filtered.filter(d => d.manufacturer === manufacturer);
+  }
+  
+  res.json(filtered);
+});
+
+app.get('/api/v1/medical-devices/stats', (req, res) => {
+  console.log('🎯 Mock API: GET /api/v1/medical-devices/stats');
+  res.json({
+    total: medicalDevices.length,
+    active: medicalDevices.filter(d => d.status === 'active').length,
+    low_stock: medicalDevices.filter(d => d.status === 'low_stock').length,
+    critical_stock: medicalDevices.filter(d => d.status === 'critical_stock').length
+  });
+});
+
+app.get('/api/v1/medical-devices/categories', (req, res) => {
+  console.log('🎯 Mock API: GET /api/v1/medical-devices/categories');
+  const categories = [...new Set(medicalDevices.map(d => d.category))];
+  res.json(categories);
+});
+
+app.get('/api/v1/medical-devices/manufacturers', (req, res) => {
+  console.log('🎯 Mock API: GET /api/v1/medical-devices/manufacturers');
+  const manufacturers = [...new Set(medicalDevices.map(d => d.manufacturer))];
+  res.json(manufacturers);
+});
+
+app.get('/api/v1/medical-devices/low-stock', (req, res) => {
+  console.log('🎯 Mock API: GET /api/v1/medical-devices/low-stock');
+  res.json(medicalDevices.filter(d => d.status === 'low_stock' || d.status === 'critical_stock'));
+});
+
+app.get('/api/v1/medical-devices/critical-stock', (req, res) => {
+  console.log('🎯 Mock API: GET /api/v1/medical-devices/critical-stock');
+  res.json(medicalDevices.filter(d => d.status === 'critical_stock'));
+});
+
+app.get('/api/v1/medical-devices/expiring-soon', (req, res) => {
+  console.log('🎯 Mock API: GET /api/v1/medical-devices/expiring-soon');
+  const thirtyDaysFromNow = new Date();
+  thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+  res.json(medicalDevices.filter(d => new Date(d.expiry_date) <= thirtyDaysFromNow));
+});
+
+// Mock data for reports
+const mockDoctors = [
+  { id: 1, name: 'Dr. Sarah Johnson', email: 'sarah.j@medigo.com', role: 'doctor', is_active: true, appointments_count: 45, orders_count: 0, specialization: 'General Medicine', created_at: '2024-01-15' },
+  { id: 2, name: 'Dr. Michael Chen', email: 'michael.c@medigo.com', role: 'doctor', is_active: true, appointments_count: 38, orders_count: 0, specialization: 'Cardiology', created_at: '2024-01-20' },
+  { id: 3, name: 'Dr. Emily Davis', email: 'emily.d@medigo.com', role: 'doctor', is_active: false, appointments_count: 22, orders_count: 0, specialization: 'Pediatrics', created_at: '2024-02-01' }
+];
+
+const mockAppointments = [
+  { id: 1, user_id: 1, doctor_id: 1, appointment_date: '2024-03-01', status: 'completed', consultation_fee: 150.00, user: { name: 'John Doe' }, doctor: { user: { name: 'Dr. Sarah Johnson' } } },
+  { id: 2, user_id: 2, doctor_id: 2, appointment_date: '2024-03-02', status: 'completed', consultation_fee: 200.00, user: { name: 'Jane Smith' }, doctor: { user: { name: 'Dr. Michael Chen' } } },
+  { id: 3, user_id: 3, doctor_id: 1, appointment_date: '2024-03-03', status: 'pending', consultation_fee: 150.00, user: { name: 'Bob Wilson' }, doctor: { user: { name: 'Dr. Sarah Johnson' } } }
+];
+
+const mockOrders = [
+  { id: 1, user_id: 1, total_amount: 89.99, status: 'completed', created_at: '2024-03-01', user: { name: 'John Doe' }, items: [{ product: { name: 'Paracetamol' }, quantity: 2, subtotal: 19.98 }] },
+  { id: 2, user_id: 2, total_amount: 156.50, status: 'completed', created_at: '2024-03-02', user: { name: 'Jane Smith' }, items: [{ product: { name: 'Vitamin C' }, quantity: 3, subtotal: 44.97 }] }
+];
+
+const mockLabTests = [
+  { id: 1, user_id: 1, lab_test_id: 1, booking_date: '2024-03-01', status: 'completed', price: 75.00, user: { name: 'John Doe' }, labTest: { name: 'Blood Test' } },
+  { id: 2, user_id: 2, lab_test_id: 2, booking_date: '2024-03-02', status: 'pending', price: 120.00, user: { name: 'Jane Smith' }, labTest: { name: 'X-Ray' } }
+];
+
+// Reports endpoints
+app.get('/api/v1/reports/users', (req, res) => {
+  console.log('🎯 Mock API: GET /api/v1/reports/users');
+  const { role } = req.query;
+  
+  let users = [...mockDoctors];
+  if (role) {
+    users = users.filter(user => user.role === role);
+  }
+  
+  const summary = {
+    total: users.length,
+    by_role: users.reduce((acc, user) => {
+      acc[user.role] = (acc[user.role] || 0) + 1;
+      return acc;
+    }, {}),
+    active: users.filter(user => user.is_active).length
+  };
+  
+  res.json({
+    data: users,
+    summary
+  });
+});
+
+app.get('/api/v1/reports/appointments', (req, res) => {
+  console.log('🎯 Mock API: GET /api/v1/reports/appointments');
+  const { start_date, end_date, status } = req.query;
+  
+  let appointments = [...mockAppointments];
+  
+  if (status) {
+    appointments = appointments.filter(apt => apt.status === status);
+  }
+  
+  const summary = {
+    total: appointments.length,
+    by_status: appointments.reduce((acc, apt) => {
+      acc[apt.status] = (acc[apt.status] || 0) + 1;
+      return acc;
+    }, {}),
+    total_revenue: appointments.filter(apt => apt.status === 'completed').reduce((sum, apt) => sum + apt.consultation_fee, 0)
+  };
+  
+  res.json({
+    data: appointments,
+    summary
+  });
+});
+
+app.get('/api/v1/reports/sales', (req, res) => {
+  console.log('🎯 Mock API: GET /api/v1/reports/sales');
+  const { start_date, end_date } = req.query;
+  
+  let orders = [...mockOrders];
+  
+  const summary = {
+    total_orders: orders.length,
+    total_revenue: orders.filter(order => order.status === 'completed').reduce((sum, order) => sum + order.total_amount, 0),
+    by_status: orders.reduce((acc, order) => {
+      acc[order.status] = (acc[order.status] || 0) + 1;
+      return acc;
+    }, {}),
+    top_products: [
+      { product: { name: 'Paracetamol' }, quantity: 15, revenue: 149.85 },
+      { product: { name: 'Vitamin C' }, quantity: 8, revenue: 119.92 }
+    ]
+  };
+  
+  res.json({
+    data: orders,
+    summary
+  });
+});
+
+app.get('/api/v1/reports/lab-tests', (req, res) => {
+  console.log('🎯 Mock API: GET /api/v1/reports/lab-tests');
+  const { start_date, end_date } = req.query;
+  
+  let labTests = [...mockLabTests];
+  
+  const summary = {
+    total: labTests.length,
+    by_status: labTests.reduce((acc, test) => {
+      acc[test.status] = (acc[test.status] || 0) + 1;
+      return acc;
+    }, {}),
+    total_revenue: labTests.filter(test => test.status === 'completed').reduce((sum, test) => sum + test.price, 0)
+  };
+  
+  res.json({
+    data: labTests,
+    summary
+  });
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 Mock API Server running on port ${PORT}`);
@@ -497,5 +706,10 @@ app.listen(PORT, () => {
   console.log('   GET /api/v1/banners?type=hero');
   console.log('   GET /api/v1/menus/services');
   console.log('   GET /api/v1/menus/emergency');
+  console.log('   GET /api/v1/admin/menu');
+  console.log('   GET /api/v1/reports/users');
+  console.log('   GET /api/v1/reports/appointments');
+  console.log('   GET /api/v1/reports/sales');
+  console.log('   GET /api/v1/reports/lab-tests');
   console.log('   GET /api/v1/health');
 });

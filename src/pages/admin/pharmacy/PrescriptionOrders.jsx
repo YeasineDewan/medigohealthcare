@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
@@ -31,6 +31,7 @@ import {
   BarChart3
 } from 'lucide-react';
 import { exportToPDF, exportToWord, printDocument } from '../../../utils/exportUtils';
+import { pharmacyOrdersApi } from '../../../services/apiService';
 
 // Mock prescription orders data
 const generateOrders = () => {
@@ -96,25 +97,43 @@ const paymentColors = {
   refunded: 'bg-purple-100 text-purple-700',
 };
 
-export default function PrescriptionOrders() {
+function PrescriptionOrders() {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [paymentFilter, setPaymentFilter] = useState('all');
-  const [orders] = useState(generateOrders);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showViewModal, setShowViewModal] = useState(false);
   const [editingOrder, setEditingOrder] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
 
-  const filteredOrders = orders.filter(order => {
-    const matchesSearch = 
-      order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.doctor.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
-    const matchesPayment = paymentFilter === 'all' || order.paymentStatus === paymentFilter;
-    return matchesSearch && matchesStatus && matchesPayment;
-  });
+  // Fetch orders from API
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const params = {
+        search: searchTerm,
+        status: statusFilter !== 'all' ? statusFilter : undefined,
+        payment_status: paymentFilter !== 'all' ? paymentFilter : undefined,
+      };
+      
+      const response = await pharmacyOrdersApi.getOrders(params);
+      setOrders(response.data.data.data || []);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      // Fallback to mock data if API fails
+      setOrders(generateOrders());
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, [searchTerm, statusFilter, paymentFilter]);
+
+  const filteredOrders = orders; // API handles filtering
 
   // Stats
   const totalOrders = orders.length;
@@ -132,10 +151,21 @@ export default function PrescriptionOrders() {
     setShowEditModal(true);
   };
 
-  const handleSaveEdit = () => {
-    alert(`Order ${editingOrder.orderNumber} updated successfully`);
-    setShowEditModal(false);
-    setEditingOrder(null);
+  const handleSaveEdit = async () => {
+    try {
+      await pharmacyOrdersApi.updateOrder(editingOrder.id, {
+        status: editingOrder.status,
+        payment_status: editingOrder.paymentStatus,
+        notes: editingOrder.notes
+      });
+      
+      fetchOrders(); // Refresh the list
+      setShowEditModal(false);
+      setEditingOrder(null);
+    } catch (error) {
+      console.error('Error updating order:', error);
+      alert('Error updating order. Please try again.');
+    }
   };
 
   const handleExportPDF = () => {
@@ -602,3 +632,5 @@ function OrderEditModal({ order, onClose, onSave }) {
     </motion.div>
   );
 }
+
+export default PrescriptionOrders;

@@ -10,7 +10,7 @@ import {
   Microscope,
   Dna,
   Eye,
-  Tooth,
+  Smile,
   Baby,
   Activity,
   Calendar,
@@ -50,7 +50,7 @@ const categories = [
   { name: 'Laboratory Tests', icon: Microscope, color: 'from-yellow-500 to-yellow-600', count: 98 },
   { name: 'Genetic Health', icon: Dna, color: 'from-indigo-500 to-indigo-600', count: 76 },
   { name: 'Eye Care', icon: Eye, color: 'from-cyan-500 to-cyan-600', count: 67 },
-  { name: 'Dental Health', icon: Tooth, color: 'from-pink-500 to-pink-600', count: 89 },
+  { name: 'Dental Health', icon: Smile, color: 'from-pink-500 to-pink-600', count: 89 },
   { name: 'Pediatrics', icon: Baby, color: 'from-orange-500 to-orange-600', count: 112 },
   { name: 'Fitness & Nutrition', icon: Activity, color: 'from-teal-500 to-teal-600', count: 145 },
 ];

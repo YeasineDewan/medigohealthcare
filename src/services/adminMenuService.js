@@ -391,10 +391,24 @@ class AdminMenuService {
         ]
       },
       {
+        id: 'medical-checkup',
+        label: 'Medical Check-Up',
+        icon: 'FileCheck',
+        order: 4,
+        children: [
+          { id: 'mc-registration', label: 'Registration', icon: 'UserPlus', path: '/admin/medical-checkup/registration', order: 1 },
+          { id: 'mc-bill-list', label: 'Bill List', icon: 'Receipt', path: '/admin/medical-checkup/bill-list', order: 2 },
+          { id: 'mc-pending-reports', label: 'Pending Report List', icon: 'Clock', path: '/admin/medical-checkup/pending-reports', order: 3 },
+          { id: 'mc-complete-reports', label: 'Complete Report List', icon: 'CheckCircle', path: '/admin/medical-checkup/complete-reports', order: 4 },
+          { id: 'mc-due-collection', label: 'Due Collection', icon: 'DollarSign', path: '/admin/medical-checkup/due-collection', order: 5 },
+          { id: 'mc-due-collection-history', label: 'Due Collection History', icon: 'FileText', path: '/admin/medical-checkup/due-collection-history', order: 6 }
+        ]
+      },
+      {
         id: 'reports',
         label: 'Reports',
         icon: 'FileText',
-        order: 4,
+        order: 5,
         children: [
           { id: 'patient-reports', label: 'Patient Reports', icon: 'Users', path: '/admin/reports/patients', order: 1 },
           { id: 'doctor-reports', label: 'Doctor Reports', icon: 'Stethoscope', path: '/admin/reports/doctors', order: 2 },
@@ -412,7 +426,7 @@ class AdminMenuService {
         id: 'medical',
         label: 'Medical',
         icon: 'Stethoscope',
-        order: 5,
+        order: 6,
         children: [
           { id: 'diagnostic-transaction', label: 'Diagnostic Transaction', icon: 'Microscope', path: '/admin/medical/diagnostic', order: 1 },
           { id: 'medical-transaction', label: 'Medical Transaction', icon: 'File', path: '/admin/medical/transaction', order: 2 },
@@ -450,12 +464,25 @@ class AdminMenuService {
         children: [
           { id: 'medicines', label: 'Medicines', icon: 'Pill', path: '/admin/pharmacy/medicines', order: 1 },
           { id: 'supplements', label: 'Supplements', icon: 'Package', path: '/admin/pharmacy/supplements', order: 2 },
-          { id: 'medical-devices', label: 'Medical Devices', icon: 'Syringe', path: '/admin/pharmacy/devices', order: 3 },
+          { id: 'medical-devices', label: 'Medical Devices', icon: 'Syringe', path: '/admin/pharmacy/medical-devices', order: 3 },
           { id: 'first-aid', label: 'First Aid', icon: 'Bandage', path: '/admin/pharmacy/first-aid', order: 4 },
-          { id: 'prescription-orders', label: 'Prescription Orders', icon: 'FileText', path: '/admin/pharmacy/prescriptions', order: 5 },
+          { id: 'prescription-orders', label: 'Prescription Orders', icon: 'FileText', path: '/admin/pharmacy/prescription-orders', order: 5 },
           { id: 'stock-management', label: 'Stock Management', icon: 'Package', path: '/admin/pharmacy/stock', order: 6 },
           { id: 'suppliers', label: 'Suppliers', icon: 'Building', path: '/admin/pharmacy/suppliers', order: 7 },
           { id: 'pharmacy-sales', label: 'Sales', icon: 'ShoppingCart', path: '/admin/pharmacy/sales', order: 8 }
+        ]
+      },
+      {
+        id: 'analysis',
+        label: 'Analysis',
+        icon: 'FlaskConical',
+        order: 8,
+        children: [
+          { id: 'analysis-setup', label: 'Analysis Setup', icon: 'Settings', path: '/admin/analysis', order: 1 },
+          { id: 'analysis-departments', label: 'Departments', icon: 'Building', path: '/admin/analysis/departments', order: 2 },
+          { id: 'analysis-tests', label: 'Test Services', icon: 'FileText', path: '/admin/analysis/tests', order: 3 },
+          { id: 'analysis-specimens', label: 'Specimens', icon: 'TestTube', path: '/admin/analysis/specimens', order: 4 },
+          { id: 'analysis-collection', label: 'Sample Collection', icon: 'Droplet', path: '/admin/analysis/collection', order: 5 }
         ]
       },
       {

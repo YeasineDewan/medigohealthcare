@@ -13,6 +13,8 @@ import {
   ChevronRight,
   Bell,
   Stethoscope,
+  FileText,
+  BarChart3,
 } from 'lucide-react';
 
 const menuItems = [
@@ -20,6 +22,8 @@ const menuItems = [
   { path: '/doctor/schedule', icon: Calendar, label: 'Appointments' },
   { path: '/doctor/live-consult', icon: Video, label: '24/7 Live Consult' },
   { path: '/doctor/patients', icon: Users, label: 'My Patients' },
+  { path: '/doctor/prescriptions', icon: FileText, label: 'Prescriptions' },
+  { path: '/doctor/reports', icon: BarChart3, label: 'Reports' },
   { path: '/doctor/earnings', icon: DollarSign, label: 'Earnings' },
   { path: '/doctor/profile', icon: User, label: 'Profile' },
 ];

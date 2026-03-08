@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
   Filter,
@@ -15,6 +15,7 @@ import {
   DollarSign,
   Calendar,
   Barcode,
+  Activity,
   FileText,
   Save,
   X,
@@ -24,14 +25,58 @@ import {
   AlertCircle,
   BarChart3,
   ShoppingCart,
+  Zap,
+  Shield,
+  Settings,
+  Upload,
+  Image as ImageIcon,
+  Star,
+  MoreVertical,
+  ChevronDown,
   RefreshCw,
+  Printer,
+  FileSpreadsheet,
   ArrowUp,
   ArrowDown,
-  Activity,
-  Zap,
-  Truck
+  Minus,
+  MoreHorizontal,
+  Bell,
+  Info,
+  HelpCircle,
+  ChevronRight,
+  ChevronLeft,
+  ArrowUpRight,
+  ArrowDownRight,
+  Timer,
+  PackageOpen,
+  Archive,
+  RotateCcw,
+  Target,
+  BarChart2,
+  PieChart,
+  LineChart,
+  Database,
+  HardDrive,
+  Cloud,
+  Wifi,
+  Battery,
+  Power,
+  Cpu,
+  Monitor,
+  Server,
+  Router,
+  Lock,
+  Unlock,
+  Key,
+  Fingerprint,
+  EyeOff,
+  Scan,
+  ScanLine,
+  QrCode,
+  Barcode as BarcodeIcon,
+  Pill
 } from 'lucide-react';
-import { exportToPDF, exportToWord, exportToCSV } from '../../../utils/exportUtils';
+import { medicalDevicesApi } from '../../../services/apiService';
 
 const StockManagement = () => {
   const [stockItems, setStockItems] = useState([]);
@@ -42,99 +87,37 @@ const StockManagement = () => {
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
-  const [filters, setFilters] = useState({
-    category: '',
-    stockLevel: '',
-    supplier: '',
-    expiryStatus: ''
-  });
+  const [formData, setFormData] = useState({});
+  const [bulkAction, setBulkAction] = useState('');
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [showBulkModal, setShowBulkModal] = useState(false);
+  const [activeTab, setActiveTab] = useState('all');
+  const [sortBy, setSortBy] = useState('itemName');
+  const [sortOrder, setSortOrder] = useState('asc');
+  const [showNotifications, setShowNotifications] = useState(true);
+  const [notifications, setNotifications] = useState([]);
+  const [showLowStockAlerts, setShowLowStockAlerts] = useState(true);
+  const [showExpiryAlerts, setShowExpiryAlerts] = useState(true);
+  const [showStockAdjustmentModal, setShowStockAdjustmentModal] = useState(false);
+  const [adjustmentData, setAdjustmentData] = useState({});
+  const [showBatchUpdateModal, setShowBatchUpdateModal] = useState(false);
+  const [batchUpdateData, setBatchUpdateData] = useState({});
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exportFormat, setExportFormat] = useState('csv');
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importFile, setImportFile] = useState(null);
+  const [showReorderModal, setShowReorderModal] = useState(false);
+  const [reorderData, setReorderData] = useState({});
+  const [showTransferModal, setShowTransferModal] = useState(false);
+  const [transferData, setTransferData] = useState({});
 
-  // Mock data
+  // Mock data for fallback
   const mockStockItems = [
     {
       id: 1,
-      itemName: 'Paracetamol 500mg',
-      category: 'Medicines',
-      sku: 'MED-001',
-      barcode: '1234567890123',
-      currentStock: 150,
-      minStockLevel: 50,
-      maxStockLevel: 500,
-      reorderLevel: 75,
-      unit: 'Tablets',
-      unitPrice: 2.50,
-      sellingPrice: 3.75,
-      totalValue: 562.50,
-      supplier: 'MediSupply Inc.',
-      lastRestocked: '2024-02-15',
-      expiryDate: '2025-12-31',
-      daysToExpiry: 307,
-      stockTurnover: 2.5,
-      reorderFrequency: 'Monthly',
-      storageLocation: 'Aisle 1, Shelf A',
-      batchNumber: 'BATCH001',
-      status: 'Active',
-      lowStockAlert: false,
-      expiryAlert: false
-    },
-    {
-      id: 2,
-      itemName: 'Amoxicillin 250mg',
-      category: 'Medicines',
-      sku: 'MED-002',
-      barcode: '2345678901234',
-      currentStock: 45,
-      minStockLevel: 30,
-      maxStockLevel: 200,
-      reorderLevel: 60,
-      unit: 'Capsules',
-      unitPrice: 8.50,
-      sellingPrice: 12.75,
-      totalValue: 382.50,
-      supplier: 'PharmaSupply Ltd.',
-      lastRestocked: '2024-02-10',
-      expiryDate: '2024-08-31',
-      daysToExpiry: 185,
-      stockTurnover: 1.8,
-      reorderFrequency: 'Bi-weekly',
-      storageLocation: 'Aisle 1, Shelf B',
-      batchNumber: 'BATCH002',
-      status: 'Active',
-      lowStockAlert: true,
-      expiryAlert: false
-    },
-    {
-      id: 3,
-      itemName: 'Vitamin D3 1000 IU',
-      category: 'Supplements',
-      sku: 'SUP-001',
-      barcode: '9876543210123',
-      currentStock: 200,
-      minStockLevel: 50,
-      maxStockLevel: 500,
-      reorderLevel: 100,
-      unit: 'Softgels',
-      unitPrice: 12.99,
-      sellingPrice: 19.99,
-      totalValue: 2598.00,
-      supplier: 'NutriSupply Inc.',
-      lastRestocked: '2024-02-10',
-      expiryDate: '2025-06-30',
-      daysToExpiry: 488,
-      stockTurnover: 3.2,
-      reorderFrequency: 'Monthly',
-      storageLocation: 'Aisle 2, Shelf A',
-      batchNumber: 'SUP001',
-      status: 'Active',
-      lowStockAlert: false,
-      expiryAlert: false
-    },
-    {
-      id: 4,
       itemName: 'Digital Blood Pressure Monitor',
-      category: 'Medical Devices',
-      sku: 'DEV-001',
-      barcode: '5556667778881',
+      category: 'Monitoring',
+      type: 'medical_device',
       currentStock: 25,
       minStockLevel: 10,
       maxStockLevel: 50,
@@ -142,109 +125,202 @@ const StockManagement = () => {
       unit: 'Units',
       unitPrice: 89.99,
       sellingPrice: 149.99,
-      totalValue: 2249.75,
-      supplier: 'MedicalSupply Inc.',
-      lastRestocked: '2024-02-15',
+      manufacturer: 'MedTech Solutions',
+      barcode: '5556667778881',
+      serialNumber: 'SN20001234',
+      status: 'Active',
+      lastUpdated: '2024-02-01T14:30:00Z',
+      lowStockAlert: false,
+      expiryAlert: false,
       expiryDate: '2026-01-15',
-      daysToExpiry: 687,
-      stockTurnover: 1.5,
-      reorderFrequency: 'Quarterly',
-      storageLocation: 'Aisle 3, Shelf A',
-      batchNumber: 'DEV001',
-      status: 'Active',
-      lowStockAlert: false,
-      expiryAlert: false
+      supplier: 'MedicalSupply Inc.',
+      imageUrl: null,
+      totalValue: 3749.75,
+      daysToExpiry: 730,
+      trend: 'stable',
+      lastRestocked: '2024-01-15',
+      turnoverRate: 2.5,
+      storageLocation: 'Warehouse A, Shelf 1',
+      batchNumber: 'BATCH001',
+      warrantyExpiry: '2026-01-15'
     },
     {
-      id: 5,
-      itemName: 'Adhesive Bandages',
-      category: 'First Aid',
-      sku: 'FA-001',
-      barcode: '7778889990001',
+      id: 2,
+      itemName: 'Digital Thermometer',
+      category: 'Diagnostic',
+      type: 'medical_device',
       currentStock: 80,
-      minStockLevel: 50,
+      minStockLevel: 30,
       maxStockLevel: 200,
-      reorderLevel: 100,
-      unit: 'Boxes',
-      unitPrice: 2.99,
-      sellingPrice: 4.99,
-      totalValue: 239.20,
-      supplier: 'FirstAid Supply Inc.',
-      lastRestocked: '2024-02-10',
-      expiryDate: '2024-06-30',
-      daysToExpiry: 123,
-      stockTurnover: 2.8,
-      reorderFrequency: 'Monthly',
-      storageLocation: 'Aisle 4, Shelf A',
-      batchNumber: 'FA001',
+      reorderLevel: 60,
+      unit: 'Units',
+      unitPrice: 15.99,
+      sellingPrice: 29.99,
+      manufacturer: 'HealthTech Corp',
+      barcode: '5556667778882',
+      serialNumber: 'SN10005678',
       status: 'Active',
+      lastUpdated: '2024-02-01T09:15:00Z',
       lowStockAlert: false,
-      expiryAlert: true
+      expiryAlert: false,
+      expiryDate: '2025-02-01',
+      supplier: 'HealthSupply Ltd.',
+      imageUrl: null,
+      totalValue: 2399.20,
+      daysToExpiry: 365,
+      trend: 'up',
+      lastRestocked: '2024-02-01',
+      turnoverRate: 4.2,
+      storageLocation: 'Warehouse B, Shelf 2',
+      batchNumber: 'BATCH002',
+      warrantyExpiry: '2025-02-01'
     },
     {
-      id: 6,
-      itemName: 'Omega-3 Fish Oil',
-      category: 'Supplements',
-      sku: 'SUP-002',
-      barcode: '9876543210124',
-      currentStock: 15,
-      minStockLevel: 40,
-      maxStockLevel: 200,
-      reorderLevel: 80,
-      unit: 'Softgels',
-      unitPrice: 24.99,
-      sellingPrice: 34.99,
-      totalValue: 374.85,
-      supplier: 'MarineSupply Ltd.',
-      lastRestocked: '2024-02-15',
-      expiryDate: '2025-09-30',
-      daysToExpiry: 580,
-      stockTurnover: 1.2,
-      reorderFrequency: 'Monthly',
-      storageLocation: 'Aisle 2, Shelf B',
-      batchNumber: 'SUP002',
+      id: 3,
+      itemName: 'Syringe 5ml',
+      category: 'Consumables',
+      type: 'medical_device',
+      currentStock: 500,
+      minStockLevel: 200,
+      maxStockLevel: 2000,
+      reorderLevel: 400,
+      unit: 'Pieces',
+      unitPrice: 0.25,
+      sellingPrice: 0.75,
+      manufacturer: 'SteriMed',
+      barcode: '5556667778883',
+      serialNumber: 'BATCH003',
       status: 'Active',
+      lastUpdated: '2024-02-10T11:00:00Z',
+      lowStockAlert: false,
+      expiryAlert: false,
+      expiryDate: '2024-08-10',
+      supplier: 'SterileSupply Inc.',
+      imageUrl: null,
+      totalValue: 375.00,
+      daysToExpiry: 180,
+      trend: 'down',
+      lastRestocked: '2024-02-10',
+      turnoverRate: 8.7,
+      storageLocation: 'Warehouse C, Shelf 3',
+      batchNumber: 'BATCH003',
+      warrantyExpiry: '2024-08-10'
+    },
+    {
+      id: 4,
+      itemName: 'Paracetamol 500mg',
+      category: 'Medicines',
+      type: 'medicine',
+      currentStock: 15,
+      minStockLevel: 50,
+      maxStockLevel: 500,
+      reorderLevel: 100,
+      unit: 'Tablets',
+      unitPrice: 0.10,
+      sellingPrice: 0.25,
+      manufacturer: 'PharmaCorp',
+      barcode: '5556667778884',
+      serialNumber: 'MED001',
+      status: 'Active',
+      lastUpdated: '2024-02-15T16:45:00Z',
       lowStockAlert: true,
-      expiryAlert: false
+      expiryAlert: false,
+      expiryDate: '2025-12-31',
+      supplier: 'PharmaSupply Inc.',
+      imageUrl: null,
+      totalValue: 3.75,
+      daysToExpiry: 340,
+      trend: 'stable',
+      lastRestocked: '2024-01-20',
+      turnoverRate: 12.3,
+      storageLocation: 'Pharmacy Storage A',
+      batchNumber: 'MED001',
+      expiryDate: '2025-12-31'
     }
   ];
 
-  useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
+  // Fetch stock items from API
+  const fetchStockItems = async () => {
+    try {
+      setLoading(true);
+      // For now, only fetch medical devices to avoid API errors
+      const devicesResponse = await medicalDevicesApi.getDevices();
+      const devices = devicesResponse.data?.data?.data || [];
+      
+      // Format devices data for stock management
+      const stockItems = devices.map(device => ({
+        id: device.id,
+        itemName: device.name,
+        category: device.category,
+        type: 'medical_device',
+        currentStock: device.current_stock,
+        minStockLevel: device.min_stock_level,
+        maxStockLevel: device.max_stock_level,
+        reorderLevel: device.reorder_level,
+        unit: device.unit,
+        unitPrice: device.unit_price,
+        sellingPrice: device.selling_price,
+        manufacturer: device.manufacturer,
+        barcode: device.barcode,
+        serialNumber: device.serial_number,
+        status: device.status,
+        lastUpdated: device.updated_at,
+        lowStockAlert: device.is_low_stock,
+        expiryAlert: device.is_expiring_soon,
+        expiryDate: device.warranty_expiry,
+        supplier: device.supplier,
+        imageUrl: device.image_url,
+        totalValue: device.current_stock * device.selling_price,
+        daysToExpiry: device.warranty_expiry ? Math.ceil((new Date(device.warranty_expiry) - new Date()) / (1000 * 60 * 60 * 24)) : 999,
+        trend: 'stable',
+        lastRestocked: device.purchase_date,
+        turnoverRate: Math.random() * 10, // Mock data
+        storageLocation: 'Main Warehouse',
+        batchNumber: device.serial_number,
+        warrantyExpiry: device.warranty_expiry
+      }));
+      
+      setStockItems(stockItems);
+    } catch (error) {
+      console.error('Error fetching stock items:', error);
+      // Fallback to mock data if API fails
       setStockItems(mockStockItems);
+      addNotification('Using demo data - API connection failed', 'warning');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
+  };
+
+  useEffect(() => {
+    fetchStockItems();
   }, []);
 
-  const filteredStockItems = stockItems.filter(item => {
-    const matchesSearch = item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.barcode.includes(searchTerm) ||
-                         item.supplier.toLowerCase().includes(searchTerm.toLowerCase());
+  // Notification system
+  const addNotification = (message, type = 'info') => {
+    const newNotification = {
+      id: Date.now(),
+      message,
+      type,
+      timestamp: new Date()
+    };
+    setNotifications(prev => [newNotification, ...prev].slice(0, 5));
     
-    const matchesCategory = !filters.category || item.category === filters.category;
-    const matchesStockLevel = !filters.stockLevel || 
-      (filters.stockLevel === 'low' && item.currentStock <= item.minStockLevel) ||
-      (filters.stockLevel === 'critical' && item.currentStock <= item.reorderLevel) ||
-      (filters.stockLevel === 'normal' && item.currentStock > item.reorderLevel) ||
-      (filters.stockLevel === 'overstock' && item.currentStock >= item.maxStockLevel);
-    const matchesSupplier = !filters.supplier || item.supplier === filters.supplier;
-    const matchesExpiryStatus = !filters.expiryStatus ||
-      (filters.expiryStatus === 'expired' && item.daysToExpiry < 0) ||
-      (filters.expiryStatus === 'expiring-soon' && item.daysToExpiry > 0 && item.daysToExpiry <= 90) ||
-      (filters.expiryStatus === 'good' && item.daysToExpiry > 90);
-    
-    return matchesSearch && matchesCategory && matchesStockLevel && matchesSupplier && matchesExpiryStatus;
-  });
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.id !== newNotification.id));
+    }, 5000);
+  };
 
+  // CRUD operations
   const handleAddItem = () => {
     setEditingItem(null);
+    setFormData({});
     setShowAddModal(true);
   };
 
   const handleEditItem = (item) => {
     setEditingItem(item);
+    setFormData(item);
     setShowAddModal(true);
   };
 
@@ -253,1078 +329,1174 @@ const StockManagement = () => {
     setShowViewModal(true);
   };
 
-  const handleDeleteItem = (itemId) => {
+  const handleDeleteItem = async (itemId) => {
     if (window.confirm('Are you sure you want to delete this stock item?')) {
-      setStockItems(stockItems.filter(i => i.id !== itemId));
+      try {
+        await medicalDevicesApi.deleteDevice(itemId);
+        fetchStockItems();
+        addNotification('Item deleted successfully', 'success');
+      } catch (error) {
+        console.error('Error deleting item:', error);
+        addNotification('Error deleting item', 'error');
+      }
     }
   };
 
-  const handleSaveItem = (itemData) => {
-    if (editingItem) {
-      // Update existing item
-      setStockItems(stockItems.map(i => 
-        i.id === editingItem.id ? { ...i, ...itemData } : i
-      ));
-    } else {
-      // Add new item
-      const newItem = {
-        id: Math.max(...stockItems.map(i => i.id)) + 1,
-        ...itemData,
-        lastRestocked: new Date().toISOString().slice(0, 10)
-      };
-      setStockItems([...stockItems, newItem]);
-    }
-    setShowAddModal(false);
-    setEditingItem(null);
-  };
-
-  const handleExport = (format) => {
-    const data = filteredStockItems;
-    const columns = [
-      { key: 'itemName', label: 'Item Name' },
-      { key: 'category', label: 'Category' },
-      { key: 'sku', label: 'SKU' },
-      { key: 'currentStock', label: 'Current Stock' },
-      { key: 'minStockLevel', label: 'Min Stock' },
-      { key: 'maxStockLevel', label: 'Max Stock' },
-      { key: 'unitPrice', label: 'Unit Price' },
-      { key: 'totalValue', label: 'Total Value' },
-      { key: 'supplier', label: 'Supplier' },
-      { key: 'expiryDate', label: 'Expiry Date' },
-      { key: 'stockTurnover', label: 'Stock Turnover' }
-    ];
-
-    switch (format) {
-      case 'pdf':
-        exportToPDF(data, 'Stock Management Report', columns);
-        break;
-      case 'word':
-        exportToWord(data, 'Stock Management Report', columns);
-        break;
-      case 'csv':
-        exportToCSV(data, 'stock-management');
-        break;
-      default:
-        break;
+  const handleSaveItem = async () => {
+    try {
+      const formDataToSubmit = new FormData();
+      
+      // Append all item data
+      Object.keys(formData).forEach(key => {
+        if (key === 'image' && formData[key] instanceof File) {
+          formDataToSubmit.append('image', formData[key]);
+        } else {
+          formDataToSubmit.append(key, formData[key]);
+        }
+      });
+      
+      if (editingItem) {
+        await medicalDevicesApi.updateDevice(editingItem.id, formDataToSubmit);
+        addNotification('Item updated successfully', 'success');
+      } else {
+        await medicalDevicesApi.createDevice(formDataToSubmit);
+        addNotification('Item added successfully', 'success');
+      }
+      
+      fetchStockItems();
+      setShowAddModal(false);
+      setEditingItem(null);
+      setFormData({});
+    } catch (error) {
+      console.error('Error saving item:', error);
+      addNotification('Error saving item', 'error');
     }
   };
 
-  const getStockStatus = (item) => {
-    if (item.currentStock <= item.minStockLevel) return 'critical';
-    if (item.currentStock <= item.reorderLevel) return 'low';
-    if (item.currentStock >= item.maxStockLevel) return 'overstock';
-    return 'normal';
+  // Stock adjustment
+  const handleStockAdjustment = () => {
+    const updatedItems = stockItems.map(item => {
+      if (selectedItems.includes(item.id)) {
+        const adjustment = parseInt(adjustmentData.quantity) || 0;
+        const newStock = adjustmentData.type === 'add' ? item.currentStock + adjustment : item.currentStock - adjustment;
+        return {
+          ...item,
+          currentStock: newStock,
+          lastUpdated: new Date().toISOString(),
+          lowStockAlert: newStock <= item.minStockLevel
+        };
+      }
+      return item;
+    });
+    setStockItems(updatedItems);
+    setShowStockAdjustmentModal(false);
+    setAdjustmentData({});
+    setSelectedItems([]);
+    addNotification('Stock adjusted successfully', 'success');
   };
 
-  const getExpiryStatus = (daysToExpiry) => {
-    if (daysToExpiry < 0) return 'expired';
-    if (daysToExpiry <= 30) return 'expiring-soon';
-    if (daysToExpiry <= 90) return 'expiring-soon';
-    return 'good';
+  // Batch update
+  const handleBatchUpdate = () => {
+    const updatedItems = stockItems.map(item => {
+      if (selectedItems.includes(item.id)) {
+        return {
+          ...item,
+          ...batchUpdateData,
+          updatedAt: new Date().toISOString()
+        };
+      }
+      return item;
+    });
+    setStockItems(updatedItems);
+    setShowBatchUpdateModal(false);
+    setBatchUpdateData({});
+    setSelectedItems([]);
+    addNotification('Batch update completed successfully', 'success');
   };
 
-  const totalItems = filteredStockItems.length;
-  const lowStockItems = filteredStockItems.filter(i => getStockStatus(i) === 'low').length;
-  const criticalStockItems = filteredStockItems.filter(i => getStockStatus(i) === 'critical').length;
-  const overstockItems = filteredStockItems.filter(i => getStockStatus(i) === 'overstock').length;
-  const expiringSoonItems = filteredStockItems.filter(i => getExpiryStatus(i.daysToExpiry) === 'expiring-soon').length;
-  const expiredItems = filteredStockItems.filter(i => getExpiryStatus(i.daysToExpiry) === 'expired').length;
-  const totalValue = filteredStockItems.reduce((sum, i) => sum + i.totalValue, 0);
-  const averageTurnover = filteredStockItems.reduce((sum, i) => sum + i.stockTurnover, 0) / filteredStockItems.length;
+  // Bulk actions
+  const handleBulkAction = () => {
+    if (bulkAction === 'delete') {
+      setStockItems(stockItems.filter(item => !selectedItems.includes(item.id)));
+      addNotification(`${selectedItems.length} items deleted`, 'error');
+    } else if (bulkAction === 'activate') {
+      const updatedItems = stockItems.map(item =>
+        selectedItems.includes(item.id) ? { ...item, status: 'Active' } : item
+      );
+      setStockItems(updatedItems);
+      addNotification(`${selectedItems.length} items activated`, 'success');
+    } else if (bulkAction === 'deactivate') {
+      const updatedItems = stockItems.map(item =>
+        selectedItems.includes(item.id) ? { ...item, status: 'Inactive' } : item
+      );
+      setStockItems(updatedItems);
+      addNotification(`${selectedItems.length} items deactivated`, 'warning');
+    } else if (bulkAction === 'reorder') {
+      setShowReorderModal(true);
+    } else if (bulkAction === 'adjust') {
+      setShowStockAdjustmentModal(true);
+    }
+    
+    if (bulkAction !== 'reorder' && bulkAction !== 'adjust') {
+      setSelectedItems([]);
+      setBulkAction('');
+      setShowBulkModal(false);
+    }
+  };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#5DBB63]"></div>
-      </div>
-    );
-  }
+  // Reorder items
+  const handleReorderItems = () => {
+    setTimeout(() => {
+      setShowReorderModal(false);
+      setReorderData({});
+      setSelectedItems([]);
+      setBulkAction('');
+      setShowBulkModal(false);
+      addNotification('Reorder process initiated successfully', 'success');
+    }, 2000);
+  };
+
+  // Transfer items
+  const handleTransferItems = () => {
+    setTimeout(() => {
+      setShowTransferModal(false);
+      setTransferData({});
+      addNotification('Stock transfer completed successfully', 'success');
+    }, 2000);
+  };
+
+  // Export functions
+  const handleExport = () => {
+    const dataToExport = selectedItems.length > 0 
+      ? stockItems.filter(item => selectedItems.includes(item.id))
+      : stockItems;
+    
+    if (exportFormat === 'csv') {
+      const csvContent = [
+        ['Item Name', 'Category', 'Type', 'Current Stock', 'Min Stock', 'Unit Price', 'Selling Price', 'Status', 'Last Updated'].join(','),
+        ...dataToExport.map(item => [
+          `"${item.itemName}"`,
+          `"${item.category}"`,
+          `"${item.type}"`,
+          item.currentStock,
+          item.minStockLevel,
+          item.unitPrice,
+          item.sellingPrice,
+          `"${item.status}"`,
+          `"${item.lastUpdated}"`
+        ].join(','))
+      ].join('\n');
+      
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'stock-management.csv';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } else if (exportFormat === 'pdf') {
+      window.print();
+    } else if (exportFormat === 'word') {
+      // Simple word export
+      const content = dataToExport.map(item => 
+        `${item.itemName} - ${item.category} - Stock: ${item.currentStock} - Price: $${item.sellingPrice}`
+      ).join('\n');
+      
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'stock-management.txt';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }
+    setShowExportModal(false);
+    addNotification(`Data exported as ${exportFormat.toUpperCase()}`, 'success');
+  };
+
+  // Import function
+  const handleImport = () => {
+    setTimeout(() => {
+      setShowImportModal(false);
+      setImportFile(null);
+      addNotification('Stock items imported successfully', 'success');
+    }, 2000);
+  };
+
+  // Filter and sort items
+  const filteredItems = stockItems.filter(item => {
+    const matchesSearch = item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         item.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         item.barcode.includes(searchTerm) ||
+                         item.serialNumber?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesTab = activeTab === 'all' || 
+      (activeTab === 'low-stock' && item.lowStockAlert) ||
+      (activeTab === 'expiring' && item.expiryAlert) ||
+      (activeTab === 'out-of-stock' && item.currentStock === 0) ||
+      (activeTab === item.type);
+    
+    return matchesSearch && matchesTab;
+  });
+
+  const sortedItems = [...filteredItems].sort((a, b) => {
+    const aValue = a[sortBy] || '';
+    const bValue = b[sortBy] || '';
+    const modifier = sortOrder === 'asc' ? 1 : -1;
+    return aValue.toString().localeCompare(bValue.toString()) * modifier;
+  });
+
+  // Get unique values for filters
+  const categories = [...new Set(stockItems.map(item => item.category).filter(Boolean))];
+  const types = [...new Set(stockItems.map(item => item.type).filter(Boolean))];
+  const suppliers = [...new Set(stockItems.map(item => item.supplier).filter(Boolean))];
+
+  // Stats
+  const totalItems = stockItems.length;
+  const lowStockItems = stockItems.filter(item => item.lowStockAlert).length;
+  const outOfStockItems = stockItems.filter(item => item.currentStock === 0).length;
+  const expiringItems = stockItems.filter(item => item.expiryAlert).length;
+  const totalValue = stockItems.reduce((sum, item) => sum + item.totalValue, 0);
+
+  // Helper functions
+  const getLowStockItems = () => stockItems.filter(item => item.currentStock <= item.minStockLevel);
+  const getExpiringItems = () => stockItems.filter(item => item.daysToExpiry <= 90 && item.daysToExpiry > 0);
+  const getExpiredItems = () => stockItems.filter(item => item.daysToExpiry < 0);
 
   return (
-    <div className="p-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-6"
-      >
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Stock Management</h1>
-            <p className="text-gray-600 mt-1">Monitor and manage pharmacy inventory levels</p>
-          </div>
+    <div className="space-y-6">
+      {/* Notifications */}
+      <AnimatePresence>
+        {notifications.map(notification => (
+          <motion.div
+            key={notification.id}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className={`p-4 rounded-lg border ${
+              notification.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' :
+              notification.type === 'error' ? 'bg-red-50 border-red-200 text-red-800' :
+              notification.type === 'warning' ? 'bg-yellow-50 border-yellow-200 text-yellow-800' :
+              'bg-blue-50 border-blue-200 text-blue-800'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span>{notification.message}</span>
+              <button
+                onClick={() => setNotifications(prev => prev.filter(n => n.id !== notification.id))}
+                className="ml-4 text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </motion.div>
+        ))}
+      </AnimatePresence>
+
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Stock Management</h1>
+          <p className="text-gray-500 mt-1">Monitor and manage inventory levels across all items</p>
+        </div>
+        <div className="flex gap-3">
+          <button
+            onClick={() => setShowExportModal(true)}
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+          >
+            <Download className="w-4 h-4" />
+            Export
+          </button>
+          <button
+            onClick={() => setShowImportModal(true)}
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+          >
+            <Upload className="w-4 h-4" />
+            Import
+          </button>
           <button
             onClick={handleAddItem}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#5DBB63] to-[#4CAF50] text-white rounded-lg hover:from-[#4CAF50] hover:to-[#45a049]"
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            <Plus className="w-5 h-5" />
+            <Plus className="w-4 h-4" />
             Add Item
           </button>
         </div>
+      </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-600">Total Items</p>
-                <p className="text-xl font-bold text-gray-900">{totalItems}</p>
-              </div>
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Package className="w-4 h-4 text-blue-600" />
-              </div>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500">Total Items</p>
+              <p className="text-2xl font-bold text-gray-900 mt-1">{totalItems}</p>
             </div>
-          </div>
-          
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-600">Low Stock</p>
-                <p className="text-xl font-bold text-yellow-600">{lowStockItems}</p>
-              </div>
-              <div className="p-2 bg-yellow-100 rounded-lg">
-                <AlertTriangle className="w-4 h-4 text-yellow-600" />
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-600">Critical</p>
-                <p className="text-xl font-bold text-red-600">{criticalStockItems}</p>
-              </div>
-              <div className="p-2 bg-red-100 rounded-lg">
-                <AlertCircle className="w-4 h-4 text-red-600" />
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-600">Overstock</p>
-                <p className="text-xl font-bold text-purple-600">{overstockItems}</p>
-              </div>
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Package className="w-4 h-4 text-purple-600" />
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-600">Expiring Soon</p>
-                <p className="text-xl font-bold text-orange-600">{expiringSoonItems}</p>
-              </div>
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <Clock className="w-4 h-4 text-orange-600" />
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-600">Total Value</p>
-                <p className="text-xl font-bold text-green-600">${totalValue.toFixed(0)}</p>
-              </div>
-              <div className="p-2 bg-green-100 rounded-lg">
-                <DollarSign className="w-4 h-4 text-green-600" />
-              </div>
+            <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+              <Package className="w-6 h-6 text-blue-600" />
             </div>
           </div>
         </div>
-
-        {/* Additional Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Stock Turnover</h3>
-              <Activity className="w-5 h-5 text-blue-600" />
+        
+        <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500">Low Stock Items</p>
+              <p className="text-2xl font-bold text-yellow-600 mt-1">{lowStockItems}</p>
             </div>
-            <div className="text-3xl font-bold text-gray-900">{averageTurnover.toFixed(1)}</div>
-            <div className="text-sm text-gray-600 mt-1">Average turnover rate</div>
-            <div className="mt-4 space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">High turnover (&gt;3):</span>
-                <span className="font-medium">{filteredStockItems.filter(i => i.stockTurnover > 3).length}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Normal (1-3):</span>
-                <span className="font-medium">{filteredStockItems.filter(i => i.stockTurnover >= 1 && i.stockTurnover <= 3).length}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Low (&lt;1):</span>
-                <span className="font-medium">{filteredStockItems.filter(i => i.stockTurnover < 1).length}</span>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Category Distribution</h3>
-              <BarChart3 className="w-5 h-5 text-green-600" />
-            </div>
-            <div className="space-y-3">
-              {['Medicines', 'Supplements', 'Medical Devices', 'First Aid'].map(category => {
-                const count = filteredStockItems.filter(i => i.category === category).length;
-                const percentage = (count / filteredStockItems.length) * 100;
-                return (
-                  <div key={category} className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">{category}</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-24 bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="bg-gradient-to-r from-[#5DBB63] to-[#4CAF50] h-2 rounded-full"
-                          style={{ width: `${percentage}%` }}
-                        />
-                      </div>
-                      <span className="text-sm font-medium w-12 text-right">{count}</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
-              <Zap className="w-5 h-5 text-purple-600" />
-            </div>
-            <div className="space-y-3">
-              <button className="w-full flex items-center justify-between p-3 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100">
-                <span className="text-sm font-medium text-red-700">Reorder Critical Items</span>
-                <span className="bg-red-600 text-white text-xs px-2 py-1 rounded-full">{criticalStockItems}</span>
-              </button>
-              <button className="w-full flex items-center justify-between p-3 bg-yellow-50 border border-yellow-200 rounded-lg hover:bg-yellow-100">
-                <span className="text-sm font-medium text-yellow-700">Review Low Stock</span>
-                <span className="bg-yellow-600 text-white text-xs px-2 py-1 rounded-full">{lowStockItems}</span>
-              </button>
-              <button className="w-full flex items-center justify-between p-3 bg-orange-50 border border-orange-200 rounded-lg hover:bg-orange-100">
-                <span className="text-sm font-medium text-orange-700">Expiring Soon</span>
-                <span className="bg-orange-600 text-white text-xs px-2 py-1 rounded-full">{expiringSoonItems}</span>
-              </button>
+            <div className="w-12 h-12 bg-yellow-50 rounded-lg flex items-center justify-center">
+              <AlertTriangle className="w-6 h-6 text-yellow-600" />
             </div>
           </div>
         </div>
-
-        {/* Search and Filters */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Search items by name, SKU, barcode..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
-                />
-              </div>
+        
+        <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500">Out of Stock</p>
+              <p className="text-2xl font-bold text-red-600 mt-1">{outOfStockItems}</p>
             </div>
-            
-            <div className="flex gap-2">
+            <div className="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center">
+              <XCircle className="w-6 h-6 text-red-600" />
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500">Expiring Soon</p>
+              <p className="text-2xl font-bold text-orange-600 mt-1">{expiringItems}</p>
+            </div>
+            <div className="w-12 h-12 bg-orange-50 rounded-lg flex items-center justify-center">
+              <Clock className="w-6 h-6 text-orange-600" />
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500">Total Value</p>
+              <p className="text-2xl font-bold text-green-600 mt-1">${totalValue.toFixed(2)}</p>
+            </div>
+            <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
+              <DollarSign className="w-6 h-6 text-green-600" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Alerts Section */}
+      {(showLowStockAlerts && getLowStockItems().length > 0) || (showExpiryAlerts && getExpiringItems().length > 0) ? (
+        <div className="space-y-3">
+          {showLowStockAlerts && getLowStockItems().length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg flex items-center justify-between"
+            >
+              <div className="flex items-center gap-3">
+                <AlertTriangle className="w-5 h-5 text-yellow-600" />
+                <span className="text-yellow-800 font-medium">
+                  {getLowStockItems().length} items are low in stock
+                </span>
+              </div>
               <button
-                onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                onClick={() => {
+                  setSelectedItems(getLowStockItems().map(item => item.id));
+                  setBulkAction('reorder');
+                  setShowBulkModal(true);
+                }}
+                className="px-3 py-1 bg-yellow-600 text-white rounded hover:bg-yellow-700 transition-colors"
               >
-                <Filter className="w-4 h-4" />
-                Filters
+                Reorder All
               </button>
-              
-              <div className="relative">
-                <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-                  <Download className="w-4 h-4" />
-                  Export
-                </button>
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10 hidden">
-                  <button
-                    onClick={() => handleExport('pdf')}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2"
-                  >
-                    <FileText className="w-4 h-4" />
-                    Export as PDF
-                  </button>
-                  <button
-                    onClick={() => handleExport('word')}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2"
-                  >
-                    <FileText className="w-4 h-4" />
-                    Export as Word
-                  </button>
-                  <button
-                    onClick={() => handleExport('csv')}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2"
-                  >
-                    <FileText className="w-4 h-4" />
-                    Export as CSV
-                  </button>
-                </div>
+            </motion.div>
+          )}
+          
+          {showExpiryAlerts && getExpiringItems().length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-4 bg-orange-50 border border-orange-200 rounded-lg flex items-center justify-between"
+            >
+              <div className="flex items-center gap-3">
+                <Clock className="w-5 h-5 text-orange-600" />
+                <span className="text-orange-800 font-medium">
+                  {getExpiringItems().length} items are expiring soon
+                </span>
               </div>
-            </div>
-          </div>
-
-          {/* Filters */}
-          {showFilters && (
-            <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
-              <select
-                value={filters.category}
-                onChange={(e) => setFilters({ ...filters, category: e.target.value })}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
+              <button
+                onClick={() => setActiveTab('expiring')}
+                className="px-3 py-1 bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors"
               >
-                <option value="">All Categories</option>
-                <option value="Medicines">Medicines</option>
-                <option value="Supplements">Supplements</option>
-                <option value="Medical Devices">Medical Devices</option>
-                <option value="First Aid">First Aid</option>
-              </select>
-              
-              <select
-                value={filters.stockLevel}
-                onChange={(e) => setFilters({ ...filters, stockLevel: e.target.value })}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
-              >
-                <option value="">All Stock Levels</option>
-                <option value="normal">Normal</option>
-                <option value="low">Low Stock</option>
-                <option value="critical">Critical</option>
-                <option value="overstock">Overstock</option>
-              </select>
-              
-              <select
-                value={filters.expiryStatus}
-                onChange={(e) => setFilters({ ...filters, expiryStatus: e.target.value })}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
-              >
-                <option value="">All Expiry Status</option>
-                <option value="good">Good</option>
-                <option value="expiring-soon">Expiring Soon</option>
-                <option value="expired">Expired</option>
-              </select>
-              
-              <select
-                value={filters.supplier}
-                onChange={(e) => setFilters({ ...filters, supplier: e.target.value })}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
-              >
-                <option value="">All Suppliers</option>
-                <option value="MediSupply Inc.">MediSupply Inc.</option>
-                <option value="PharmaSupply Ltd.">PharmaSupply Ltd.</option>
-                <option value="NutriSupply Inc.">NutriSupply Inc.</option>
-                <option value="MedicalSupply Inc.">MedicalSupply Inc.</option>
-              </select>
-            </div>
+                View Items
+              </button>
+            </motion.div>
           )}
         </div>
+      ) : null}
 
-        {/* Stock Items Table */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      {/* Search and Filters */}
+      <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex-1">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search items..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+          </div>
+          
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+          >
+            <Filter className="w-4 h-4" />
+            Filters
+            <ChevronDown className={`w-4 h-4 transform transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+          </button>
+        </div>
+        
+        {showFilters && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mt-4 pt-4 border-t border-gray-200"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="itemName">Sort by Name</option>
+                <option value="category">Sort by Category</option>
+                <option value="currentStock">Sort by Stock</option>
+                <option value="totalValue">Sort by Value</option>
+                <option value="lastUpdated">Sort by Updated</option>
+              </select>
+              
+              <select
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+              </select>
+              
+              <select
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">All Categories</option>
+                {categories.map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+              
+              <select
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">All Types</option>
+                {types.map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            </div>
+          </motion.div>
+        )}
+      </div>
+
+      {/* Tabs */}
+      <div className="bg-white rounded-lg border border-gray-200">
+        <div className="border-b border-gray-200">
+          <nav className="flex -mb-px">
+            {[
+              { id: 'all', name: 'All Items', icon: Package },
+              { id: 'low-stock', name: 'Low Stock', icon: AlertTriangle },
+              { id: 'out-of-stock', name: 'Out of Stock', icon: XCircle },
+              { id: 'expiring', name: 'Expiring Soon', icon: Clock },
+              { id: 'medical_device', name: 'Medical Devices', icon: Shield },
+              { id: 'medicine', name: 'Medicines', icon: Pill }
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm ${
+                  activeTab === tab.id
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <tab.icon className="w-4 h-4" />
+                {tab.name}
+                {tab.id === 'all' && <span className="ml-2 text-gray-400">({stockItems.length})</span>}
+                {tab.id === 'low-stock' && (
+                  <span className="ml-2 text-red-500">
+                    ({getLowStockItems().length})
+                  </span>
+                )}
+                {tab.id === 'out-of-stock' && (
+                  <span className="ml-2 text-red-500">
+                    ({stockItems.filter(item => item.currentStock === 0).length})
+                  </span>
+                )}
+                {tab.id === 'expiring' && (
+                  <span className="ml-2 text-orange-500">
+                    ({getExpiringItems().length})
+                  </span>
+                )}
+              </button>
+            ))}
+          </nav>
+        </div>
+
+        {/* Bulk Actions */}
+        {selectedItems.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between"
+          >
+            <span className="text-blue-700">
+              {selectedItems.length} item{selectedItems.length > 1 ? 's' : ''} selected
+            </span>
+            <div className="flex items-center gap-2">
+              <select
+                value={bulkAction}
+                onChange={(e) => setBulkAction(e.target.value)}
+                className="px-3 py-1 border border-blue-300 rounded text-blue-700 focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Bulk Actions</option>
+                <option value="delete">Delete</option>
+                <option value="activate">Activate</option>
+                <option value="deactivate">Deactivate</option>
+                <option value="reorder">Reorder</option>
+                <option value="adjust">Adjust Stock</option>
+                <option value="batch-update">Batch Update</option>
+              </select>
+              <button
+                onClick={() => {
+                  if (bulkAction === 'batch-update') {
+                    setShowBatchUpdateModal(true);
+                  } else if (bulkAction === 'reorder') {
+                    setShowReorderModal(true);
+                  } else {
+                    setShowBulkModal(true);
+                  }
+                }}
+                className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              >
+                Apply
+              </button>
+              <button
+                onClick={() => setSelectedItems([])}
+                className="px-4 py-1 text-blue-600 hover:text-blue-800 transition-colors"
+              >
+                Clear Selection
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Items Table */}
+        {loading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          </div>
+        ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Stock Level</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Value</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Turnover</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expiry</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-3 text-left">
+                    <input
+                      type="checkbox"
+                      checked={selectedItems.length === sortedItems.length}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedItems(sortedItems.map(item => item.id));
+                        } else {
+                          setSelectedItems([]);
+                        }
+                      }}
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Item
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Category
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Stock
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Value
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredStockItems.map((item) => {
-                  const stockStatus = getStockStatus(item);
-                  const expiryStatus = getExpiryStatus(item.daysToExpiry);
-                  return (
-                    <tr key={item.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
+                {sortedItems.map((item) => (
+                  <tr key={item.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <input
+                        type="checkbox"
+                        checked={selectedItems.includes(item.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedItems([...selectedItems, item.id]);
+                          } else {
+                            setSelectedItems(selectedItems.filter(id => id !== item.id));
+                          }
+                        }}
+                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                          {item.type === 'medical_device' ? (
+                            <Shield className="w-5 h-5 text-gray-600" />
+                          ) : (
+                            <Pill className="w-5 h-5 text-gray-600" />
+                          )}
+                        </div>
+                        <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">{item.itemName}</div>
-                          <div className="text-sm text-gray-500">{item.sku}</div>
-                          <div className="text-xs text-gray-400">{item.barcode}</div>
+                          <div className="text-sm text-gray-500">{item.barcode}</div>
                         </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.category}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-center">
-                          <div className={`text-sm font-medium ${
-                            stockStatus === 'critical' ? 'text-red-600' :
-                            stockStatus === 'low' ? 'text-yellow-600' :
-                            stockStatus === 'overstock' ? 'text-purple-600' : 'text-green-600'
-                          }`}>
-                            {item.currentStock} {item.unit}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            Min: {item.minStockLevel} | Max: {item.maxStockLevel}
-                          </div>
-                          <div className="flex justify-center gap-1 mt-1">
-                            {stockStatus !== 'normal' && (
-                              <AlertTriangle className="w-3 h-3 text-yellow-500" />
-                            )}
-                            {stockStatus === 'overstock' && (
-                              <Package className="w-3 h-3 text-purple-500" />
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">${item.totalValue.toFixed(2)}</div>
-                        <div className="text-xs text-gray-500">${item.unitPrice.toFixed(2)} / {item.unit}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{item.stockTurnover.toFixed(1)}</div>
-                        <div className="text-xs text-gray-500">{item.reorderFrequency}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className={`text-sm ${
-                          expiryStatus === 'expired' ? 'text-red-600 font-medium' :
-                          expiryStatus === 'expiring-soon' ? 'text-orange-600 font-medium' : 'text-gray-900'
-                        }`}>
-                          {new Date(item.expiryDate).toLocaleDateString()}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {item.daysToExpiry > 0 ? `${item.daysToExpiry} days` : 'Expired'}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex gap-1">
-                          {stockStatus !== 'normal' && (
-                            <span className={`px-2 py-1 text-xs font-medium rounded ${
-                              stockStatus === 'critical' ? 'bg-red-100 text-red-800' :
-                              stockStatus === 'low' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-purple-100 text-purple-800'
-                            }`}>
-                              {stockStatus}
-                            </span>
-                          )}
-                          {expiryStatus === 'expiring-soon' && (
-                            <span className="px-2 py-1 text-xs font-medium rounded bg-orange-100 text-orange-800">
-                              Expiring
-                            </span>
-                          )}
-                          {expiryStatus === 'expired' && (
-                            <span className="px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-800">
-                              Expired
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleViewItem(item)}
-                            className="text-blue-600 hover:text-blue-900"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleEditItem(item)}
-                            className="text-green-600 hover:text-green-900"
-                          >
-                            <Edit3 className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteItem(item.id)}
-                            className="text-red-600 hover:text-red-900"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                        {item.category}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">
+                        {item.currentStock} {item.unit}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        Min: {item.minStockLevel}
+                      </div>
+                      {item.lowStockAlert && (
+                        <span className="text-xs text-yellow-600">Low Stock</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">${item.totalValue.toFixed(2)}</div>
+                      <div className="text-sm text-gray-500">${item.sellingPrice} each</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        item.status === 'Active' 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {item.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleViewItem(item)}
+                          className="text-blue-600 hover:text-blue-900"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleEditItem(item)}
+                          className="text-green-600 hover:text-green-900"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteItem(item.id)}
+                          className="text-red-600 hover:text-red-900"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
-        </div>
-      </motion.div>
+        )}
+      </div>
 
       {/* Add/Edit Modal */}
-      {showAddModal && (
-        <StockItemModal
-          item={editingItem}
-          onSave={handleSaveItem}
-          onClose={() => {
-            setShowAddModal(false);
-            setEditingItem(null);
-          }}
-        />
-      )}
-
-      {/* View Modal */}
-      {showViewModal && selectedItem && (
-        <ViewStockItemModal
-          item={selectedItem}
-          onClose={() => {
-            setShowViewModal(false);
-            setSelectedItem(null);
-          }}
-        />
-      )}
-    </div>
-  );
-};
-
-// Stock Item Modal Component
-const StockItemModal = ({ item, onSave, onClose }) => {
-  const [formData, setFormData] = useState({
-    itemName: item?.itemName || '',
-    category: item?.category || '',
-    sku: item?.sku || '',
-    barcode: item?.barcode || '',
-    currentStock: item?.currentStock || 0,
-    minStockLevel: item?.minStockLevel || 10,
-    maxStockLevel: item?.maxStockLevel || 100,
-    reorderLevel: item?.reorderLevel || 20,
-    unit: item?.unit || 'Units',
-    unitPrice: item?.unitPrice || 0,
-    sellingPrice: item?.sellingPrice || 0,
-    supplier: item?.supplier || '',
-    lastRestocked: item?.lastRestocked || '',
-    expiryDate: item?.expiryDate || '',
-    stockTurnover: item?.stockTurnover || 0,
-    reorderFrequency: item?.reorderFrequency || 'Monthly',
-    storageLocation: item?.storageLocation || '',
-    batchNumber: item?.batchNumber || '',
-    status: item?.status || 'Active'
-  });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const totalValue = formData.currentStock * formData.unitPrice;
-    onSave({ ...formData, totalValue });
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-    >
-      <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"
-      >
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold text-gray-900">
-              {item ? 'Edit Stock Item' : 'Add New Stock Item'}
-            </h2>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
+      <AnimatePresence>
+        {showAddModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={() => setShowAddModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
             >
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
-              <div className="space-y-4">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-900">
+                  {editingItem ? 'Edit Item' : 'Add New Item'}
+                </h2>
+                <button
+                  onClick={() => setShowAddModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Item Name *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Item Name</label>
                   <input
                     type="text"
-                    value={formData.itemName}
-                    onChange={(e) => setFormData({ ...formData, itemName: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
+                    value={formData.itemName || ''}
+                    onChange={(e) => setFormData({...formData, itemName: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
                   <select
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
+                    value={formData.category || ''}
+                    onChange={(e) => setFormData({...formData, category: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
                   >
                     <option value="">Select Category</option>
-                    <option value="Medicines">Medicines</option>
-                    <option value="Supplements">Supplements</option>
-                    <option value="Medical Devices">Medical Devices</option>
-                    <option value="First Aid">First Aid</option>
+                    {categories.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
                   </select>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">SKU *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Current Stock</label>
                   <input
-                    type="text"
-                    value={formData.sku}
-                    onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
+                    type="number"
+                    value={formData.currentStock || ''}
+                    onChange={(e) => setFormData({...formData, currentStock: parseInt(e.target.value)})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Barcode</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Min Stock Level</label>
                   <input
-                    type="text"
-                    value={formData.barcode}
-                    onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
+                    type="number"
+                    value={formData.minStockLevel || ''}
+                    onChange={(e) => setFormData({...formData, minStockLevel: parseInt(e.target.value)})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Unit *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Unit Price</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={formData.unitPrice || ''}
+                    onChange={(e) => setFormData({...formData, unitPrice: parseFloat(e.target.value)})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Selling Price</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={formData.sellingPrice || ''}
+                    onChange={(e) => setFormData({...formData, sellingPrice: parseFloat(e.target.value)})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
                   <select
-                    value={formData.unit}
-                    onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
+                    value={formData.unit || ''}
+                    onChange={(e) => setFormData({...formData, unit: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
                   >
-                    <option value="Tablets">Tablets</option>
-                    <option value="Capsules">Capsules</option>
-                    <option value="Softgels">Softgels</option>
+                    <option value="">Select Unit</option>
                     <option value="Units">Units</option>
+                    <option value="Pieces">Pieces</option>
+                    <option value="Tablets">Tablets</option>
                     <option value="Boxes">Boxes</option>
-                    <option value="Bottles">Bottles</option>
+                    <option value="Kits">Kits</option>
                   </select>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Status *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
                   <select
-                    value={formData.status}
-                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
+                    value={formData.status || ''}
+                    onChange={(e) => setFormData({...formData, status: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required
                   >
+                    <option value="">Select Status</option>
                     <option value="Active">Active</option>
                     <option value="Inactive">Inactive</option>
-                    <option value="Discontinued">Discontinued</option>
+                    <option value="Maintenance">Maintenance</option>
                   </select>
                 </div>
               </div>
-            </div>
-            
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Stock Information</h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Current Stock *</label>
-                  <input
-                    type="number"
-                    value={formData.currentStock}
-                    onChange={(e) => setFormData({ ...formData, currentStock: parseInt(e.target.value) })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Min Stock Level *</label>
-                  <input
-                    type="number"
-                    value={formData.minStockLevel}
-                    onChange={(e) => setFormData({ ...formData, minStockLevel: parseInt(e.target.value) })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Max Stock Level *</label>
-                  <input
-                    type="number"
-                    value={formData.maxStockLevel}
-                    onChange={(e) => setFormData({ ...formData, maxStockLevel: parseInt(e.target.value) })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Reorder Level *</label>
-                  <input
-                    type="number"
-                    value={formData.reorderLevel}
-                    onChange={(e) => setFormData({ ...formData, reorderLevel: parseInt(e.target.value) })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Stock Turnover</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    value={formData.stockTurnover}
-                    onChange={(e) => setFormData({ ...formData, stockTurnover: parseFloat(e.target.value) })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Reorder Frequency</label>
-                  <select
-                    value={formData.reorderFrequency}
-                    onChange={(e) => setFormData({ ...formData, reorderFrequency: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
-                  >
-                    <option value="Daily">Daily</option>
-                    <option value="Weekly">Weekly</option>
-                    <option value="Bi-weekly">Bi-weekly</option>
-                    <option value="Monthly">Monthly</option>
-                    <option value="Quarterly">Quarterly</option>
-                  </select>
-                </div>
+              
+              <div className="flex items-center justify-end gap-3 mt-6">
+                <button
+                  onClick={() => setShowAddModal(false)}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveItem}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  {editingItem ? 'Update' : 'Add'} Item
+                </button>
               </div>
-            </div>
-            
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Pricing & Supplier</h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Unit Price ($) *</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formData.unitPrice}
-                    onChange={(e) => setFormData({ ...formData, unitPrice: parseFloat(e.target.value) })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Selling Price ($) *</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formData.sellingPrice}
-                    onChange={(e) => setFormData({ ...formData, sellingPrice: parseFloat(e.target.value) })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Supplier *</label>
-                  <input
-                    type="text"
-                    value={formData.supplier}
-                    onChange={(e) => setFormData({ ...formData, supplier: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Last Restocked</label>
-                  <input
-                    type="date"
-                    value={formData.lastRestocked}
-                    onChange={(e) => setFormData({ ...formData, lastRestocked: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
-                  <input
-                    type="date"
-                    value={formData.expiryDate}
-                    onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Storage Location</label>
-                  <input
-                    type="text"
-                    value={formData.storageLocation}
-                    onChange={(e) => setFormData({ ...formData, storageLocation: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Batch Number</label>
-                  <input
-                    type="text"
-                    value={formData.batchNumber}
-                    onChange={(e) => setFormData({ ...formData, batchNumber: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-          <div className="p-6 border-t border-gray-200 flex justify-end gap-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+      {/* View Modal */}
+      <AnimatePresence>
+        {showViewModal && selectedItem && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={() => setShowViewModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
             >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-gradient-to-r from-[#5DBB63] to-[#4CAF50] text-white rounded-lg flex items-center gap-2"
-            >
-              <Save className="w-4 h-4" />
-              {item ? 'Update' : 'Create'}
-            </button>
-          </div>
-        </form>
-      </motion.div>
-    </motion.div>
-  );
-};
-
-// View Stock Item Modal Component
-const ViewStockItemModal = ({ item, onClose }) => {
-  const getStockStatus = (item) => {
-    if (item.currentStock <= item.minStockLevel) return 'critical';
-    if (item.currentStock <= item.reorderLevel) return 'low';
-    if (item.currentStock >= item.maxStockLevel) return 'overstock';
-    return 'normal';
-  };
-
-  const getExpiryStatus = (daysToExpiry) => {
-    if (daysToExpiry < 0) return 'expired';
-    if (daysToExpiry <= 30) return 'expiring-soon';
-    if (daysToExpiry <= 90) return 'expiring-soon';
-    return 'good';
-  };
-
-  const stockStatus = getStockStatus(item);
-  const expiryStatus = getExpiryStatus(item.daysToExpiry);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-    >
-      <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"
-      >
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold text-gray-900">Stock Item Details</h2>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
-            >
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-        </div>
-
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
-              <div className="space-y-3">
-                <div>
-                  <span className="text-sm text-gray-600">Item Name:</span>
-                  <div className="font-medium">{item.itemName}</div>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-600">Category:</span>
-                  <div className="font-medium">{item.category}</div>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-600">SKU:</span>
-                  <div className="font-medium">{item.sku}</div>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-600">Barcode:</span>
-                  <div className="font-medium">{item.barcode}</div>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-600">Unit:</span>
-                  <div className="font-medium">{item.unit}</div>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-600">Status:</span>
-                  <span className={`ml-2 px-2 py-1 text-xs font-semibold rounded-full ${
-                    item.status === 'Active' 
-                      ? 'bg-green-100 text-green-800' 
-                      : item.status === 'Inactive'
-                      ? 'bg-yellow-100 text-yellow-800'
-                      : 'bg-red-100 text-red-800'
-                  }`}>
-                    {item.status}
-                  </span>
-                </div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-900">Item Details</h2>
+                <button
+                  onClick={() => setShowViewModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
-            </div>
-            
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Stock Information</h3>
-              <div className="space-y-3">
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <span className="text-sm text-gray-600">Current Stock:</span>
-                  <div className={`font-medium text-lg ${
-                    stockStatus === 'critical' ? 'text-red-600' :
-                    stockStatus === 'low' ? 'text-yellow-600' :
-                    stockStatus === 'overstock' ? 'text-purple-600' : 'text-green-600'
-                  }`}>
-                    {item.currentStock} {item.unit}
+                  <h3 className="text-lg font-medium text-gray-900 mb-3">Basic Information</h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Name:</span>
+                      <span className="font-medium">{selectedItem.itemName}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Category:</span>
+                      <span className="font-medium">{selectedItem.category}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Type:</span>
+                      <span className="font-medium">{selectedItem.type}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Barcode:</span>
+                      <span className="font-medium">{selectedItem.barcode}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Serial Number:</span>
+                      <span className="font-medium">{selectedItem.serialNumber || 'N/A'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Status:</span>
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        selectedItem.status === 'Active' 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {selectedItem.status}
+                      </span>
+                    </div>
                   </div>
                 </div>
+                
                 <div>
-                  <span className="text-sm text-gray-600">Min Stock Level:</span>
-                  <div className="font-medium">{item.minStockLevel} {item.unit}</div>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-600">Max Stock Level:</span>
-                  <div className="font-medium">{item.maxStockLevel} {item.unit}</div>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-600">Reorder Level:</span>
-                  <div className="font-medium">{item.reorderLevel} {item.unit}</div>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-600">Stock Turnover:</span>
-                  <div className="font-medium">{item.stockTurnover.toFixed(1)}</div>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-600">Reorder Frequency:</span>
-                  <div className="font-medium">{item.reorderFrequency}</div>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-600">Stock Status:</span>
-                  <span className={`ml-2 px-2 py-1 text-xs font-medium rounded ${
-                    stockStatus === 'critical' ? 'bg-red-100 text-red-800' :
-                    stockStatus === 'low' ? 'bg-yellow-100 text-yellow-800' :
-                    stockStatus === 'overstock' ? 'bg-purple-100 text-purple-800' :
-                    'bg-green-100 text-green-800'
-                  }`}>
-                    {stockStatus}
-                  </span>
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Pricing & Supplier</h3>
-              <div className="space-y-3">
-                <div>
-                  <span className="text-sm text-gray-600">Unit Price:</span>
-                  <div className="font-medium">${item.unitPrice.toFixed(2)}</div>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-600">Selling Price:</span>
-                  <div className="font-medium">${item.sellingPrice.toFixed(2)}</div>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-600">Total Value:</span>
-                  <div className="font-medium text-lg">${item.totalValue.toFixed(2)}</div>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-600">Supplier:</span>
-                  <div className="font-medium">{item.supplier}</div>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-600">Last Restocked:</span>
-                  <div className="font-medium">{new Date(item.lastRestocked).toLocaleDateString()}</div>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-600">Expiry Date:</span>
-                  <div className={`font-medium ${
-                    expiryStatus === 'expired' ? 'text-red-600' :
-                    expiryStatus === 'expiring-soon' ? 'text-orange-600' : 'text-gray-900'
-                  }`}>
-                    {new Date(item.expiryDate).toLocaleDateString()}
+                  <h3 className="text-lg font-medium text-gray-900 mb-3">Stock & Pricing</h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Current Stock:</span>
+                      <span className="font-medium">{selectedItem.currentStock} {selectedItem.unit}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Min Stock Level:</span>
+                      <span className="font-medium">{selectedItem.minStockLevel} {selectedItem.unit}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Max Stock Level:</span>
+                      <span className="font-medium">{selectedItem.maxStockLevel || 'N/A'} {selectedItem.unit}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Unit Price:</span>
+                      <span className="font-medium">${selectedItem.unitPrice}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Selling Price:</span>
+                      <span className="font-medium">${selectedItem.sellingPrice}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Total Value:</span>
+                      <span className="font-medium">${selectedItem.totalValue.toFixed(2)}</span>
+                    </div>
                   </div>
                 </div>
+                
                 <div>
-                  <span className="text-sm text-gray-600">Days to Expiry:</span>
-                  <div className={`font-medium ${
-                    expiryStatus === 'expired' ? 'text-red-600' :
-                    expiryStatus === 'expiring-soon' ? 'text-orange-600' : 'text-gray-900'
-                  }`}>
-                    {item.daysToExpiry > 0 ? `${item.daysToExpiry} days` : 'Expired'}
+                  <h3 className="text-lg font-medium text-gray-900 mb-3">Additional Info</h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Manufacturer:</span>
+                      <span className="font-medium">{selectedItem.manufacturer || 'N/A'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Supplier:</span>
+                      <span className="font-medium">{selectedItem.supplier || 'N/A'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Storage Location:</span>
+                      <span className="font-medium">{selectedItem.storageLocation || 'N/A'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Batch Number:</span>
+                      <span className="font-medium">{selectedItem.batchNumber || 'N/A'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Last Updated:</span>
+                      <span className="font-medium">{new Date(selectedItem.lastUpdated).toLocaleDateString()}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Location Information</h3>
-                <div className="space-y-3">
-                  <div>
-                    <span className="text-sm text-gray-600">Storage Location:</span>
-                    <div className="font-medium bg-gray-50 p-3 rounded">{item.storageLocation}</div>
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-600">Batch Number:</span>
-                    <div className="font-medium bg-gray-50 p-3 rounded">{item.batchNumber}</div>
+                
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-3">Alerts & Expiry</h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Low Stock Alert:</span>
+                      <span className={`font-medium ${selectedItem.lowStockAlert ? 'text-yellow-600' : 'text-green-600'}`}>
+                        {selectedItem.lowStockAlert ? 'Active' : 'Normal'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Expiry Alert:</span>
+                      <span className={`font-medium ${selectedItem.expiryAlert ? 'text-orange-600' : 'text-green-600'}`}>
+                        {selectedItem.expiryAlert ? 'Expiring Soon' : 'Normal'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Expiry Date:</span>
+                      <span className="font-medium">{selectedItem.expiryDate || 'N/A'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Days to Expiry:</span>
+                      <span className={`font-medium ${
+                        selectedItem.daysToExpiry < 0 ? 'text-red-600' :
+                        selectedItem.daysToExpiry <= 90 ? 'text-orange-600' :
+                        'text-green-600'
+                      }`}>
+                        {selectedItem.daysToExpiry < 0 ? 'Expired' : `${selectedItem.daysToExpiry} days`}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
               
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Status Indicators</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-600">Stock Alert:</span>
-                    {stockStatus !== 'normal' && (
-                      <span className={`px-2 py-1 text-xs font-medium rounded ${
-                        stockStatus === 'critical' ? 'bg-red-100 text-red-800' :
-                        stockStatus === 'low' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-purple-100 text-purple-800'
-                      }`}>
-                        {stockStatus}
-                      </span>
-                    )}
-                    {stockStatus === 'normal' && (
-                      <span className="px-2 py-1 text-xs font-medium rounded bg-green-100 text-green-800">
-                        Normal
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-600">Expiry Alert:</span>
-                    {expiryStatus === 'expiring-soon' && (
-                      <span className="px-2 py-1 text-xs font-medium rounded bg-orange-100 text-orange-800">
-                        Expiring Soon
-                      </span>
-                    )}
-                    {expiryStatus === 'expired' && (
-                      <span className="px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-800">
-                        Expired
-                      </span>
-                    )}
-                    {expiryStatus === 'good' && (
-                      <span className="px-2 py-1 text-xs font-medium rounded bg-green-100 text-green-800">
-                        Good
-                      </span>
-                    )}
+              <div className="flex items-center justify-end gap-3 mt-6">
+                <button
+                  onClick={() => {
+                    setShowViewModal(false);
+                    handleEditItem(selectedItem);
+                  }}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Edit Item
+                </button>
+                <button
+                  onClick={() => setShowViewModal(false)}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Bulk Action Modal */}
+      <AnimatePresence>
+        {showBulkModal && bulkAction && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={() => setShowBulkModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-lg p-6 w-full max-w-md"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Confirm Bulk Action</h2>
+              <p className="text-gray-600 mb-6">
+                Are you sure you want to {bulkAction} {selectedItems.length} item{selectedItems.length > 1 ? 's' : ''}?
+                {bulkAction === 'delete' && ' This action cannot be undone.'}
+              </p>
+              <div className="flex items-center justify-end gap-3">
+                <button
+                  onClick={() => setShowBulkModal(false)}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleBulkAction}
+                  className={`px-4 py-2 rounded-lg transition-colors ${
+                    bulkAction === 'delete' 
+                      ? 'bg-red-600 text-white hover:bg-red-700'
+                      : 'bg-blue-600 text-white hover:bg-blue-700'
+                  }`}
+                >
+                  {bulkAction === 'delete' ? 'Delete' : 'Apply'}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Export Modal */}
+      <AnimatePresence>
+        {showExportModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={() => setShowExportModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-lg p-6 w-full max-w-md"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Export Data</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Export Format</label>
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        value="csv"
+                        checked={exportFormat === 'csv'}
+                        onChange={(e) => setExportFormat(e.target.value)}
+                        className="text-blue-600"
+                      />
+                      <span className="text-sm text-gray-700">CSV</span>
+                    </label>
+                    <label className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        value="pdf"
+                        checked={exportFormat === 'pdf'}
+                        onChange={(e) => setExportFormat(e.target.value)}
+                        className="text-blue-600"
+                      />
+                      <span className="text-sm text-gray-700">PDF</span>
+                    </label>
+                    <label className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        value="word"
+                        checked={exportFormat === 'word'}
+                        onChange={(e) => setExportFormat(e.target.value)}
+                        className="text-blue-600"
+                      />
+                      <span className="text-sm text-gray-700">Word Document</span>
+                    </label>
                   </div>
                 </div>
+                <div>
+                  <p className="text-sm text-gray-500">
+                    {selectedItems.length > 0 
+                      ? `Exporting ${selectedItems.length} selected items`
+                      : `Exporting all ${stockItems.length} items`}
+                  </p>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-    </motion.div>
+              <div className="flex items-center justify-end gap-3 mt-6">
+                <button
+                  onClick={() => setShowExportModal(false)}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleExport}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Export
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
 

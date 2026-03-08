@@ -91,6 +91,22 @@ class AdminMenuController extends Controller
                 ]
             ],
             [
+                'id' => 'medical-checkup',
+                'label' => 'Medical Check-Up',
+                'icon' => 'FileCheck',
+                'order' => 4,
+                'visible' => true,
+                'roles' => ['admin', 'doctor'],
+                'children' => [
+                    ['id' => 'mc-registration', 'label' => 'Registration', 'icon' => 'UserPlus', 'path' => '/admin/medical-checkup/registration', 'order' => 1],
+                    ['id' => 'mc-bill-list', 'label' => 'Bill List', 'icon' => 'Receipt', 'path' => '/admin/medical-checkup/bill-list', 'order' => 2],
+                    ['id' => 'mc-pending-reports', 'label' => 'Pending Report List', 'icon' => 'Clock', 'path' => '/admin/medical-checkup/pending-reports', 'order' => 3],
+                    ['id' => 'mc-complete-reports', 'label' => 'Complete Report List', 'icon' => 'CheckCircle', 'path' => '/admin/medical-checkup/complete-reports', 'order' => 4],
+                    ['id' => 'mc-due-collection', 'label' => 'Due Collection', 'icon' => 'DollarSign', 'path' => '/admin/medical-checkup/due-collection', 'order' => 5],
+                    ['id' => 'mc-due-collection-history', 'label' => 'Due Collection History', 'icon' => 'FileText', 'path' => '/admin/medical-checkup/due-collection-history', 'order' => 6]
+                ]
+            ],
+            [
                 'id' => 'medical',
                 'label' => 'Medical',
                 'icon' => 'Stethoscope',
@@ -138,12 +154,27 @@ class AdminMenuController extends Controller
                 'children' => [
                     ['id' => 'medicines', 'label' => 'Medicines', 'icon' => 'Pill', 'path' => '/admin/pharmacy/medicines', 'order' => 1],
                     ['id' => 'supplements', 'label' => 'Supplements', 'icon' => 'Package', 'path' => '/admin/pharmacy/supplements', 'order' => 2],
-                    ['id' => 'medical-devices', 'label' => 'Medical Devices', 'icon' => 'Syringe', 'path' => '/admin/pharmacy/devices', 'order' => 3],
+                    ['id' => 'medical-devices', 'label' => 'Medical Devices', 'icon' => 'Syringe', 'path' => '/admin/pharmacy/medical-devices', 'order' => 3],
                     ['id' => 'first-aid', 'label' => 'First Aid', 'icon' => 'Bandage', 'path' => '/admin/pharmacy/first-aid', 'order' => 4],
-                    ['id' => 'prescription-orders', 'label' => 'Prescription Orders', 'icon' => 'FileText', 'path' => '/admin/pharmacy/prescriptions', 'order' => 5],
+                    ['id' => 'prescription-orders', 'label' => 'Prescription Orders', 'icon' => 'FileText', 'path' => '/admin/pharmacy/prescription-orders', 'order' => 5],
                     ['id' => 'stock-management', 'label' => 'Stock Management', 'icon' => 'Package', 'path' => '/admin/pharmacy/stock', 'order' => 6],
                     ['id' => 'suppliers', 'label' => 'Suppliers', 'icon' => 'Building', 'path' => '/admin/pharmacy/suppliers', 'order' => 7],
                     ['id' => 'pharmacy-sales', 'label' => 'Sales', 'icon' => 'ShoppingCart', 'path' => '/admin/pharmacy/sales', 'order' => 8]
+                ]
+            ],
+            [
+                'id' => 'analysis',
+                'label' => 'Analysis',
+                'icon' => 'FlaskConical',
+                'order' => 8,
+                'visible' => true,
+                'roles' => ['admin'],
+                'children' => [
+                    ['id' => 'analysis-setup', 'label' => 'Analysis Setup', 'icon' => 'Settings', 'path' => '/admin/analysis', 'order' => 1],
+                    ['id' => 'analysis-departments', 'label' => 'Departments', 'icon' => 'Building', 'path' => '/admin/analysis/departments', 'order' => 2],
+                    ['id' => 'analysis-tests', 'label' => 'Test Services', 'icon' => 'FileText', 'path' => '/admin/analysis/tests', 'order' => 3],
+                    ['id' => 'analysis-specimens', 'label' => 'Specimens', 'icon' => 'TestTube', 'path' => '/admin/analysis/specimens', 'order' => 4],
+                    ['id' => 'analysis-collection', 'label' => 'Sample Collection', 'icon' => 'Droplet', 'path' => '/admin/analysis/collection', 'order' => 5]
                 ]
             ],
             [

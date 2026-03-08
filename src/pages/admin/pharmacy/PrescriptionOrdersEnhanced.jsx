@@ -134,9 +134,9 @@ const PrescriptionOrdersEnhanced = () => {
           orderNumber: prescription.id,
           patient: {
             id: prescription.customerId,
-            name: `Customer ${prescription.customerId}`,
-            email: `customer${prescription.customerId}@email.com`,
-            phone: `+1-234-567-${prescription.customerId.padStart(4, '0')}`,
+            name: `Customer ${prescription.customerId || 'Unknown'}`,
+            email: `customer${prescription.customerId || '0'}@email.com`,
+            phone: `+1-234-567-${(prescription.customerId || 0).toString().padStart(4, '0')}`,
             address: '123 Main St, City, State 12345'
           },
           doctor: {
@@ -215,9 +215,9 @@ const PrescriptionOrdersEnhanced = () => {
         orderNumber: prescription.id,
         patient: {
           id: prescription.customerId,
-          name: `Customer ${prescription.customerId}`,
-          email: `customer${prescription.customerId}@email.com`,
-          phone: `+1-234-567-${prescription.customerId.padStart(4, '0')}`,
+          name: `Customer ${prescription.customerId || 'Unknown'}`,
+          email: `customer${prescription.customerId || '0'}@email.com`,
+          phone: `+1-234-567-${(prescription.customerId || 0).toString().padStart(4, '0')}`,
           address: '123 Main St, City, State 12345'
         },
         doctor: {

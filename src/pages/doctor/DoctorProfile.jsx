@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Users, Mail, Phone, MapPin, Stethoscope, Camera, Save, X, Plus, Trash2, Award, Clock, DollarSign, Languages, Check, Edit2, Shield, Activity, AlertCircle, Upload, FileText, Calendar, Star, TrendingUp, Eye, EyeOff, Lock, Unlock, Zap, Target, ChevronRight, Info } from 'lucide-react';
+import doctorProfileService from '../../services/doctorProfileService';
+import { toast } from 'react-hot-toast';
 
 export default function DoctorProfile() {
   const [isEditing, setIsEditing] = useState(false);
@@ -15,8 +17,13 @@ export default function DoctorProfile() {
   const [validationErrors, setValidationErrors] = useState({});
   const [touchedFields, setTouchedFields] = useState({});
   const [lastSaveTime, setLastSaveTime] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [profileStats, setProfileStats] = useState({});
   const autoSaveTimeoutRef = useRef(null);
   const fileInputRef = useRef(null);
+
+  // Get doctor ID from auth context or localStorage
+  const doctorId = localStorage.getItem('doctorId') || '1';
 
   // Backup for cancel functionality
   const [backupData, setBackupData] = useState({});
@@ -61,6 +68,40 @@ export default function DoctorProfile() {
     memberships: ['Bangladesh Cardiac Society', 'American College of Cardiology'],
     researchInterests: ['Preventive Cardiology', 'Heart Failure Management']
   });
+
+  // Load profile data on mount
+  useEffect(() => {
+    loadProfileData();
+    loadProfileStats();
+  }, []);
+
+  const loadProfileData = async () => {
+    try {
+      setLoading(true);
+      const response = await doctorProfileService.getProfile(doctorId);
+      if (response.success) {
+        setPersonalInfo(response.data.personal_info);
+        setProfessionalInfo(response.data.professional_info);
+        setExpertiseInfo(response.data.expertise_info);
+      }
+    } catch (error) {
+      toast.error('Failed to load profile data');
+      console.error('Error loading profile:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadProfileStats = async () => {
+    try {
+      const response = await doctorProfileService.getProfileStats(doctorId);
+      if (response.success) {
+        setProfileStats(response.data);
+      }
+    } catch (error) {
+      console.error('Error loading stats:', error);
+    }
+  };
 
   // Profile completion calculation
   useEffect(() => {
@@ -163,42 +204,73 @@ export default function DoctorProfile() {
     setValidationErrors(errors);
   };
 
-  const autoSave = () => {
+  const autoSave = async () => {
     setAutoSaveStatus('saving');
-    setTimeout(() => {
+    try {
+      // Save based on active tab
+      if (activeTab === 'personal') {
+        await doctorProfileService.updatePersonalInfo(doctorId, personalInfo);
+      } else if (activeTab === 'professional') {
+        await doctorProfileService.updateProfessionalInfo(doctorId, professionalInfo);
+      } else if (activeTab === 'expertise') {
+        await doctorProfileService.updateExpertiseInfo(doctorId, expertiseInfo);
+      }
       setAutoSaveStatus('saved');
       setLastSaveTime(new Date());
       setTimeout(() => {
         setAutoSaveStatus('');
       }, 2000);
-    }, 1000);
+    } catch (error) {
+      setAutoSaveStatus('');
+      console.error('Auto-save failed:', error);
+    }
   };
 
-  const handleFileUpload = (event) => {
+  const handleFileUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
       setIsUploading(true);
       setUploadProgress(0);
       
-      const interval = setInterval(() => {
-        setUploadProgress(prev => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            setIsUploading(false);
-            setTimeout(() => {
-              setUploadProgress(0);
-            }, 1000);
-            return 100;
-          }
-          return prev + 10;
-        });
-      }, 100);
+      try {
+        // Simulate progress
+        const interval = setInterval(() => {
+          setUploadProgress(prev => {
+            if (prev >= 90) {
+              clearInterval(interval);
+              return 90;
+            }
+            return prev + 10;
+          });
+        }, 100);
+
+        const response = await doctorProfileService.uploadProfilePicture(doctorId, file);
+        
+        clearInterval(interval);
+        setUploadProgress(100);
+        
+        if (response.success) {
+          toast.success('Profile picture uploaded successfully');
+          setPersonalInfo(prev => ({ ...prev, profile_picture: response.data.profile_picture }));
+        }
+        
+        setTimeout(() => {
+          setIsUploading(false);
+          setUploadProgress(0);
+        }, 1000);
+      } catch (error) {
+        setIsUploading(false);
+        setUploadProgress(0);
+        toast.error('Failed to upload profile picture');
+        console.error('Upload error:', error);
+      }
     }
   };
 
   const handleFieldChange = (field, value, section = 'personal') => {
     setTouchedFields(prev => ({ ...prev, [`${section}-${field}`]: true }));
     validateField(field, value, section);
+    setHasChanges(true);
     
     if (section === 'personal') {
       setPersonalInfo(prev => ({ ...prev, [field]: value }));
@@ -227,16 +299,29 @@ export default function DoctorProfile() {
     setHasChanges(false);
   };
 
-  const saveChanges = () => {
+  const saveChanges = async () => {
     setSaveStatus('saving');
-    setTimeout(() => {
+    try {
+      // Save all sections
+      await Promise.all([
+        doctorProfileService.updatePersonalInfo(doctorId, personalInfo),
+        doctorProfileService.updateProfessionalInfo(doctorId, professionalInfo),
+        doctorProfileService.updateExpertiseInfo(doctorId, expertiseInfo),
+      ]);
+      
       setSaveStatus('saved');
+      toast.success('Profile updated successfully');
+      
       setTimeout(() => {
         setSaveStatus('');
         setIsEditing(false);
         setHasChanges(false);
       }, 1500);
-    }, 1000);
+    } catch (error) {
+      setSaveStatus('');
+      toast.error('Failed to save changes');
+      console.error('Save error:', error);
+    }
   };
 
   const handlePersonalInfoChange = (field, value) => {
@@ -1049,6 +1134,18 @@ export default function DoctorProfile() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 p-6">
+      {loading ? (
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full mx-auto mb-4"
+            />
+            <p className="text-gray-600">Loading profile...</p>
+          </div>
+        </div>
+      ) : (
       <div className="max-w-6xl mx-auto">
         {/* Professional Header with Profile Completion */}
         <motion.div 
@@ -1302,7 +1399,7 @@ export default function DoctorProfile() {
               </div>
               <div>
                 <p className="text-sm opacity-90">Profile Views</p>
-                <p className="text-xl font-bold">1,234</p>
+                <p className="text-xl font-bold">{profileStats.profile_views || 0}</p>
               </div>
             </div>
           </motion.div>
@@ -1317,7 +1414,7 @@ export default function DoctorProfile() {
               </div>
               <div>
                 <p className="text-sm opacity-90">Patient Rating</p>
-                <p className="text-xl font-bold">4.9/5</p>
+                <p className="text-xl font-bold">{profileStats.patient_rating || 0}/5</p>
               </div>
             </div>
           </motion.div>
@@ -1332,7 +1429,7 @@ export default function DoctorProfile() {
               </div>
               <div>
                 <p className="text-sm opacity-90">Total Patients</p>
-                <p className="text-xl font-bold">856</p>
+                <p className="text-xl font-bold">{profileStats.total_patients || 0}</p>
               </div>
             </div>
           </motion.div>
@@ -1347,12 +1444,13 @@ export default function DoctorProfile() {
               </div>
               <div>
                 <p className="text-sm opacity-90">This Month</p>
-                <p className="text-xl font-bold">৳84.5K</p>
+                <p className="text-xl font-bold">৳{(profileStats.this_month_earnings || 0).toLocaleString()}</p>
               </div>
             </div>
           </motion.div>
         </motion.div>
       </div>
+      )}
     </div>
   );
 }

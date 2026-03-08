@@ -94,6 +94,7 @@ import {
   Pill
 } from 'lucide-react';
 import { exportToPDF, exportToWord, exportToCSV, printDocument } from '../../../utils/exportUtils';
+import { medicalDevicesApi } from '../../../services/apiService';
 
 const StockManagementEnhanced = () => {
   const [stockItems, setStockItems] = useState([]);
@@ -538,12 +539,59 @@ const StockManagementEnhanced = () => {
     { id: 'first-aid', name: 'First Aid', icon: PackageOpen }
   ];
 
-  useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
+  // Fetch stock items from API
+  const fetchStockItems = async () => {
+    try {
+      setLoading(true);
+      // For now, only fetch medical devices to avoid API errors
+      const devicesResponse = await medicalDevicesApi.getDevices();
+      const devices = devicesResponse.data.data.data || [];
+      
+      // Format devices data for stock management
+      const stockItems = devices.map(device => ({
+        id: device.id,
+        itemName: device.name,
+        category: device.category,
+        type: 'medical_device',
+        currentStock: device.current_stock,
+        minStockLevel: device.min_stock_level,
+        maxStockLevel: device.max_stock_level,
+        reorderLevel: device.reorder_level,
+        unit: device.unit,
+        unitPrice: device.unit_price,
+        sellingPrice: device.selling_price,
+        manufacturer: device.manufacturer,
+        barcode: device.barcode,
+        status: device.status,
+        lastUpdated: device.updated_at,
+        lowStockAlert: device.is_low_stock,
+        expiryAlert: device.is_expiring_soon,
+        supplier: device.supplier,
+        imageUrl: device.image_url,
+        totalValue: device.current_stock * device.selling_price,
+        daysToExpiry: device.warranty_expiry ? Math.ceil((new Date(device.warranty_expiry) - new Date()) / (1000 * 60 * 60 * 24)) : 999,
+        trend: 'stable',
+        lastRestocked: device.purchase_date,
+        turnoverRate: Math.random() * 10, // Mock data
+        storageLocation: 'Main Warehouse',
+        batchNumber: device.serial_number,
+        expiryDate: device.warranty_expiry
+      }));
+      
+      setStockItems(stockItems);
+    } catch (error) {
+      console.error('Error fetching stock items:', error);
+      // Show user-friendly message and fallback to mock data
+      console.log('Backend API not available. Using mock data for demonstration.');
       setStockItems(mockStockItems);
+      // You could also show a toast notification here if you have one
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
+  };
+
+  useEffect(() => {
+    fetchStockItems();
   }, []);
 
   // Enhanced CRUD operations

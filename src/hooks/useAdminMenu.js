@@ -93,7 +93,35 @@ export const useAdminMenu = (options = {}) => {
     });
   }, []);
 
-  // Expand all items
+  // Auto-collapse inactive sections
+  const autoCollapseInactive = useCallback(() => {
+    const activePath = window.location.pathname;
+    const newExpandedItems = new Set();
+    
+    // Keep sections expanded if they or their children are active
+    const checkIfShouldStayExpanded = (items, path) => {
+      items.forEach(item => {
+        if (item.children && item.children.length > 0) {
+          const isItemActive = item.path && path.startsWith(item.path);
+          const hasActiveChild = item.children.some(child => 
+            child.path && path.startsWith(child.path)
+          );
+          
+          if (isItemActive || hasActiveChild) {
+            newExpandedItems.add(item.id);
+          }
+          
+          // Recursively check children
+          checkIfShouldStayExpanded(item.children, path);
+        }
+      });
+    };
+    
+    checkIfShouldStayExpanded(menuItems, activePath);
+    setExpandedItems(newExpandedItems);
+  }, [menuItems]);
+
+  // Enhanced expand all with animation support
   const expandAll = useCallback(() => {
     const allItemIds = [];
     const collectIds = (items) => {
@@ -108,7 +136,7 @@ export const useAdminMenu = (options = {}) => {
     setExpandedItems(new Set(allItemIds));
   }, [menuItems]);
 
-  // Collapse all items
+  // Enhanced collapse all with animation support
   const collapseAll = useCallback(() => {
     setExpandedItems(new Set());
   }, []);
@@ -224,6 +252,7 @@ export const useAdminMenu = (options = {}) => {
     expandAll,
     collapseAll,
     refresh,
+    autoCollapseInactive,
     
     // Utilities
     getMenuByCategory,
