@@ -10,6 +10,11 @@ use App\Http\Controllers\Api\ProductCategoryController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\LabTestController;
 use App\Http\Controllers\Api\LabTestBookingController;
+use App\Http\Controllers\Api\LabTestCategoryController;
+use App\Http\Controllers\Api\LabSampleCollectionController;
+use App\Http\Controllers\Api\LabTestResultController;
+use App\Http\Controllers\Api\LabEquipmentController;
+use App\Http\Controllers\Api\LabQualityControlController;
 use App\Http\Controllers\Api\PrescriptionController;
 use App\Http\Controllers\Api\MedicalRecordController;
 use App\Http\Controllers\Api\BlogController;
@@ -23,6 +28,7 @@ use App\Http\Controllers\Api\PharmacyOrderController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\InventoryController;
+use App\Http\Controllers\Api\DoctorProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -78,6 +84,7 @@ Route::prefix('v1')->group(function () {
     // Banners
     Route::get('/banners', [BannerController::class, 'index']);
     Route::get('/banners/{id}', [BannerController::class, 'show']);
+    Route::post('/upload-banner', [BannerController::class, 'uploadImage']);
     
     // Auth Routes
     Route::post('/auth/register', [AuthController::class, 'register']);
@@ -189,6 +196,13 @@ Route::prefix('v1')->group(function () {
         
         // Admin/Doctor Routes
         Route::middleware(['role:admin,doctor'])->group(function () {
+            // Banner Management
+            Route::post('/banners', [BannerController::class, 'store']);
+            Route::put('/banners/{id}', [BannerController::class, 'update']);
+            Route::delete('/banners/{id}', [BannerController::class, 'destroy']);
+            Route::put('/banners/{id}/toggle', [BannerController::class, 'toggleActive']);
+            Route::get('/banners/stats', [BannerController::class, 'getStats']);
+            
             Route::post('/doctors', [DoctorController::class, 'store']);
             Route::put('/doctors/{id}', [DoctorController::class, 'update']);
             Route::post('/categories', [ProductCategoryController::class, 'store']);
@@ -199,6 +213,32 @@ Route::prefix('v1')->group(function () {
             Route::post('/lab-tests', [LabTestController::class, 'store']);
             Route::put('/lab-tests/{id}', [LabTestController::class, 'update']);
             
+            // Lab Categories Management
+            Route::get('/lab/categories', [LabTestCategoryController::class, 'index']);
+            Route::post('/lab/categories', [LabTestCategoryController::class, 'store']);
+            Route::get('/lab/categories/{id}', [LabTestCategoryController::class, 'show']);
+            Route::put('/lab/categories/{id}', [LabTestCategoryController::class, 'update']);
+            Route::delete('/lab/categories/{id}', [LabTestCategoryController::class, 'destroy']);
+            Route::get('/lab/categories/stats', [LabTestCategoryController::class, 'getStats']);
+            
+            // Lab Sample Collection Management
+            Route::get('/lab/sample-collections', [LabSampleCollectionController::class, 'index']);
+            Route::post('/lab/sample-collections', [LabSampleCollectionController::class, 'store']);
+            Route::get('/lab/sample-collections/{id}', [LabSampleCollectionController::class, 'show']);
+            Route::put('/lab/sample-collections/{id}', [LabSampleCollectionController::class, 'update']);
+            Route::put('/lab/sample-collections/{id}/status', [LabSampleCollectionController::class, 'updateStatus']);
+            Route::delete('/lab/sample-collections/{id}', [LabSampleCollectionController::class, 'destroy']);
+            Route::get('/lab/sample-collections/stats', [LabSampleCollectionController::class, 'getStats']);
+            
+            // Doctor Profile Management
+            Route::get('/doctors/{id}/profile', [DoctorProfileController::class, 'getProfile']);
+            Route::put('/doctors/{id}/personal-info', [DoctorProfileController::class, 'updatePersonalInfo']);
+            Route::put('/doctors/{id}/professional-info', [DoctorProfileController::class, 'updateProfessionalInfo']);
+            Route::put('/doctors/{id}/expertise-info', [DoctorProfileController::class, 'updateExpertiseInfo']);
+            Route::post('/doctors/{id}/profile-picture', [DoctorProfileController::class, 'uploadProfilePicture']);
+            Route::get('/doctors/{id}/stats', [DoctorProfileController::class, 'getProfileStats']);
+            Route::put('/doctors/{id}/availability', [DoctorProfileController::class, 'updateAvailability']);
+            
             // Inventory Management
             Route::get('/inventory', [InventoryController::class, 'index']);
             Route::post('/inventory', [InventoryController::class, 'store']);
@@ -206,17 +246,16 @@ Route::prefix('v1')->group(function () {
             Route::put('/inventory/{id}', [InventoryController::class, 'update']);
             Route::get('/inventory/low-stock', [InventoryController::class, 'lowStock']);
             
-            // Reports
-            Route::get('/reports/appointments', [ReportController::class, 'appointments']);
-            Route::get('/reports/sales', [ReportController::class, 'sales']);
-            Route::get('/reports/lab-tests', [ReportController::class, 'labTests']);
-            Route::get('/reports/users', [ReportController::class, 'users']);
-            
-            // Banner Management (Admin only)
-            Route::post('/banners', [BannerController::class, 'store']);
-            Route::put('/banners/{id}', [BannerController::class, 'update']);
-            Route::delete('/banners/{id}', [BannerController::class, 'destroy']);
-            Route::put('/banners/{id}/toggle', [BannerController::class, 'toggleActive']);
+            // Users
+            Route::post('/doctors', [DoctorController::class, 'store']);
+            Route::put('/doctors/{id}', [DoctorController::class, 'update']);
+            Route::post('/categories', [ProductCategoryController::class, 'store']);
+            Route::put('/categories/{id}', [ProductCategoryController::class, 'update']);
+            Route::delete('/categories/{id}', [ProductCategoryController::class, 'destroy']);
+            Route::post('/products', [ProductController::class, 'store']);
+            Route::put('/products/{id}', [ProductController::class, 'update']);
+            Route::post('/lab-tests', [LabTestController::class, 'store']);
+            Route::put('/lab-tests/{id}', [LabTestController::class, 'update']);
         });
     });
 });

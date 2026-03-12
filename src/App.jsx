@@ -105,6 +105,12 @@ const StockManagement = lazy(() => import('./pages/admin/inventory/StockManageme
 
 // Lazy load lab
 const LabTestsAdmin = lazy(() => import('./pages/admin/lab/LabTests'));
+const TestCategories = lazy(() => import('./pages/admin/lab/TestCategories'));
+const SampleCollection = lazy(() => import('./pages/admin/lab/SampleCollection'));
+const TestResults = lazy(() => import('./pages/admin/lab/TestResults'));
+const LabEquipment = lazy(() => import('./pages/admin/lab/LabEquipment'));
+const QualityControl = lazy(() => import('./pages/admin/lab/QualityControl'));
+const LabReportsAdmin = lazy(() => import('./pages/admin/lab/LabReports'));
 
 // Lazy load pharmacy
 const Medicines = lazy(() => import('./pages/admin/pharmacy/Medicines'));
@@ -318,6 +324,12 @@ function App() {
           
           {/* Lab Routes */}
           <Route path="lab/tests" element={<LabTestsAdmin />} />
+          <Route path="lab/categories" element={<Suspense fallback={<LoadingSpinner />}><TestCategories /></Suspense>} />
+          <Route path="lab/collection" element={<Suspense fallback={<LoadingSpinner />}><SampleCollection /></Suspense>} />
+          <Route path="lab/results" element={<Suspense fallback={<LoadingSpinner />}><TestResults /></Suspense>} />
+          <Route path="lab/equipment" element={<Suspense fallback={<LoadingSpinner />}><LabEquipment /></Suspense>} />
+          <Route path="lab/quality" element={<Suspense fallback={<LoadingSpinner />}><QualityControl /></Suspense>} />
+          <Route path="lab/reports" element={<Suspense fallback={<LoadingSpinner />}><LabReportsAdmin /></Suspense>} />
           <Route path="lab/*" element={<AdminSettings />} />
           
           {/* Patients sub-routes */}
