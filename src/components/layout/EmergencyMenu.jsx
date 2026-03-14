@@ -17,15 +17,20 @@ export default function EmergencyMenu({ emergencyServices, isOpen, onClose }) {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0, y: -8 }}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
+          exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2 }}
           className="absolute right-0 top-full mt-2 z-50"
+          onMouseEnter={(e) => e.stopPropagation()}
+          onMouseLeave={(e) => {
+            e.stopPropagation();
+            setTimeout(() => onClose(), 100);
+          }}
         >
           <div
             className="min-w-[280px] rounded-xl bg-white shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] border border-red-100 overflow-hidden"
-            onMouseLeave={onClose}
+            onMouseEnter={(e) => e.stopPropagation()}
           >
             <div className="p-4 bg-red-50/30 border-b border-red-100">
               <h3 className="text-xs font-semibold uppercase tracking-wider text-red-600 mb-1">
@@ -42,7 +47,11 @@ export default function EmergencyMenu({ emergencyServices, isOpen, onClose }) {
                     key={service.id}
                     to="/emergency"
                     className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-red-50/50 transition-colors duration-150 group"
-                    onClick={onClose}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onClose();
+                    }}
                   >
                     <span
                       className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
@@ -67,7 +76,11 @@ export default function EmergencyMenu({ emergencyServices, isOpen, onClose }) {
               <Link
                 to="/emergency"
                 className="inline-flex items-center gap-2 text-sm font-semibold text-red-600 hover:text-red-700 transition-colors"
-                onClick={onClose}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onClose();
+                }}
               >
                 <AlertCircle className="w-4 h-4" />
                 Call Emergency: 999

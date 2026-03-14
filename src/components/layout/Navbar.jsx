@@ -166,7 +166,14 @@ export default function Navbar() {
                   className={`w-4 h-4 transition-transform ${emergencyMenuOpen ? 'rotate-180' : ''}`}
                 />
               </button>
-              <div ref={emergencyMenuRef}>
+              <div 
+                ref={emergencyMenuRef}
+                className="relative"
+                onMouseEnter={() => setEmergencyMenuOpen(true)}
+                onMouseLeave={() => {
+                  setTimeout(() => setEmergencyMenuOpen(false), 150);
+                }}
+              >
                 <EmergencyMenu
                   emergencyServices={emergencyServices}
                   isOpen={emergencyMenuOpen}
@@ -192,7 +199,7 @@ export default function Navbar() {
             </button>
             <Link
               to="/auth?tab=signup"
-              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg border border-[#5DBB63] text-[#5DBB63] hover:bg-[#5DBB63]/10 font-medium transition-colors"
+              className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-[#5DBB63] text-[#5DBB63] hover:bg-[#5DBB63] hover:text-white font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
             >
               <User className="w-4 h-4" />
               Sign Up

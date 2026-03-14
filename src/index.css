@@ -93,14 +93,69 @@ a:focus {
   text-decoration: none !important;
 }
 
-/* Remove blue underlines from all links */
+/* Remove blue underlines from all links - AGGRESSIVE OVERRIDE */
 a:not([class]) {
-  color: #3b82f6;
+  color: #3b82f6 !important;
   text-decoration: none !important;
+  border-bottom: none !important;
 }
 
 a:not([class]):hover {
-  color: #2563eb;
+  color: #2563eb !important;
+  text-decoration: none !important;
+  border-bottom: none !important;
+}
+
+a:not([class]):focus {
+  color: #2563eb !important;
+  text-decoration: none !important;
+  border-bottom: none !important;
+}
+
+/* Remove ALL underlines from ALL links - MOST AGGRESSIVE */
+a {
+  text-decoration: none !important;
+  border-bottom: none !important;
+  text-decoration-line: none !important;
+  text-decoration-style: none !important;
+  text-decoration-color: transparent !important;
+  text-decoration-thickness: 0 !important;
+  text-underline-offset: 0 !important;
+  text-underline-position: none !important;
+}
+
+a:hover {
+  text-decoration: none !important;
+  border-bottom: none !important;
+  text-decoration-line: none !important;
+  text-decoration-style: none !important;
+  text-decoration-color: transparent !important;
+  text-decoration-thickness: 0 !important;
+  text-underline-offset: 0 !important;
+  text-underline-position: none !important;
+}
+
+a:focus, a:active, a:visited {
+  text-decoration: none !important;
+  border-bottom: none !important;
+  text-decoration-line: none !important;
+  text-decoration-style: none !important;
+  text-decoration-color: transparent !important;
+  text-decoration-thickness: 0 !important;
+  text-underline-offset: 0 !important;
+  text-underline-position: none !important;
+}
+
+/* Override any browser defaults */
+* {
+  text-decoration: none !important;
+}
+
+* a {
+  text-decoration: none !important;
+}
+
+* a:hover {
   text-decoration: none !important;
 }
 
