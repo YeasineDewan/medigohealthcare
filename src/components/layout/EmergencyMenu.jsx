@@ -10,8 +10,16 @@ const iconMap = {
 };
 
 export default function EmergencyMenu({ emergencyServices, isOpen, onClose }) {
-  // Ensure emergencyServices is always an array
-  const services = Array.isArray(emergencyServices) ? emergencyServices : [];
+  // Ensure emergencyServices is always an array and has fallback data
+  const services = Array.isArray(emergencyServices) && emergencyServices.length > 0 
+    ? emergencyServices 
+    : [
+        { id: 1, title: 'Ambulance Request', description: 'Live Tracking', icon: 'ambulance', bg_color_hex: '#FEE2E2' },
+        { id: 2, title: 'Emergency Doctor', description: '24/7 Available', icon: 'phone-call', bg_color_hex: '#FEE2E2' },
+        { id: 3, title: 'Blood Bank', description: 'Find Donors', icon: 'droplet', bg_color_hex: '#FEE2E2' },
+        { id: 4, title: 'Emergency Room', description: 'Immediate Care', icon: 'alert', bg_color_hex: '#FEE2E2' },
+        { id: 5, title: 'Critical Care', description: 'ICU Services', icon: 'alert', bg_color_hex: '#FEE2E2' },
+      ];
   
   return (
     <AnimatePresence>

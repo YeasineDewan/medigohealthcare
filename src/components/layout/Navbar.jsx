@@ -116,7 +116,14 @@ export default function Navbar() {
                   className={`w-4 h-4 transition-transform ${serviceMenuOpen ? 'rotate-180' : ''}`}
                 />
               </button>
-              <div ref={serviceMenuRef}>
+              <div 
+                ref={serviceMenuRef}
+                className="relative"
+                onMouseEnter={() => setServiceMenuOpen(true)}
+                onMouseLeave={() => {
+                  setTimeout(() => setServiceMenuOpen(false), 150);
+                }}
+              >
                 <ServiceMenu
                   services={services}
                   isOpen={serviceMenuOpen}
@@ -199,7 +206,7 @@ export default function Navbar() {
             </button>
             <Link
               to="/auth?tab=signup"
-              className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-[#5DBB63] text-[#5DBB63] hover:bg-[#5DBB63] hover:text-white font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
+              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg bg-[#165028] text-white hover:bg-[#0f3d1c] font-medium transition-colors"
             >
               <User className="w-4 h-4" />
               Sign Up
@@ -273,7 +280,7 @@ export default function Navbar() {
                   <Link
                     to="/auth?tab=signup"
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-center gap-2 w-full py-3 rounded-lg border border-[#5DBB63] text-[#5DBB63] font-medium"
+className="flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-[#165028] text-white font-medium hover:bg-[#0f3d1c] transition-colors"
                   >
                     <User className="w-4 h-4" />
                     Sign Up

@@ -129,7 +129,7 @@ export default function AuthGate() {
                   </Link>
                   <Link
                     to={`/auth/${selectedRole}/signup`}
-                    className="flex items-center justify-center gap-2 w-full py-4 rounded-xl border-2 border-[#5DBB63] text-[#165028] font-semibold hover:bg-[#f0fdf2] transition-colors"
+className="flex items-center justify-center gap-2 w-full py-4 rounded-xl bg-[#165028] text-white font-semibold hover:bg-[#0f3d1c] transition-colors"
                   >
                     <UserPlus className="w-5 h-5" />
                     Sign Up
