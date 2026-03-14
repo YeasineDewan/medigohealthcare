@@ -225,7 +225,7 @@ export default function Login({ role = 'patient' }) {
                   />
                   <span className="text-sm text-gray-600">Remember me</span>
                 </label>
-                <Link to="/forgot-password" className="text-sm font-medium text-[#5DBB63] hover:underline">
+                <Link to="/forgot-password" className="text-sm font-medium text-[#5DBB63] hover:text-[#4a9a4f] transition-colors">
                   Forgot password?
                 </Link>
               </div>
@@ -287,7 +287,7 @@ export default function Login({ role = 'patient' }) {
           <div className="mt-6 text-center">
             <p className="text-gray-600">
               Don't have an account?{' '}
-              <Link to={`/auth/${role}/signup`} className="text-[#5DBB63] font-medium hover:underline">
+              <Link to={`/auth/${role}/signup`} className="text-[#5DBB63] font-medium hover:text-[#4a9a4f] transition-colors">
                 Sign Up
               </Link>
             </p>

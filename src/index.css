@@ -79,6 +79,85 @@ h1, h2, h3, h4, h5, h6 {
 
 a {
   transition: color 0.2s ease-in-out;
+  text-decoration: none !important;
+  border-bottom: none !important;
+}
+
+a:hover {
+  text-decoration: none !important;
+  border-bottom: none !important;
+}
+
+a:focus {
+  outline: none !important;
+  text-decoration: none !important;
+}
+
+/* Remove blue underlines from all links */
+a:not([class]) {
+  color: #3b82f6;
+  text-decoration: none !important;
+}
+
+a:not([class]):hover {
+  color: #2563eb;
+  text-decoration: none !important;
+}
+
+/* Button fixes */
+button, .btn, [role="button"] {
+  border-radius: var(--radius-lg) !important;
+  text-decoration: none !important;
+  border: none !important;
+  outline: none !important;
+}
+
+button:focus, .btn:focus, [role="button"]:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Input fixes */
+input, textarea, select {
+  border-radius: var(--radius-md) !important;
+  border: 1px solid #e5e7eb !important;
+  outline: none !important;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Remove default link styling */
+.link, .link-primary, .link-secondary {
+  text-decoration: none !important;
+  border-bottom: none !important;
+}
+
+/* Card and component fixes */
+.card, .panel, .dropdown {
+  border-radius: var(--radius-lg) !important;
+}
+
+/* Specific button class fixes */
+.btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-light, .btn-dark {
+  border-radius: var(--radius-lg) !important;
+  text-decoration: none !important;
+  border: none !important;
+}
+
+/* Form controls */
+.form-control, .form-select {
+  border-radius: var(--radius-md) !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+.form-control:focus, .form-select:focus {
+  outline: none !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
 }
 
 /* Custom utilities */
@@ -113,6 +192,35 @@ a {
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* Additional design fixes */
+.hover-underline {
+  text-decoration: none !important;
+}
+
+.hover-underline:hover {
+  text-decoration: none !important;
+}
+
+/* Force remove underlines from all interactive elements */
+a, button, [role="button"], .btn, input[type="button"], input[type="submit"] {
+  text-decoration: none !important;
+  border-bottom: none !important;
+}
+
+/* Ensure all buttons have rounded corners */
+.btn, button, [role="button"], input[type="button"], input[type="submit"], .btn-primary, 
+.btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-light, .btn-dark,
+.btn-outline-primary, .btn-outline-secondary, .btn-outline-success, .btn-outline-danger,
+.btn-outline-warning, .btn-outline-info, .btn-outline-light, .btn-outline-dark {
+  border-radius: 0.75rem !important;
+}
+
+/* Remove default focus outlines and add custom focus states */
+a:focus, button:focus, input:focus, textarea:focus, select:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
 }
 
 /* Custom scrollbar */

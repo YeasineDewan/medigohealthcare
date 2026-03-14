@@ -42,7 +42,7 @@ export default function OrderConfirmation() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Order not found</h2>
-          <Link to="/pharmacy" className="text-[#5DBB63] hover:underline">
+          <Link to="/pharmacy" className="text-[#5DBB63] hover:text-[#4a9a4f] transition-colors">
             Continue Shopping
           </Link>
         </div>
@@ -252,11 +252,11 @@ export default function OrderConfirmation() {
             <span>Need help? Contact our support team</span>
           </div>
           <div className="mt-2">
-            <a href="mailto:support@medigo.health" className="text-[#5DBB63] hover:underline">
+            <a href="mailto:support@medigo.health" className="text-[#5DBB63] hover:text-[#4a9a4f] transition-colors">
               support@medigo.health
             </a>
             <span className="mx-2 text-gray-400">|</span>
-            <a href="tel:+8801XXXXXXXX" className="text-[#5DBB63] hover:underline">
+            <a href="tel:+8801XXXXXXXX" className="text-[#5DBB63] hover:text-[#4a9a4f] transition-colors">
               +880 1XXX-XXXXXX
             </a>
           </div>

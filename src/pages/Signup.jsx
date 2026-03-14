@@ -321,7 +321,7 @@ export default function Signup({ role = 'patient' }) {
                 />
                 <span className="text-sm text-gray-600">
                   I agree to the{' '}
-                  <Link to="/terms" className="text-[#5DBB63] hover:underline">
+                  <Link to="/terms" className="text-[#5DBB63] hover:text-[#4a9a4f] transition-colors">
                     Terms and Conditions
                   </Link>
                 </span>
@@ -338,7 +338,7 @@ export default function Signup({ role = 'patient' }) {
                 />
                 <span className="text-sm text-gray-600">
                   I agree to the{' '}
-                  <Link to="/privacy" className="text-[#5DBB63] hover:underline">
+                  <Link to="/privacy" className="text-[#5DBB63] hover:text-[#4a9a4f] transition-colors">
                     Privacy Policy
                   </Link>
                 </span>
@@ -371,7 +371,7 @@ export default function Signup({ role = 'patient' }) {
           <div className="mt-6 text-center">
             <p className="text-gray-600">
               Already have an account?{' '}
-              <Link to={`/auth/${role}/login`} className="text-[#5DBB63] font-medium hover:underline">
+              <Link to={`/auth/${role}/login`} className="text-[#5DBB63] font-medium hover:text-[#4a9a4f] transition-colors">
                 Sign In
               </Link>
             </p>
