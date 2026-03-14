@@ -22,6 +22,6 @@ export default defineConfig({
   // Environment variables for production
   define: {
     'process.env.NODE_ENV': '"production"',
-    'process.env.VITE_API_URL': '"https://temp1.medigohealthcares.com/api"'
+    'process.env.VITE_API_URL': '"https://test.medigohealthcares.com/api"'
   }
 })

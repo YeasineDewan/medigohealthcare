@@ -133,6 +133,6 @@ The project is now organized and ready for cPanel deployment with:
 ## 📋 Next Steps
 
 1. **Deploy to cPanel** using `scripts/deploy-cpanel.sh`
-2. **Configure domain** for `temp1.medigohealthcares.com`
+2. **Configure domain** for `test.medigohealthcares.com`
 3. **Set up database** with provided credentials
 4. **Test application** functionality
