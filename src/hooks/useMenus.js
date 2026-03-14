@@ -7,8 +7,16 @@ export function useServicesMenu() {
 
   useEffect(() => {
     menuService.getServices()
-      .then(({ data }) => setServices(data.data || data || []))
-      .catch(() => setServices(fallbackServices))
+      .then((response) => {
+        // Handle different response formats
+        const data = response.data || response || [];
+        const services = Array.isArray(data) ? data : [];
+        setServices(services);
+      })
+      .catch((error) => {
+        console.warn('Failed to fetch services:', error);
+        setServices(fallbackServices);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -21,8 +29,16 @@ export function useEmergencyMenu() {
 
   useEffect(() => {
     menuService.getEmergencyServices()
-      .then(({ data }) => setEmergencyServices(data.data || data || []))
-      .catch(() => setEmergencyServices(fallbackEmergencyServices))
+      .then((response) => {
+        // Handle different response formats
+        const data = response.data || response || [];
+        const services = Array.isArray(data) ? data : [];
+        setEmergencyServices(services);
+      })
+      .catch((error) => {
+        console.warn('Failed to fetch emergency services:', error);
+        setEmergencyServices(fallbackEmergencyServices);
+      })
       .finally(() => setLoading(false));
   }, []);
 
