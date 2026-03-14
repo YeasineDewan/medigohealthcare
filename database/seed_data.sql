@@ -47,7 +47,9 @@ INSERT INTO `services` (`id`, `title`, `description`, `icon`, `price`, `is_activ
 (3, 'Lab Tests', 'Comprehensive laboratory testing and diagnostics', 'flask', 300.00, 1, NOW(), NOW()),
 (4, 'X-Ray & Imaging', 'Digital X-ray and medical imaging services', 'x-ray', 800.00, 1, NOW(), NOW()),
 (5, 'Vaccination', 'Immunization and vaccination services', 'syringe', 200.00, 1, NOW(), NOW()),
-(6, 'Health Checkup', 'Complete health screening and preventive checkup', 'heart', 1500.00, 1, NOW(), NOW());
+(6, 'Health Checkup', 'Complete health screening and preventive checkup', 'heart', 1500.00, 1, NOW(), NOW()),
+(7, 'EXCLUSIVE EXECUTIVE HEALTH CHECK-UP', 'Comprehensive executive health package including CBC, Blood Grouping, RBS, S.CREATININE, S. BILIRUBIN, SGPT, SGOT, HBSAG, ANTI HCV, HIV, VDRL, TPHA, ESR, FBS, HbA1c, HBsAg-ELISA, Urine R/E, Pregnancy Test, Physical Examination, Lipid Profile, Liver Function Test, ECG, X-Ray Chest', 'star', 7800.00, 1, NOW(), NOW()),
+(8, 'EXECUTIVE HEALTH CHECK-UP', 'Standard executive health package with essential tests', 'briefcase', 5500.00, 1, NOW(), NOW());
 
 -- ============================================
 -- Emergency Services Data
@@ -99,23 +101,67 @@ INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `quantity`, `unit_pri
 -- ============================================
 
 INSERT INTO `lab_tests` (`id`, `name`, `description`, `category`, `price`, `is_popular`, `is_active`, `created_at`, `updated_at`) VALUES
-(1, 'Complete Blood Count (CBC)', 'Comprehensive blood test for overall health assessment', 'Hematology', 500.00, 1, 1, NOW(), NOW()),
-(2, 'Blood Sugar Test', 'Fasting and postprandial blood sugar levels', 'Biochemistry', 200.00, 1, 1, NOW(), NOW()),
-(3, 'Lipid Profile', 'Cholesterol and triglycerides level test', 'Biochemistry', 600.00, 0, 1, NOW(), NOW()),
-(4, 'Liver Function Test', 'Comprehensive liver health assessment', 'Biochemistry', 800.00, 0, 1, NOW(), NOW()),
-(5, 'Kidney Function Test', 'Renal function and electrolyte panel', 'Biochemistry', 700.00, 0, 1, NOW(), NOW()),
+(1, 'Complete Blood Count (CBC)', 'Comprehensive blood test including TC, DC, ESR, HB%', 'Hematology', 400.00, 1, 1, NOW(), NOW()),
+(2, 'Blood Sugar Test', 'Random Blood Sugar (RBS) test for glucose levels', 'Biochemistry', 200.00, 1, 1, NOW(), NOW()),
+(3, 'Lipid Profile', 'Cholesterol and triglycerides level test', 'Biochemistry', 1000.00, 0, 1, NOW(), NOW()),
+(4, 'Liver Function Test', 'Comprehensive liver health assessment including SGPT, SGOT, S. BILIRUBIN', 'Biochemistry', 1500.00, 0, 1, NOW(), NOW()),
+(5, 'Kidney Function Test', 'Renal function test including S.CREATININE', 'Biochemistry', 300.00, 0, 1, NOW(), NOW()),
 (6, 'Thyroid Function Test', 'T3, T4, and TSH hormone levels', 'Endocrinology', 900.00, 0, 1, NOW(), NOW()),
-(7, 'Urine Routine Test', 'Complete urine analysis', 'Microbiology', 150.00, 1, 1, NOW(), NOW()),
-(8, 'X-Ray Chest', 'Digital chest X-ray for lung and heart examination', 'Radiology', 500.00, 0, 1, NOW(), NOW());
+(7, 'Urine Routine Test', 'Complete urine analysis', 'Microbiology', 200.00, 1, 1, NOW(), NOW()),
+(8, 'X-Ray Chest', 'Digital chest X-ray for lung and heart examination', 'Radiology', 500.00, 0, 1, NOW(), NOW()),
+(9, 'APTT', 'Activated Partial Thromboplastin Time test for blood clotting', 'Hematology', 1000.00, 0, 1, NOW(), NOW()),
+(10, 'Blood Grouping', 'ABO blood group and Rh factor determination', 'Hematology', 200.00, 1, 1, NOW(), NOW()),
+(11, 'ASO', 'Antistreptolysin O test for streptococcal infection', 'Immunology', 700.00, 0, 1, NOW(), NOW()),
+(12, 'Beta hCG', 'Beta human chorionic gonadotropin for pregnancy detection', 'Hormone', 1000.00, 1, 1, NOW(), NOW()),
+(13, 'S. CREATININE', 'Serum creatinine for kidney function assessment', 'Biochemistry', 300.00, 0, 1, NOW(), NOW()),
+(14, 'Blood for Microfilaria', 'Microfilaria detection test for filariasis', 'Parasitology', 1600.00, 0, 1, NOW(), NOW()),
+(15, 'S. BILIRUBIN', 'Serum bilirubin for liver function assessment', 'Biochemistry', 300.00, 0, 1, NOW(), NOW()),
+(16, 'SGPT', 'Serum Glutamic Pyruvic Transaminase for liver function', 'Biochemistry', 300.00, 0, 1, NOW(), NOW()),
+(17, 'HBSAG (ELISA)', 'Hepatitis B surface antigen test', 'Immunology', 500.00, 0, 1, NOW(), NOW()),
+(18, 'SGOT', 'Serum Glutamic Oxaloacetic Transaminase for liver function', 'Biochemistry', 300.00, 0, 1, NOW(), NOW()),
+(19, 'CRP', 'C-Reactive Protein test for inflammation', 'Immunology', 1000.00, 0, 1, NOW(), NOW()),
+(20, 'ANTI HCV (ELISA)', 'Hepatitis C antibody test', 'Immunology', 600.00, 0, 1, NOW(), NOW()),
+(21, 'DC', 'Differential Count for blood cell types', 'Hematology', 250.00, 0, 1, NOW(), NOW()),
+(22, 'HIV 1.2 (ELISA)', 'HIV antibody test', 'Immunology', 600.00, 0, 1, NOW(), NOW()),
+(23, 'D-Dimer', 'D-dimer test for blood clot disorders', 'Hematology', 1200.00, 0, 1, NOW(), NOW()),
+(24, 'VDRL', 'Venereal Disease Research Laboratory test for syphilis', 'Immunology', 300.00, 0, 1, NOW(), NOW()),
+(25, 'Dengue IgM + IgG ELISA', 'Dengue antibody test for infection detection', 'Immunology', 500.00, 1, 1, NOW(), NOW()),
+(26, 'TPHA', 'Treponema pallidum hemagglutination test for syphilis', 'Immunology', 400.00, 0, 1, NOW(), NOW()),
+(27, 'ESR', 'Erythrocyte Sedimentation Rate for inflammation', 'Hematology', 200.00, 0, 1, NOW(), NOW()),
+(28, 'FBS', 'Fasting Blood Sugar test', 'Biochemistry', 250.00, 1, 1, NOW(), NOW()),
+(29, 'FIBRIL ANTIGEN/TRIPLE ANTIGEN', 'Fibrinogen antigen test', 'Hematology', 1000.00, 0, 1, NOW(), NOW()),
+(30, 'OPIATES', 'Opiates drug test', 'Toxicology', 300.00, 0, 1, NOW(), NOW()),
+(31, 'FSH', 'Follicle Stimulating Hormone test', 'Hormone', 1000.00, 0, 1, NOW(), NOW()),
+(32, 'CANNABINOIDS', 'Cannabinoids drug test', 'Toxicology', 300.00, 0, 1, NOW(), NOW()),
+(33, 'H. Pylori Antibody', 'Helicobacter pylori antibody test', 'Immunology', 1000.00, 0, 1, NOW(), NOW()),
+(34, 'MALARIA', 'Malaria parasite detection test', 'Parasitology', 300.00, 1, 1, NOW(), NOW()),
+(35, 'HbA1c', 'Glycated hemoglobin for diabetes monitoring', 'Biochemistry', 1000.00, 1, 1, NOW(), NOW()),
+(36, 'HBsAg-ELISA', 'Hepatitis B surface antigen ELISA test', 'Immunology', 800.00, 0, 1, NOW(), NOW()),
+(37, 'ICT for Filaria', 'Immunochromatographic test for filariasis', 'Parasitology', 1100.00, 0, 1, NOW(), NOW()),
+(38, 'ICT for Malaria', 'Immunochromatographic test for malaria', 'Parasitology', 1000.00, 1, 1, NOW(), NOW()),
+(39, 'LH', 'Luteinizing Hormone test', 'Hormone', 1000.00, 0, 1, NOW(), NOW()),
+(40, 'S. ALBUMIN', 'Serum albumin for nutritional assessment', 'Biochemistry', 400.00, 0, 1, NOW(), NOW()),
+(41, 'S. CALCIUM', 'Serum calcium for bone health assessment', 'Biochemistry', 600.00, 0, 1, NOW(), NOW()),
+(42, 'S. IgE', 'Serum Immunoglobulin E for allergy assessment', 'Immunology', 2000.00, 0, 1, NOW(), NOW()),
+(43, 'MT', 'Mantoux test for tuberculosis', 'Immunology', 400.00, 0, 1, NOW(), NOW()),
+(44, 'OGTT', 'Oral Glucose Tolerance Test for diabetes', 'Biochemistry', 500.00, 0, 1, NOW(), NOW()),
+(45, 'PROLACTINE', 'Prolactin hormone test', 'Hormone', 1000.00, 0, 1, NOW(), NOW()),
+(46, 'Prothrombin Time (PT)', 'Prothrombin time for blood clotting assessment', 'Hematology', 500.00, 0, 1, NOW(), NOW()),
+(47, 'RA/RF', 'Rheumatoid Arthritis/Rheumatoid Factor test', 'Immunology', 720.00, 0, 1, NOW(), NOW()),
+(48, 'PREGNANCY TEST', 'Urine pregnancy test', 'Hormone', 200.00, 1, 1, NOW(), NOW()),
+(49, 'STOOL R/E', 'Stool routine examination', 'Microbiology', 300.00, 0, 1, NOW(), NOW()),
+(50, 'MICRO FILARIA', 'Microfilaria detection in blood', 'Parasitology', 400.00, 0, 1, NOW(), NOW()),
+(51, 'E.C.G', 'Electrocardiogram for heart function', 'Cardiology', 500.00, 1, 1, NOW(), NOW()),
+(52, 'PHYSICAL EXAMINATION (DOCTOR)', 'Complete physical examination by doctor', 'General', 3500.00, 0, 1, NOW(), NOW());
 
 -- ============================================
 -- Sample Lab Test Bookings
 -- ============================================
 
 INSERT INTO `lab_test_bookings` (`id`, `user_id`, `lab_test_id`, `booking_number`, `preferred_date`, `preferred_time`, `status`, `payment_status`, `total_amount`, `created_at`, `updated_at`) VALUES
-(1, 4, 1, 'LAB-2024001', NOW() + INTERVAL 2 DAY, '09:00:00', 'confirmed', 'paid', 500.00, NOW() - INTERVAL 1 DAY, NOW() - INTERVAL 1 DAY),
+(1, 4, 1, 'LAB-2024001', NOW() + INTERVAL 2 DAY, '09:00:00', 'confirmed', 'paid', 400.00, NOW() - INTERVAL 1 DAY, NOW() - INTERVAL 1 DAY),
 (2, 5, 2, 'LAB-2024002', NOW() + INTERVAL 3 DAY, '10:30:00', 'pending', 'pending', 200.00, NOW() - INTERVAL 2 HOUR, NOW() - INTERVAL 2 HOUR),
-(3, 4, 7, 'LAB-2024003', NOW() + INTERVAL 1 DAY, '08:00:00', 'completed', 'paid', 150.00, NOW() - INTERVAL 3 DAY, NOW() - INTERVAL 2 DAY);
+(3, 4, 7, 'LAB-2024003', NOW() + INTERVAL 1 DAY, '08:00:00', 'completed', 'paid', 200.00, NOW() - INTERVAL 3 DAY, NOW() - INTERVAL 2 DAY);
 
 -- ============================================
 -- Sample Prescriptions

@@ -12,9 +12,9 @@ import {
   DownloadCloud, UploadCloud, FileDown, FileUp, FolderOpen, Folder, Archive,
   FileSpreadsheet, FileText2, FileCheck, FileX, FileWarning, FileQuestion,
   Clipboard, ClipboardList, ClipboardCheck, ClipboardX, ClipboardPlus,
-  MedicalKit, Prescription, Pill, Capsules, Syringe, TestTube, Microscope,
-  Brain, Lungs, Bone, EyeIcon, Ear, Tooth, Kidney, HeartPulse,
-  ActivitySquare, SquareActivity, HeartHandshake, HandHeart, HeartCrack
+  Pill, Capsules, Syringe, TestTube, Microscope,
+  Brain, HeartPulse,
+  ActivitySquare, HeartHandshake
 } from 'lucide-react';
 
 const patientReports = [

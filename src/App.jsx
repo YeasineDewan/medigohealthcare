@@ -47,6 +47,7 @@ import AdminInventory from './pages/admin/AdminInventory';
 import AdminCategories from './pages/admin/AdminCategories';
 import AdminBanners from './pages/admin/AdminBanners';
 
+
 // Lazy load settings
 const GeneralSettings = lazy(() => import('./pages/admin/settings/General'));
 const UserManagement = lazy(() => import('./pages/admin/settings/UserManagement'));
@@ -61,6 +62,9 @@ const ChartOfAccounts = lazy(() => import('./pages/admin/accounts/ChartOfAccount
 const TrialBalance = lazy(() => import('./pages/admin/accounts/TrialBalance'));
 const BalanceSheet = lazy(() => import('./pages/admin/accounts/BalanceSheet'));
 const IncomeStatement = lazy(() => import('./pages/admin/accounts/IncomeStatement'));
+const DayBook = lazy(() => import('./pages/admin/accounts/DayBook'));
+const CashBook = lazy(() => import('./pages/admin/accounts/CashBook'));
+const BankBook = lazy(() => import('./pages/admin/BankBook'));
 
 // Lazy load reports
 const ReportsHub = lazy(() => import('./pages/admin/reports/ReportsHub.jsx'));
@@ -77,6 +81,7 @@ const CustomReports = lazy(() => import('./pages/admin/reports/CustomReports.jsx
 
 // Lazy load marketing
 const Promotions = lazy(() => import('./pages/admin/marketing/Promotions'));
+const VideoCarouselManager = lazy(() => import('./pages/admin/marketing/VideoCarouselManager'));
 
 // Lazy load communications
 const Notifications = lazy(() => import('./pages/admin/communications/Notifications'));
@@ -130,8 +135,12 @@ const ServiceList = lazy(() => import('./pages/admin/services/ServiceList'));
 const ServicePricing = lazy(() => import('./pages/admin/services/ServicePricing'));
 const ServicePackages = lazy(() => import('./pages/admin/services/ServicePackages'));
 
-// Lazy load medical
-const Diagnostic = lazy(() => import('./pages/admin/medical/Diagnostic'));
+// Medical components
+import Diagnostic from './pages/admin/medical/Diagnostic';
+import Transaction from './pages/admin/medical/Transaction';
+import Combined from './pages/admin/medical/Combined';
+import Prescription from './pages/admin/medical/Prescription';
+import History from './pages/admin/medical/History';
 
 // Lazy load Medical Check-Up
 const MedicalCheckupRegistration = lazy(() => import('./pages/admin/medicalCheckup/Registration'));
@@ -264,6 +273,9 @@ function App() {
           <Route path="accounts/create-group" element={<CreateGroup />} />
           <Route path="accounts/create-ledger" element={<CreateLedger />} />
           <Route path="accounts/chart-of-accounts" element={<ChartOfAccounts />} />
+          <Route path="accounts/day-book" element={<DayBook />} />
+          <Route path="accounts/cash-book" element={<CashBook />} />
+          <Route path="accounts/bank-book" element={<BankBook />} />
           <Route path="accounts/trial-balance" element={<TrialBalance />} />
           <Route path="accounts/balance-sheet" element={<BalanceSheet />} />
           <Route path="accounts/income-statement" element={<IncomeStatement />} />
@@ -306,6 +318,10 @@ function App() {
           
           {/* Medical Routes */}
           <Route path="medical/diagnostic" element={<Diagnostic />} />
+          <Route path="medical/transaction" element={<Transaction />} />
+          <Route path="medical/combined" element={<Combined />} />
+          <Route path="medical/prescription" element={<Prescription />} />
+          <Route path="medical/history" element={<History />} />
           <Route path="medical/*" element={<AdminSettings />} />
           
           {/* Departments Routes */}
@@ -362,6 +378,7 @@ function App() {
           
           {/* Marketing Routes */}
           <Route path="marketing/promotions" element={<Promotions />} />
+          <Route path="marketing/video-carousel" element={<Suspense fallback={<LoadingSpinner />}><VideoCarouselManager /></Suspense>} />
           <Route path="marketing/*" element={<AdminSettings />} />
           
           {/* Communications Routes */}

@@ -15,9 +15,10 @@ export const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Handle network errors gracefully
     if (!error.response) {
       console.warn('API request failed - network error or server unavailable');
+    } else if (error.response.status >= 500) {
+      console.warn(`API server error ${error.response.status}: ${error.config?.url}`);
     }
     return Promise.reject(error);
   }

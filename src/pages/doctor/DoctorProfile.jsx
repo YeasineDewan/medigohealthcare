@@ -299,7 +299,101 @@ export default function DoctorProfile() {
     setHasChanges(false);
   };
 
+  const handlePersonalInfoChange = (field, value) => {
+    handleFieldChange(field, value, 'personal');
+  };
+
+  const handleProfessionalInfoChange = (field, value) => {
+    handleFieldChange(field, value, 'professional');
+  };
+
+  const handleExpertiseInfoChange = (field, value) => {
+    handleFieldChange(field, value, 'expertise');
+  };
+
+  // Dynamic array management functions
+  const addArrayItem = (section, field, value) => {
+    if (!value || value.trim() === '') return;
+    
+    setHasChanges(true);
+    
+    if (section === 'professional') {
+      setProfessionalInfo(prev => ({
+        ...prev,
+        [field]: [...(prev[field] || []), value.trim()]
+      }));
+    } else if (section === 'expertise') {
+      setExpertiseInfo(prev => ({
+        ...prev,
+        [field]: [...(prev[field] || []), value.trim()]
+      }));
+    }
+  };
+
+  const removeArrayItem = (section, field, index) => {
+    setHasChanges(true);
+    
+    if (section === 'professional') {
+      setProfessionalInfo(prev => ({
+        ...prev,
+        [field]: prev[field].filter((_, i) => i !== index)
+      }));
+    } else if (section === 'expertise') {
+      setExpertiseInfo(prev => ({
+        ...prev,
+        [field]: prev[field].filter((_, i) => i !== index)
+      }));
+    }
+  };
+
+  const handleArrayKeyPress = (e, section, field) => {
+    if (e.key === 'Enter' && e.target.value.trim()) {
+      e.preventDefault();
+      addArrayItem(section, field, e.target.value);
+      e.target.value = '';
+    }
+  };
+
+  // Enhanced validation with real-time feedback
+  const validateForm = () => {
+    const errors = {};
+    
+    // Personal info validation
+    if (!personalInfo.firstName || personalInfo.firstName.trim().length < 2) {
+      errors.firstName = 'First name must be at least 2 characters';
+    }
+    if (!personalInfo.lastName || personalInfo.lastName.trim().length < 2) {
+      errors.lastName = 'Last name must be at least 2 characters';
+    }
+    if (!personalInfo.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(personalInfo.email)) {
+      errors.email = 'Please enter a valid email address';
+    }
+    if (!personalInfo.phone || !/^\+?[0-9]{10,15}$/.test(personalInfo.phone.replace(/\s/g, ''))) {
+      errors.phone = 'Please enter a valid phone number';
+    }
+    
+    // Professional info validation
+    if (!professionalInfo.specialization) {
+      errors.specialization = 'Specialization is required';
+    }
+    if (!professionalInfo.experience || isNaN(professionalInfo.experience) || professionalInfo.experience < 0) {
+      errors.experience = 'Please enter valid years of experience';
+    }
+    if (!professionalInfo.consultationFee || isNaN(professionalInfo.consultationFee) || professionalInfo.consultationFee <= 0) {
+      errors.consultationFee = 'Please enter a valid consultation fee';
+    }
+    
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Enhanced save with validation
   const saveChanges = async () => {
+    if (!validateForm()) {
+      toast.error('Please fix the validation errors before saving');
+      return;
+    }
+    
     setSaveStatus('saving');
     try {
       // Save all sections
@@ -319,21 +413,15 @@ export default function DoctorProfile() {
       }, 1500);
     } catch (error) {
       setSaveStatus('');
-      toast.error('Failed to save changes');
+      if (error.response?.data?.errors) {
+        // Handle validation errors from server
+        setValidationErrors(error.response.data.errors);
+        toast.error('Please fix the validation errors');
+      } else {
+        toast.error('Failed to save changes');
+      }
       console.error('Save error:', error);
     }
-  };
-
-  const handlePersonalInfoChange = (field, value) => {
-    handleFieldChange(field, value, 'personal');
-  };
-
-  const handleProfessionalInfoChange = (field, value) => {
-    handleFieldChange(field, value, 'professional');
-  };
-
-  const handleExpertiseInfoChange = (field, value) => {
-    handleFieldChange(field, value, 'expertise');
   };
 
   const renderPersonalInfo = () => (
@@ -825,12 +913,7 @@ export default function DoctorProfile() {
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    onClick={() => {
-                      setProfessionalInfo(prev => ({
-                        ...prev,
-                        qualifications: prev.qualifications.filter((_, i) => i !== index)
-                      }));
-                    }}
+                    onClick={() => removeArrayItem('professional', 'qualifications', index)}
                     className="text-red-500 hover:text-red-700 p-1"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -849,26 +932,16 @@ export default function DoctorProfile() {
                 type="text"
                 placeholder="Add new qualification"
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter' && e.target.value.trim()) {
-                    setProfessionalInfo(prev => ({
-                      ...prev,
-                      qualifications: [...prev.qualifications, e.target.value.trim()]
-                    }));
-                    e.target.value = '';
-                  }
-                }}
+                onKeyPress={(e) => handleArrayKeyPress(e, 'professional', 'qualifications')}
+                id="qualifications-input"
               />
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => {
-                  const input = document.querySelector('input[placeholder="Add new qualification"]');
+                  const input = document.getElementById('qualifications-input');
                   if (input && input.value.trim()) {
-                    setProfessionalInfo(prev => ({
-                      ...prev,
-                      qualifications: [...prev.qualifications, input.value.trim()]
-                    }));
+                    addArrayItem('professional', 'qualifications', input.value);
                     input.value = '';
                   }
                 }}

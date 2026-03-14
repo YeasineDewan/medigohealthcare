@@ -1,6 +1,66 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 
+// Main DynamicChart component that routes to specific chart types
+export default function DynamicChart({ 
+  type = 'line', 
+  data = [], 
+  width = 400, 
+  height = 200, 
+  color = '#5DBB63',
+  title = '',
+  ...props 
+}) {
+  // Transform data for charts
+  const chartData = data.map((item, index) => ({
+    value: typeof item === 'number' ? item : (item.value || 0),
+    label: item.label || item.date || `Item ${index + 1}`
+  }));
+
+  switch (type) {
+    case 'line':
+      return (
+        <div className="w-full">
+          {title && <h3 className="text-lg font-semibold mb-4">{title}</h3>}
+          <LineChart data={chartData} width={width} height={height} color={color} />
+        </div>
+      );
+    case 'bar':
+      return (
+        <div className="w-full">
+          {title && <h3 className="text-lg font-semibold mb-4">{title}</h3>}
+          <BarChart data={chartData} width={width} height={height} color={color} />
+        </div>
+      );
+    case 'pie':
+      return (
+        <div className="w-full">
+          {title && <h3 className="text-lg font-semibold mb-4">{title}</h3>}
+          <PieChart data={chartData} width={width} height={height} />
+        </div>
+      );
+    case 'progress':
+      return (
+        <div className="w-full">
+          {title && <h3 className="text-lg font-semibold mb-4">{title}</h3>}
+          <ProgressChart 
+            value={data[0]?.value || 0} 
+            max={data[0]?.max || 100} 
+            label={data[0]?.label || title}
+            color={color}
+            {...props}
+          />
+        </div>
+      );
+    default:
+      return (
+        <div className="w-full p-4 border border-gray-200 rounded-lg">
+          <p className="text-gray-500">Unsupported chart type: {type}</p>
+        </div>
+      );
+  }
+}
+
 // Simple chart components without external dependencies
 export function LineChart({ data = [], width = 400, height = 200, color = '#5DBB63' }) {
   const canvasRef = useRef(null);

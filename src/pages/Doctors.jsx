@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Search, Filter, MapPin } from 'lucide-react';
 import DoctorCard from '../components/features/DoctorCard';
+import VideoCarousel from '../components/core/VideoCarousel';
 
 const specialties = ['All', 'Cardiology', 'Pediatrics', 'General Medicine', 'Dermatology', 'Orthopedics'];
 const mockDoctors = [
@@ -32,6 +33,35 @@ export default function Doctors() {
           </p>
         </div>
       </div>
+
+      {/* Video Carousel Section */}
+      <section className="py-12 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <VideoCarousel 
+            videos={[
+              {
+                id: 1,
+                title: "Our Expert Doctors",
+                description: "Meet our team of experienced medical professionals",
+                url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+                thumbnail: "https://picsum.photos/seed/doctors1/800/450"
+              },
+              {
+                id: 2,
+                title: "Doctor Consultation Process",
+                description: "How to book and attend your consultation",
+                url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+                thumbnail: "https://picsum.photos/seed/doctors2/800/450"
+              }
+            ]}
+            autoPlay={true}
+            interval={7000}
+            showControls={true}
+            showThumbnails={false}
+            height="h-80 md:h-96"
+          />
+        </div>
+      </section>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex flex-col lg:flex-row gap-6 mb-10">

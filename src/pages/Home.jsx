@@ -20,6 +20,7 @@ import HeroBanner from '../components/features/HeroBanner';
 import FeaturedProducts from '../components/features/FeaturedProducts';
 import BestDoctors from '../components/features/BestDoctors';
 import { Button } from '../components/core/Button';
+import VideoCarousel from '../components/core/VideoCarousel';
 import axios from 'axios';
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api/v1';
@@ -355,6 +356,53 @@ export default function Home() {
       ) : (
         <HeroBanner banners={banners} autoSlide={true} interval={6000} />
       )}
+
+      {/* Video Carousel Section */}
+      <section className="py-16 bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl font-bold text-[#165028] mb-4">Featured Videos</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+              Discover our healthcare services through engaging videos
+            </p>
+          </motion.div>
+          <VideoCarousel 
+            videos={[
+              {
+                id: 1,
+                title: "Welcome to Medigo Healthcare",
+                description: "Experience world-class healthcare with our expert medical team",
+                url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                thumbnail: "https://picsum.photos/seed/medigo1/800/450"
+              },
+              {
+                id: 2,
+                title: "Our Expert Doctors",
+                description: "Meet our team of experienced medical professionals",
+                url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+                thumbnail: "https://picsum.photos/seed/medigo2/800/450"
+              },
+              {
+                id: 3,
+                title: "Advanced Medical Technology",
+                description: "State-of-the-art equipment and facilities",
+                url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+                thumbnail: "https://picsum.photos/seed/medigo3/800/450"
+              }
+            ]}
+            autoPlay={true}
+            interval={6000}
+            showControls={true}
+            showThumbnails={true}
+            height="h-96 md:h-[500px]"
+          />
+        </div>
+      </section>
 
       {/* Services Grid */}
       <section className="py-20 bg-white">

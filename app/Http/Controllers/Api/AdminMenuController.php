@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
+use App\Models\Role;
+use Illuminate\Support\Facades\Auth;
 
 class AdminMenuController extends Controller
 {
@@ -12,11 +14,7 @@ class AdminMenuController extends Controller
      */
     public function index(): JsonResponse
     {
-        // Return the admin menu structure
-        // This can be customized based on user role/permissions
-        $menu = $this->getMenuStructure();
-        
-        return response()->json($menu);
+        return (new MenuPermissionController())->getAdminMenu();
     }
 
     /**

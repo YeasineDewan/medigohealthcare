@@ -1,0 +1,119 @@
+CPANEL FILE STRUCTURE GUIDE
+==========================
+
+Domain: temp1.medigohealthcares.com
+Database: medigohe_db_yds
+
+UPLOAD STRUCTURE TO CPANEL:
+---------------------------
+
+Option 1: Main Domain (public_html/)
+├── public_html/
+│   ├── app/
+│   ├── bootstrap/
+│   ├── config/
+│   ├── database/
+│   ├── public/
+│   │   ├── index.php
+│   │   ├── .htaccess
+│   │   ├── assets/
+│   │   └── prescriptions/
+│   ├── resources/
+│   ├── routes/
+│   ├── storage/
+│   ├── vendor/
+│   ├── .env (copy from .env.cpanel)
+│   ├── .htaccess
+│   ├── artisan
+│   └── composer.json
+
+Option 2: Subdomain (public_html/temp1/)
+├── public_html/
+│   └── temp1/
+│       ├── app/
+│       ├── bootstrap/
+│       ├── config/
+│       ├── database/
+│       ├── public/
+│       │   ├── index.php
+│       │   ├── .htaccess
+│       │   ├── assets/
+│       │   └── prescriptions/
+│       ├── resources/
+│       ├── routes/
+│       ├── storage/
+│       ├── vendor/
+│       ├── .env (copy from .env.cpanel)
+│       ├── .htaccess
+│       ├── artisan
+│       └── composer.json
+
+FILES TO EXCLUDE WHEN UPLOADING:
+---------------------------------
+- node_modules/
+- .git/
+- .gitignore
+- vendor/ (upload empty, then run composer install)
+- storage/logs/* (upload empty)
+- storage/framework/cache/* (upload empty)
+- storage/framework/sessions/* (upload empty)
+- storage/framework/views/* (upload empty)
+
+IMPORTANT CONFIGURATION FILES:
+------------------------------
+1. .env.cpanel → .env
+   - Contains database credentials
+   - Domain configuration
+   - Production settings
+
+2. public/.htaccess
+   - URL rewriting
+   - Security headers
+   - PHP settings
+
+3. vite.config.cpanel.js
+   - Production build configuration
+   - API endpoint configuration
+
+DEPLOYMENT SEQUENCE:
+--------------------
+1. Upload all files (excluding above)
+2. Copy .env.cpanel to .env
+3. Set file permissions
+4. Run composer install
+5. Generate application key
+6. Run migrations
+7. Build frontend assets
+8. Clear and cache configurations
+
+DIRECTORY PERMISSIONS (cPanel/Linux):
+------------------------------------
+storage/ → 755
+bootstrap/cache/ → 755
+storage/logs/ → 777
+storage/framework/cache/ → 777
+storage/framework/sessions/ → 777
+storage/framework/views/ → 777
+
+WEB SERVER CONFIGURATION:
+------------------------
+- Apache with mod_rewrite enabled
+- PHP 8.1+ recommended
+- MySQL/MariaDB
+- SSL certificate (enable in cPanel)
+
+URL STRUCTURE:
+--------------
+Main: https://temp1.medigohealthcares.com/
+API: https://temp1.medigohealthcares.com/api/
+Admin: https://temp1.medigohealthcares.com/admin/
+
+CRON JOBS (if needed):
+----------------------
+* * * * * /usr/bin/php /home/username/public_html/artisan schedule:run >> /dev/null 2>&1
+
+BACKUP LOCATIONS:
+----------------
+Database: cPanel → Backup → MySQL Backups
+Files: cPanel → Backup → Full Backup
+Laravel Backups: storage/app/backups/

@@ -39,8 +39,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
     
-    // Admin Menu
-    Route::get('/admin/menu', [AdminMenuController::class, 'index']);
+    // Admin Menu - Dynamic with permissions
+    Route::get('/admin/menu', [MenuPermissionController::class, 'getAdminMenu']);
     
     // Settings Routes
     Route::prefix('settings')->group(function () {

@@ -8,25 +8,57 @@ class AdminMenuService {
     this.baseURL = '/api/v1/admin/menu'; // API endpoint
   }
 
-  async getMenuStructure() {
-    try {
-      const cached = this.getFromCache();
-      if (cached) {
-        return cached;
-      }
+    async getMenuStructure() {
+      try {
+        // Skip API call in development mode if backend is not available
+        const isDevelopment = import.meta.env.DEV;
+        const backendEnabled = import.meta.env.VITE_ENABLE_BACKEND === 'true' || import.meta.env.VITE_ENABLE_BACKEND === undefined;
+        
+        if (isDevelopment && !backendEnabled) {
+          console.log('Development mode (VITE_ENABLE_BACKEND=false): Using fallback menu structure');
+          const { user } = useAdminStore.getState();
+          return this.getFallbackMenuStructure(user?.role, user?.permissions);
+        }
 
-      const response = await axios.get(this.baseURL);
-      const menuData = this.transformMenuData(response.data);
-      
-      this.setCache(menuData);
-      
-      return menuData;
-    } catch (error) {
-      console.warn('Failed to fetch menu from API, using fallback:', error.message);
-      
-      const { user } = useAdminStore.getState();
-      return this.getFallbackMenuStructure(user?.role, user?.permissions);
+        const cached = this.getFromCache();
+        if (cached) {
+          return cached;
+        }
+
+        const response = await axios.get(this.baseURL, {
+          timeout: 5000,
+          validateStatus: function (status) {
+            return status < 500; // Resolve only if status < 500
+          }
+        });
+        
+        if (response.status !== 200) {
+          throw new Error(`API responded with status ${response.status}: ${response.statusText}`);
+        }
+        
+        const menuData = this.transformMenuData(response.data);
+        this.setCache(menuData);
+        return menuData;
+      } catch (error) {
+        const isDevNoBackend = import.meta.env.DEV && import.meta.env.VITE_ENABLE_BACKEND === 'false';
+        if (isDevNoBackend) {
+          console.log('Development fallback active - no backend expected');
+        } else {
+          console.warn(`Admin menu API error (${error.code || error.message || 'unknown'}):`, {
+            url: this.baseURL,
+            message: error.message,
+            isDev: import.meta.env.DEV,
+            backendEnabled: import.meta.env.VITE_ENABLE_BACKEND
+          });
+        }
+        
+        const { user } = useAdminStore.getState();
+        return this.getFallbackMenuStructure(user?.role, user?.permissions);
+      }
     }
+
+  isBackendAvailable() {
+    return import.meta.env.VITE_ENABLE_BACKEND !== 'false';
   }
 
   transformMenuData(rawData) {
@@ -570,9 +602,10 @@ class AdminMenuService {
         children: [
           { id: 'banners', label: 'Banners', icon: 'Image', path: '/admin/marketing/banners', order: 1 },
           { id: 'promotions', label: 'Promotions', icon: 'Tag', path: '/admin/marketing/promotions', order: 2 },
-          { id: 'discounts', label: 'Discounts', icon: 'Percent', path: '/admin/marketing/discounts', order: 3 },
-          { id: 'campaigns', label: 'Campaigns', icon: 'Target', path: '/admin/marketing/campaigns', order: 4 },
-          { id: 'social-media', label: 'Social Media', icon: 'MessageSquare', path: '/admin/marketing/social', order: 5 }
+          { id: 'video-carousel', label: 'Video Carousel', icon: 'Film', path: '/admin/marketing/video-carousel', order: 3 },
+          { id: 'discounts', label: 'Discounts', icon: 'Percent', path: '/admin/marketing/discounts', order: 4 },
+          { id: 'campaigns', label: 'Campaigns', icon: 'Target', path: '/admin/marketing/campaigns', order: 5 },
+          { id: 'social-media', label: 'Social Media', icon: 'MessageSquare', path: '/admin/marketing/social', order: 6 }
         ]
       },
       {

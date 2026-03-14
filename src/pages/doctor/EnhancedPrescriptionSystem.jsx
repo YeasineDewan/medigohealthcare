@@ -7,9 +7,9 @@ import {
   ChevronDown, ChevronUp, ArrowUpRight, ArrowDownRight, TrendingUp, Activity, Heart,
   Thermometer, Stethoscope, Award, Shield, Zap, Globe, Languages, Settings, Bell,
   FilterIcon, Grid, List, SearchIcon, RefreshCw, MoreVertical, Paperclip, Smile,
-  Frown, Meh, MessageCircle, PhoneCall, VideoCamera, Home, Building, Briefcase,
+  Frown, Meh, MessageCircle, PhoneCall, Home, Building, Briefcase,
   CreditCard, DollarSign, Tag, Barcode, QrCode, FileImage, FileScan, Signature,
-  Stamp, Certificate, MedicalKit, Prescription, Clipboard, NotePencil
+  Stamp, Clipboard, NotePencil
 } from 'lucide-react';
 
 const videoConsultationPrescriptions = [
@@ -252,7 +252,7 @@ export default function EnhancedPrescriptionSystem() {
               <div className="relative">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-600 via-pink-600 to-red-600 p-1">
                   <div className="w-full h-full rounded-2xl bg-white flex items-center justify-center">
-                    <Prescription className="w-8 h-8 text-transparent bg-gradient-to-br from-purple-600 to-pink-600" />
+                    <FileText className="w-8 h-8 text-transparent bg-gradient-to-br from-purple-600 to-pink-600" />
                   </div>
                 </div>
                 <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center border-4 border-white">
