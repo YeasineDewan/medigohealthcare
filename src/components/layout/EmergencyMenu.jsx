@@ -21,7 +21,7 @@ export default function EmergencyMenu({ emergencyServices, isOpen, onClose }) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.2 }}
-          className="absolute right-0 top-full mt-1 pt-2"
+          className="absolute right-0 top-full mt-2 z-50"
         >
           <div
             className="min-w-[280px] rounded-xl bg-white shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] border border-red-100 overflow-hidden"

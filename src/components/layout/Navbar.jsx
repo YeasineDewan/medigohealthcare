@@ -91,7 +91,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center gap-1">
+          <div className="hidden lg:flex items-center gap-2">
             <Link
               to="/"
               className="px-4 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors"
@@ -148,7 +148,7 @@ export default function Navbar() {
             >
               Blog
             </Link>
-            <div className="relative ml-2">
+            <div className="relative ml-4">
               <button
                 ref={emergencyButtonRef}
                 onMouseEnter={() => {
@@ -177,7 +177,7 @@ export default function Navbar() {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/cart')}
               className="relative p-2 rounded-lg text-gray-600 hover:bg-[#f0fdf2] hover:text-[#165028] transition-colors"
