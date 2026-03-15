@@ -1,0 +1,31 @@
+# What to include when zipping for cPanel upload
+# Run "npm run build:cpanel" BEFORE zipping.
+
+INCLUDE (from project root):
+  app/
+  bootstrap/
+  config/
+  database/
+  public/          (must contain index.php, .htaccess, index.html, assets/)
+  resources/
+  routes/
+  storage/         (keep folder structure; can empty logs and framework subdirs)
+  vendor/          (from: composer install --no-dev --optimize-autoloader)
+  scripts/
+  .env.cpanel.example
+  artisan
+  composer.json
+  composer.lock
+  CPANEL_DEPLOY.md
+  index.html       (root – optional; frontend lives in public after build)
+
+EXCLUDE:
+  node_modules/
+  .git/
+  .env
+  dist/
+  *.log
+  .idea/
+  .vscode/
+
+Then upload the zip to cPanel, extract, set document root to public/, create .env from .env.cpanel.example, run migrations, set permissions. See CPANEL_DEPLOY.md.

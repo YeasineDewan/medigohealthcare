@@ -2,12 +2,10 @@
 # Enable URL rewriting
 RewriteEngine On
 
-# Handle Laravel routes (except for assets)
-RewriteCond %{REQUEST_URI} !^/assets/
-RewriteCond %{REQUEST_URI} !^/favicon\.svg$
-RewriteCond %{REQUEST_URI} !^/prescriptions/
+# Serve existing files and directories (index.html, assets/, etc.)
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
+# Send all other requests to Laravel (API + SPA fallback)
 RewriteRule ^ index.php [L]
 
 # Security headers

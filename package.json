@@ -9,6 +9,7 @@
     "mock-server": "node start-mock-server.js",
     "build": "node node_modules/vite/bin/vite.js build",
     "build:prod": "node node_modules/vite/bin/vite.js build --mode production",
+    "build:cpanel": "node scripts/build-for-cpanel.cjs",
     "lint": "node node_modules/eslint/bin/eslint.js .",
     "preview": "node node_modules/vite/bin/vite.js preview",
     "start": "node node_modules/vite/bin/vite.js preview --host",

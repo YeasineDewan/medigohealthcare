@@ -335,14 +335,14 @@ export default function Home() {
 
   return (
     <div>
-      {/* Development Notice - Only show in development and when API fails */}
+      {/* Development Notice - compact, only in dev when API fails */}
       {import.meta.env.DEV && !loading && banners.length === 0 && (
-        <div className="bg-amber-50 border-b border-amber-200 px-4 py-2">
+        <div className="bg-amber-50 border-b border-amber-200 px-4 py-1.5">
           <div className="max-w-7xl mx-auto flex items-center gap-2">
-            <div className="w-4 h-4 bg-amber-500 rounded-full animate-pulse"></div>
-            <p className="text-amber-800 text-sm">
-              <strong>Development Mode:</strong> Backend server appears to be offline. Using default content. 
-              <span className="ml-2 text-amber-600">Start backend server at localhost:8000</span>
+            <div className="w-2.5 h-2.5 bg-amber-500 rounded-full animate-pulse flex-shrink-0"></div>
+            <p className="text-amber-800 text-xs">
+              <strong>Development Mode:</strong> Backend server appears to be offline. Using default content.
+              <span className="ml-1.5 text-amber-600">Start backend at localhost:8000</span>
             </p>
           </div>
         </div>

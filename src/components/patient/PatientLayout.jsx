@@ -15,17 +15,39 @@ import {
   ChevronRight,
   Bell,
   Stethoscope,
+  Receipt,
+  FlaskConical,
+  MessageCircle,
+  HelpCircle,
 } from 'lucide-react';
 
-const menuItems = [
-  { path: '/patient', icon: LayoutDashboard, label: 'Dashboard' },
-  { path: '/patient/book', icon: Calendar, label: 'Book Doctor' },
-  { path: '/patient/live-consult', icon: Video, label: '24/7 Live Consult' },
-  { path: '/patient/appointments', icon: ClipboardList, label: 'My Appointments' },
-  { path: '/patient/orders', icon: ShoppingBag, label: 'Orders' },
-  { path: '/patient/records', icon: FileText, label: 'Health Records' },
-  { path: '/patient/prescriptions', icon: Pill, label: 'Prescriptions' },
-  { path: '/patient/profile', icon: User, label: 'Profile' },
+const menuSections = [
+  {
+    label: 'Care',
+    items: [
+      { path: '/patient', icon: LayoutDashboard, label: 'Dashboard' },
+      { path: '/patient/book', icon: Calendar, label: 'Book Doctor' },
+      { path: '/patient/live-consult', icon: Video, label: '24/7 Live Consult' },
+      { path: '/patient/appointments', icon: ClipboardList, label: 'My Appointments' },
+    ],
+  },
+  {
+    label: 'Orders & Records',
+    items: [
+      { path: '/patient/orders', icon: ShoppingBag, label: 'Orders' },
+      { path: '/patient/records', icon: FileText, label: 'Health Records' },
+      { path: '/patient/prescriptions', icon: Pill, label: 'Prescriptions' },
+      { path: '/patient/billing', icon: Receipt, label: 'Billing & Invoices' },
+      { path: '/patient/lab-results', icon: FlaskConical, label: 'Lab Results' },
+    ],
+  },
+  {
+    label: 'Account',
+    items: [
+      { path: '/patient/messages', icon: MessageCircle, label: 'Messages' },
+      { path: '/patient/profile', icon: User, label: 'Profile' },
+    ],
+  },
 ];
 
 export default function PatientLayout() {
@@ -34,6 +56,35 @@ export default function PatientLayout() {
   const navigate = useNavigate();
 
   const handleLogout = () => navigate('/auth');
+
+  const renderNav = (mobile = false) => (
+    <nav className={mobile ? 'p-4' : 'flex-1 p-4 overflow-y-auto'}>
+      {menuSections.map((section) => (
+        <div key={section.label} className={mobile ? 'mb-6' : 'mb-6'}>
+          <p className="px-4 mb-2 text-xs font-semibold text-white/50 uppercase tracking-wider">
+            {section.label}
+          </p>
+          {section.items.map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={mobile ? () => setSidebarOpen(false) : undefined}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl mb-1 transition-colors ${
+                  isActive ? 'bg-[#5DBB63] text-white' : 'text-white/80 hover:bg-white/10'
+                }`}
+              >
+                <item.icon className="w-5 h-5 flex-shrink-0" />
+                <span className="font-medium">{item.label}</span>
+                {isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
+              </Link>
+            );
+          })}
+        </div>
+      ))}
+    </nav>
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -46,24 +97,7 @@ export default function PatientLayout() {
             <span className="font-bold text-xl">Medigo Patient</span>
           </Link>
         </div>
-        <nav className="flex-1 p-4 overflow-y-auto">
-          {menuItems.map((item) => {
-            const isActive = location.pathname === item.path;
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl mb-1 transition-colors ${
-                  isActive ? 'bg-[#5DBB63] text-white' : 'text-white/80 hover:bg-white/10'
-                }`}
-              >
-                <item.icon className="w-5 h-5 flex-shrink-0" />
-                <span className="font-medium">{item.label}</span>
-                {isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
-              </Link>
-            );
-          })}
-        </nav>
+        {renderNav(false)}
       </aside>
 
       {sidebarOpen && (
@@ -76,21 +110,7 @@ export default function PatientLayout() {
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <nav className="p-4">
-              {menuItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl mb-1 ${
-                    location.pathname === item.path ? 'bg-[#5DBB63]' : 'text-white/80'
-                  }`}
-                >
-                  <item.icon className="w-5 h-5" />
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
+            {renderNav(true)}
           </aside>
         </div>
       )}
@@ -103,10 +123,10 @@ export default function PatientLayout() {
             </button>
             <div className="flex-1" />
             <div className="flex items-center gap-4">
-              <button className="relative p-2 rounded-lg hover:bg-gray-100">
+              <Link to="/patient/messages" className="relative p-2 rounded-lg hover:bg-gray-100">
                 <Bell className="w-5 h-5 text-gray-600" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
-              </button>
+              </Link>
               <div className="hidden sm:block text-right">
                 <p className="font-medium text-[#111827]">Ahmed Khan</p>
                 <p className="text-xs text-gray-500">Patient</p>

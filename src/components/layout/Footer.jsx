@@ -28,11 +28,11 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { icon: Facebook, href: '#', label: 'Facebook', color: 'hover:bg-blue-600' },
-  { icon: Twitter, href: '#', label: 'Twitter', color: 'hover:bg-sky-500' },
-  { icon: Instagram, href: '#', label: 'Instagram', color: 'hover:bg-pink-600' },
-  { icon: Linkedin, href: '#', label: 'LinkedIn', color: 'hover:bg-blue-700' },
-  { icon: Youtube, href: '#', label: 'YouTube', color: 'hover:bg-red-600' },
+  { icon: Facebook, href: 'https://facebook.com', label: 'Facebook' },
+  { icon: Twitter, href: 'https://twitter.com', label: 'Twitter' },
+  { icon: Instagram, href: 'https://instagram.com', label: 'Instagram' },
+  { icon: Linkedin, href: 'https://linkedin.com', label: 'LinkedIn' },
+  { icon: Youtube, href: 'https://youtube.com', label: 'YouTube' },
 ];
 
 export default function Footer() {
@@ -79,7 +79,7 @@ export default function Footer() {
               </div>
             </Link>
             
-            <p className="text-gray-300 text-sm mb-6 leading-relaxed">
+            <p className="text-white/85 text-sm mb-6 leading-relaxed">
               Your trusted healthcare platform. Quality care, delivered digitally.
             </p>
 
@@ -91,7 +91,7 @@ export default function Footer() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Subscribe to newsletter"
-                  className="w-full px-4 py-3 pr-12 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#5DBB63] transition-all"
+                  className="w-full px-4 py-3 pr-12 rounded-xl bg-white/10 backdrop-blur-sm border border-white/25 text-white text-sm placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-[#5DBB63] transition-all"
                   required
                 />
                 <button
@@ -107,12 +107,12 @@ export default function Footer() {
 
             {/* Contact */}
             <div className="space-y-2">
-              <a href="tel:+8801886643626" className="flex items-center gap-2 text-gray-300 hover:text-[#5DBB63] text-sm transition-colors">
-                <Phone className="w-4 h-4" />
+              <a href="tel:+8801886643626" className="flex items-center gap-2 text-white/90 hover:text-[#5DBB63] text-sm transition-colors">
+                <Phone className="w-4 h-4 text-white/90" />
                 +880 1886-643626
               </a>
-              <a href="mailto:info@medigo.com" className="flex items-center gap-2 text-gray-300 hover:text-[#5DBB63] text-sm transition-colors">
-                <Mail className="w-4 h-4" />
+              <a href="mailto:info@medigo.com" className="flex items-center gap-2 text-white/90 hover:text-[#5DBB63] text-sm transition-colors">
+                <Mail className="w-4 h-4 text-white/90" />
                 info@medigo.com
               </a>
             </div>
@@ -120,12 +120,12 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-bold text-[#165028] mb-4 text-sm uppercase tracking-wider" style={{textShadow: '0 2px 4px rgba(0,0,0,0.2)'}}>Quick Links</h4>
+            <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Quick Links</h4>
             <ul className="space-y-2.5">
               {footerLinks.Quick.map((link) => (
                 <li key={link.href}>
-                  <Link to={link.href} className="flex items-center gap-2 text-gray-300 hover:text-white hover:translate-x-1 text-sm transition-all">
-                    <link.icon className="w-4 h-4 text-[#5DBB63]" />
+                  <Link to={link.href} className="flex items-center gap-2 text-white/85 hover:text-[#5DBB63] hover:translate-x-1 text-sm transition-all">
+                    <link.icon className="w-4 h-4 text-white/70 shrink-0" />
                     {link.label}
                   </Link>
                 </li>
@@ -135,12 +135,12 @@ export default function Footer() {
 
           {/* Company */}
           <div>
-            <h4 className="font-bold text-[#86efac] mb-4 text-sm uppercase tracking-wider" style={{textShadow: '0 2px 4px rgba(0,0,0,0.2)'}}>Company</h4>
+            <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Company</h4>
             <ul className="space-y-2.5">
               {footerLinks.Company.map((link) => (
                 <li key={link.href}>
-                  <Link to={link.href} className="flex items-center gap-2 text-gray-300 hover:text-white hover:translate-x-1 text-sm transition-all">
-                    <link.icon className="w-4 h-4 text-[#5DBB63]" />
+                  <Link to={link.href} className="flex items-center gap-2 text-white/85 hover:text-[#5DBB63] hover:translate-x-1 text-sm transition-all">
+                    <link.icon className="w-4 h-4 text-white/70 shrink-0" />
                     {link.label}
                   </Link>
                 </li>
@@ -150,12 +150,12 @@ export default function Footer() {
 
           {/* Legal */}
           <div>
-            <h4 className="font-bold text-[#86efac] mb-4 text-sm uppercase tracking-wider" style={{textShadow: '0 2px 4px rgba(0,0,0,0.2)'}}>Legal</h4>
+            <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Legal</h4>
             <ul className="space-y-2.5">
               {footerLinks.Legal.map((link) => (
                 <li key={link.href}>
-                  <Link to={link.href} className="flex items-center gap-2 text-gray-300 hover:text-white hover:translate-x-1 text-sm transition-all">
-                    <link.icon className="w-4 h-4 text-[#5DBB63]" />
+                  <Link to={link.href} className="flex items-center gap-2 text-white/85 hover:text-[#5DBB63] hover:translate-x-1 text-sm transition-all">
+                    <link.icon className="w-4 h-4 text-white/70 shrink-0" />
                     {link.label}
                   </Link>
                 </li>
@@ -169,37 +169,39 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             {/* Copyright & Badges */}
             <div className="flex flex-col sm:flex-row items-center gap-4">
-              <p className="text-gray-400 text-xs">
+              <p className="text-white/80 text-xs">
                 © {new Date().getFullYear()} Medigo. All rights reserved.
               </p>
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 backdrop-blur-sm">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 border border-white/15">
                   <Shield className="w-3.5 h-3.5 text-[#5DBB63]" />
-                  <span className="text-xs text-gray-400">Secured</span>
+                  <span className="text-xs text-white/85">Secured</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 backdrop-blur-sm">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 border border-white/15">
                   <Award className="w-3.5 h-3.5 text-[#5DBB63]" />
-                  <span className="text-xs text-gray-400">Certified</span>
+                  <span className="text-xs text-white/85">Certified</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 backdrop-blur-sm">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 border border-white/15">
                   <Clock className="w-3.5 h-3.5 text-[#5DBB63]" />
-                  <span className="text-xs text-gray-400">24/7</span>
+                  <span className="text-xs text-white/85">24/7</span>
                 </div>
               </div>
             </div>
 
-            {/* Social Links */}
+            {/* Social Links - clear design, white icons, green hover */}
             <div className="flex items-center gap-2">
-              {socialLinks.map(({ icon: Icon, href, label, color }) => (
+              {socialLinks.map(({ icon: Icon, href, label }) => (
                 <motion.a
                   key={label}
                   href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={label}
                   whileHover={{ scale: 1.1, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`w-9 h-9 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 flex items-center justify-center text-gray-300 hover:text-white hover:border-transparent transition-all duration-300 ${color}`}
+                  className="w-10 h-10 rounded-full bg-white/15 border border-white/20 flex items-center justify-center text-white hover:bg-[#5DBB63] hover:border-[#5DBB63] hover:text-white transition-all duration-300"
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-4 h-4" strokeWidth={2} />
                 </motion.a>
               ))}
             </div>

@@ -65,6 +65,8 @@ const IncomeStatement = lazy(() => import('./pages/admin/accounts/IncomeStatemen
 const DayBook = lazy(() => import('./pages/admin/accounts/DayBook'));
 const CashBook = lazy(() => import('./pages/admin/accounts/CashBook'));
 const BankBook = lazy(() => import('./pages/admin/BankBook'));
+const JournalEntry = lazy(() => import('./pages/admin/accounts/JournalEntry'));
+const AdminSectionPlaceholder = lazy(() => import('./pages/admin/AdminSectionPlaceholder'));
 
 // Lazy load reports
 const ReportsHub = lazy(() => import('./pages/admin/reports/ReportsHub.jsx'));
@@ -180,9 +182,14 @@ const PatientLayout = lazy(() => import('./components/patient/PatientLayout'));
 const PatientDashboard = lazy(() => import('./pages/patient/PatientDashboard'));
 const PatientBook = lazy(() => import('./pages/patient/PatientBook'));
 const PatientLiveConsult = lazy(() => import('./pages/patient/PatientLiveConsult'));
+const PatientPortalAppointments = lazy(() => import('./pages/patient/PatientAppointments'));
 const PatientOrders = lazy(() => import('./pages/patient/PatientOrders'));
+const PatientPortalRecords = lazy(() => import('./pages/patient/PatientRecords'));
 const PatientPrescriptions = lazy(() => import('./pages/patient/PatientPrescriptions'));
 const PatientProfile = lazy(() => import('./pages/patient/PatientProfile'));
+const PatientPortalBilling = lazy(() => import('./pages/patient/PatientBilling'));
+const PatientLabResults = lazy(() => import('./pages/patient/PatientLabResults'));
+const PatientMessages = lazy(() => import('./pages/patient/PatientMessages'));
 
 // Public pages
 import JoinAsDoctor from './pages/JoinAsDoctor';
@@ -279,7 +286,8 @@ function App() {
           <Route path="accounts/trial-balance" element={<TrialBalance />} />
           <Route path="accounts/balance-sheet" element={<BalanceSheet />} />
           <Route path="accounts/income-statement" element={<IncomeStatement />} />
-          <Route path="accounts/*" element={<AdminSettings />} />
+          <Route path="accounts/journal-entry" element={<Suspense fallback={<LoadingSpinner />}><JournalEntry /></Suspense>} />
+          <Route path="accounts/*" element={<Suspense fallback={<LoadingSpinner />}><AdminSectionPlaceholder /></Suspense>} />
           
           {/* HR Routes */}
           <Route path="hr/employee-entry" element={<EmployeeEntry />} />
@@ -289,7 +297,7 @@ function App() {
           <Route path="hr/attendance/daily" element={<DailyAttendance />} />
           <Route path="hr/attendance/monthly" element={<MonthlyAttendance />} />
           <Route path="hr/attendance/report" element={<AttendanceReport />} />
-          <Route path="hr/*" element={<AdminSettings />} />
+          <Route path="hr/*" element={<Suspense fallback={<LoadingSpinner />}><AdminSectionPlaceholder /></Suspense>} />
           
           {/* Reports Routes */}
           <Route path="reports" element={<Suspense fallback={<LoadingSpinner />}><ReportsHub /></Suspense>} />
@@ -303,7 +311,7 @@ function App() {
           <Route path="reports/sales" element={<Suspense fallback={<LoadingSpinner />}><SalesReports /></Suspense>} />
           <Route path="reports/services" element={<Suspense fallback={<LoadingSpinner />}><ServiceReports /></Suspense>} />
           <Route path="reports/custom" element={<Suspense fallback={<LoadingSpinner />}><CustomReports /></Suspense>} />
-          <Route path="reports/*" element={<AdminSettings />} />
+          <Route path="reports/*" element={<Suspense fallback={<LoadingSpinner />}><AdminSectionPlaceholder /></Suspense>} />
           
           {/* Medical Check-Up Routes */}
           <Route path="medical-checkup/registration" element={<Suspense fallback={<LoadingSpinner />}><MedicalCheckupRegistration /></Suspense>} />
@@ -314,7 +322,7 @@ function App() {
           <Route path="medical-checkup/due-collection-history" element={<Suspense fallback={<LoadingSpinner />}><DueCollectionHistory /></Suspense>} />
           <Route path="medical-checkup/value-entry/:candidateId?" element={<Suspense fallback={<LoadingSpinner />}><AllValueEntry /></Suspense>} />
           <Route path="medical-checkup/report/:reportId" element={<Suspense fallback={<LoadingSpinner />}><MedicalExaminationReport /></Suspense>} />
-          <Route path="medical-checkup/*" element={<AdminSettings />} />
+          <Route path="medical-checkup/*" element={<Suspense fallback={<LoadingSpinner />}><AdminSectionPlaceholder /></Suspense>} />
           
           {/* Medical Routes */}
           <Route path="medical/diagnostic" element={<Diagnostic />} />
@@ -322,10 +330,10 @@ function App() {
           <Route path="medical/combined" element={<Combined />} />
           <Route path="medical/prescription" element={<Prescription />} />
           <Route path="medical/history" element={<History />} />
-          <Route path="medical/*" element={<AdminSettings />} />
+          <Route path="medical/*" element={<Suspense fallback={<LoadingSpinner />}><AdminSectionPlaceholder /></Suspense>} />
           
           {/* Departments Routes */}
-          <Route path="departments/*" element={<AdminSettings />} />
+          <Route path="departments/*" element={<Suspense fallback={<LoadingSpinner />}><AdminSectionPlaceholder /></Suspense>} />
           
           {/* Pharmacy Routes */}
           <Route path="pharmacy/medicines" element={<Medicines />} />
@@ -336,7 +344,7 @@ function App() {
           <Route path="pharmacy/stock" element={<StockManagementEnhanced />} />
           <Route path="pharmacy/suppliers" element={<Suppliers />} />
           <Route path="pharmacy/sales" element={<Sales />} />
-          <Route path="pharmacy/*" element={<AdminSettings />} />
+          <Route path="pharmacy/*" element={<Suspense fallback={<LoadingSpinner />}><AdminSectionPlaceholder /></Suspense>} />
           
           {/* Lab Routes */}
           <Route path="lab/tests" element={<LabTestsAdmin />} />
@@ -346,7 +354,7 @@ function App() {
           <Route path="lab/equipment" element={<Suspense fallback={<LoadingSpinner />}><LabEquipment /></Suspense>} />
           <Route path="lab/quality" element={<Suspense fallback={<LoadingSpinner />}><QualityControl /></Suspense>} />
           <Route path="lab/reports" element={<Suspense fallback={<LoadingSpinner />}><LabReportsAdmin /></Suspense>} />
-          <Route path="lab/*" element={<AdminSettings />} />
+          <Route path="lab/*" element={<Suspense fallback={<LoadingSpinner />}><AdminSectionPlaceholder /></Suspense>} />
           
           {/* Patients sub-routes */}
           <Route path="patients/registration" element={<Suspense fallback={<LoadingSpinner />}><PatientRegistration /></Suspense>} />
@@ -356,34 +364,34 @@ function App() {
           <Route path="patients/records" element={<Suspense fallback={<LoadingSpinner />}><PatientRecords /></Suspense>} />
           <Route path="patients/history" element={<Suspense fallback={<LoadingSpinner />}><MedicalHistory /></Suspense>} />
           <Route path="patients/billing" element={<Suspense fallback={<LoadingSpinner />}><PatientBilling /></Suspense>} />
-          <Route path="patients/*" element={<AdminSettings />} />
+          <Route path="patients/*" element={<Suspense fallback={<LoadingSpinner />}><AdminSectionPlaceholder /></Suspense>} />
           
           {/* Doctors sub-routes */}
-          <Route path="doctors/*" element={<AdminSettings />} />
+          <Route path="doctors/*" element={<Suspense fallback={<LoadingSpinner />}><AdminSectionPlaceholder /></Suspense>} />
           
           {/* Inventory Routes */}
           <Route path="inventory/stock" element={<StockManagement />} />
-          <Route path="inventory/*" element={<AdminSettings />} />
+          <Route path="inventory/*" element={<Suspense fallback={<LoadingSpinner />}><AdminSectionPlaceholder /></Suspense>} />
           
           {/* Emergency sub-routes */}
           <Route path="emergency/cases" element={<EmergencyCases />} />
-          <Route path="emergency/*" element={<AdminSettings />} />
+          <Route path="emergency/*" element={<Suspense fallback={<LoadingSpinner />}><AdminSectionPlaceholder /></Suspense>} />
           
           {/* Services sub-routes */}
           <Route path="services/categories" element={<Suspense fallback={<LoadingSpinner />}><ServiceCategories /></Suspense>} />
           <Route path="services/list" element={<Suspense fallback={<LoadingSpinner />}><ServiceList /></Suspense>} />
           <Route path="services/pricing" element={<Suspense fallback={<LoadingSpinner />}><ServicePricing /></Suspense>} />
           <Route path="services/packages" element={<Suspense fallback={<LoadingSpinner />}><ServicePackages /></Suspense>} />
-          <Route path="services/*" element={<AdminSettings />} />
+          <Route path="services/*" element={<Suspense fallback={<LoadingSpinner />}><AdminSectionPlaceholder /></Suspense>} />
           
           {/* Marketing Routes */}
           <Route path="marketing/promotions" element={<Promotions />} />
           <Route path="marketing/video-carousel" element={<Suspense fallback={<LoadingSpinner />}><VideoCarouselManager /></Suspense>} />
-          <Route path="marketing/*" element={<AdminSettings />} />
+          <Route path="marketing/*" element={<Suspense fallback={<LoadingSpinner />}><AdminSectionPlaceholder /></Suspense>} />
           
           {/* Communications Routes */}
           <Route path="communications/notifications" element={<Notifications />} />
-          <Route path="communications/*" element={<AdminSettings />} />
+          <Route path="communications/*" element={<Suspense fallback={<LoadingSpinner />}><AdminSectionPlaceholder /></Suspense>} />
           
           {/* Analysis Setup Routes */}
           <Route path="analysis" element={<AnalysisSetup />} />
@@ -391,7 +399,7 @@ function App() {
           <Route path="analysis/tests" element={<TestServiceEntry />} />
           <Route path="analysis/specimens" element={<AnalysisSpecimen />} />
           <Route path="analysis/collection" element={<SampleCollectionRoom />} />
-          <Route path="analysis/*" element={<AdminSettings />} />
+          <Route path="analysis/*" element={<Suspense fallback={<LoadingSpinner />}><AdminSectionPlaceholder /></Suspense>} />
         </Route>
 
         <Route path="/doctor" element={<DoctorLayout />}>
@@ -411,8 +419,13 @@ function App() {
           <Route index element={<PatientDashboard />} />
           <Route path="book" element={<PatientBook />} />
           <Route path="live-consult" element={<PatientLiveConsult />} />
+          <Route path="appointments" element={<Suspense fallback={<LoadingSpinner />}><PatientPortalAppointments /></Suspense>} />
           <Route path="orders" element={<PatientOrders />} />
+          <Route path="records" element={<Suspense fallback={<LoadingSpinner />}><PatientPortalRecords /></Suspense>} />
           <Route path="prescriptions" element={<PatientPrescriptions />} />
+          <Route path="billing" element={<Suspense fallback={<LoadingSpinner />}><PatientPortalBilling /></Suspense>} />
+          <Route path="lab-results" element={<Suspense fallback={<LoadingSpinner />}><PatientLabResults /></Suspense>} />
+          <Route path="messages" element={<Suspense fallback={<LoadingSpinner />}><PatientMessages /></Suspense>} />
           <Route path="profile" element={<PatientProfile />} />
         </Route>
 

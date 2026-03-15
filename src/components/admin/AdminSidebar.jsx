@@ -1366,7 +1366,12 @@ export default function AdminSidebar() {
 
         {/* Menu Items */}
         {!loading && !error && (
-          <div className="space-y-2">
+          <div className="space-y-1">
+            {!sidebarCollapsed && menuItems.length > 0 && !isMenuEmpty && (
+              <p className="px-4 pt-1 pb-2 text-[10px] font-semibold text-white/40 uppercase tracking-widest">
+                Navigation
+              </p>
+            )}
             {isMenuEmpty ? (
               <div className="text-center py-8">
                 <p className="text-sm text-white/60">No menu items found</p>

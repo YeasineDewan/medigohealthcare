@@ -99,11 +99,11 @@ export default function Navbar() {
             </div>
 
             {/* Center Navigation */}
-            <div className="hidden lg:flex items-center justify-center flex-1 max-w-2xl mx-8">
-              <div className="flex items-center gap-1">
+            <div className="hidden lg:flex items-center justify-center flex-1 max-w-4xl mx-8">
+              <div className="flex items-center gap-4">
                 <Link
                   to="/"
-                  className="px-4 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors"
+                  className="px-3 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors text-[15px]"
                 >
                   Home
                 </Link>
@@ -118,7 +118,7 @@ export default function Navbar() {
                       setEmergencyMenuOpen(false);
                       setServiceMenuOpen(!serviceMenuOpen);
                     }}
-                    className="flex items-center gap-1 px-4 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors"
+                    className="flex items-center gap-1 px-3 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors text-[15px]"
                   >
                     Services
                     <ChevronDown
@@ -142,29 +142,29 @@ export default function Navbar() {
                 </div>
                 <Link
                   to="/about"
-                  className="px-4 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors"
+                  className="px-3 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors text-[15px]"
                 >
                   About Us
                 </Link>
                 <Link
                   to="/careers"
-                  className="px-4 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors"
+                  className="px-3 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors text-[15px]"
                 >
                   Careers
                 </Link>
                 <Link
                   to="/contact"
-                  className="px-4 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors"
+                  className="px-3 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors text-[15px]"
                 >
                   Contact
                 </Link>
                 <Link
                   to="/blog"
-                  className="px-4 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors"
+                  className="px-3 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors text-[15px]"
                 >
                   Blog
                 </Link>
-                <div className="relative">
+                <div className="relative ml-1">
                   <button
                     ref={emergencyButtonRef}
                     onMouseEnter={() => {
@@ -175,7 +175,7 @@ export default function Navbar() {
                       setServiceMenuOpen(false);
                       setEmergencyMenuOpen(!emergencyMenuOpen);
                     }}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 font-semibold transition-colors border border-red-100"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 font-semibold transition-colors border border-red-100 text-[15px]"
                   >
                     Emergency
                     <ChevronDown
@@ -216,14 +216,14 @@ export default function Navbar() {
               </button>
               <Link
                 to="/auth?tab=signup"
-                className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#5DBB63] text-white hover:bg-[#4a9c52] font-semibold transition-all duration-200 shadow-sm hover:shadow-md border border-[#5DBB63]"
+                className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg bg-[#165028] text-white hover:bg-[#0f3d1c] font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
               >
                 <User className="w-4 h-4" />
                 Sign Up
               </Link>
               <Link
                 to="/auth"
-                className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#165028] text-white hover:bg-[#0f3d1c] font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
+                className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg bg-[#165028] text-white hover:bg-[#0f3d1c] font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
               >
                 <User className="w-4 h-4" />
                 Login
@@ -290,7 +290,7 @@ export default function Navbar() {
                   <Link
                     to="/auth?tab=signup"
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-[#5DBB63] text-white font-semibold hover:bg-[#4a9c52] transition-all duration-200 shadow-sm"
+                    className="flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-[#165028] text-white font-semibold hover:bg-[#0f3d1c] transition-all duration-200 shadow-sm"
                   >
                     <User className="w-4 h-4" />
                     Sign Up

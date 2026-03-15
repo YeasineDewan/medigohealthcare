@@ -15,17 +15,36 @@ import {
   Stethoscope,
   FileText,
   BarChart3,
+  Clock,
+  MessageCircle,
+  FolderOpen,
+  Settings,
 } from 'lucide-react';
 
-const menuItems = [
-  { path: '/doctor', icon: LayoutDashboard, label: 'Dashboard' },
-  { path: '/doctor/schedule', icon: Calendar, label: 'Appointments' },
-  { path: '/doctor/live-consult', icon: Video, label: '24/7 Live Consult' },
-  { path: '/doctor/patients', icon: Users, label: 'My Patients' },
-  { path: '/doctor/prescriptions', icon: FileText, label: 'Prescriptions' },
-  { path: '/doctor/reports', icon: BarChart3, label: 'Reports' },
-  { path: '/doctor/earnings', icon: DollarSign, label: 'Earnings' },
-  { path: '/doctor/profile', icon: User, label: 'Profile' },
+const menuSections = [
+  {
+    label: 'Overview',
+    items: [
+      { path: '/doctor', icon: LayoutDashboard, label: 'Dashboard' },
+      { path: '/doctor/schedule', icon: Calendar, label: 'Appointments' },
+      { path: '/doctor/live-consult', icon: Video, label: '24/7 Live Consult' },
+    ],
+  },
+  {
+    label: 'Practice',
+    items: [
+      { path: '/doctor/patients', icon: Users, label: 'My Patients' },
+      { path: '/doctor/prescriptions', icon: FileText, label: 'Prescriptions' },
+      { path: '/doctor/reports', icon: BarChart3, label: 'Reports' },
+    ],
+  },
+  {
+    label: 'Account',
+    items: [
+      { path: '/doctor/earnings', icon: DollarSign, label: 'Earnings' },
+      { path: '/doctor/profile', icon: User, label: 'Profile' },
+    ],
+  },
 ];
 
 export default function DoctorLayout() {
@@ -34,6 +53,35 @@ export default function DoctorLayout() {
   const navigate = useNavigate();
 
   const handleLogout = () => navigate('/auth');
+
+  const renderNav = (mobile = false) => (
+    <nav className={mobile ? 'p-4' : 'flex-1 p-4 overflow-y-auto'}>
+      {menuSections.map((section) => (
+        <div key={section.label} className={mobile ? 'mb-6' : 'mb-6'}>
+          <p className="px-4 mb-2 text-xs font-semibold text-white/50 uppercase tracking-wider">
+            {section.label}
+          </p>
+          {section.items.map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={mobile ? () => setSidebarOpen(false) : undefined}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl mb-1 transition-colors ${
+                  isActive ? 'bg-[#5DBB63] text-white' : 'text-white/80 hover:bg-white/10'
+                }`}
+              >
+                <item.icon className="w-5 h-5 flex-shrink-0" />
+                <span className="font-medium">{item.label}</span>
+                {isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
+              </Link>
+            );
+          })}
+        </div>
+      ))}
+    </nav>
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -46,24 +94,7 @@ export default function DoctorLayout() {
             <span className="font-bold text-xl">Medigo Doctor</span>
           </Link>
         </div>
-        <nav className="flex-1 p-4 overflow-y-auto">
-          {menuItems.map((item) => {
-            const isActive = location.pathname === item.path;
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl mb-1 transition-colors ${
-                  isActive ? 'bg-[#5DBB63] text-white' : 'text-white/80 hover:bg-white/10'
-                }`}
-              >
-                <item.icon className="w-5 h-5 flex-shrink-0" />
-                <span className="font-medium">{item.label}</span>
-                {isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
-              </Link>
-            );
-          })}
-        </nav>
+        {renderNav(false)}
       </aside>
 
       {sidebarOpen && (
@@ -76,21 +107,7 @@ export default function DoctorLayout() {
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <nav className="p-4">
-              {menuItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl mb-1 ${
-                    location.pathname === item.path ? 'bg-[#5DBB63]' : 'text-white/80'
-                  }`}
-                >
-                  <item.icon className="w-5 h-5" />
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
+            {renderNav(true)}
           </aside>
         </div>
       )}

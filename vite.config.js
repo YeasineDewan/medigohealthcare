@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  base: '/', // Production: serve from domain root (cPanel)
   server: {
     port: 5173,
     host: true, // Allow external connections for hosting
@@ -18,6 +19,7 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
+    emptyOutDir: true,
     sourcemap: false,
     rollupOptions: {
       output: {

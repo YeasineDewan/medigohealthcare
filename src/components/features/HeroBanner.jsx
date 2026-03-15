@@ -139,8 +139,8 @@ export default function HeroBanner({ banners = defaultBanners, autoSlide = true,
         </AnimatePresence>
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      {/* Content - reduced top padding so hero starts closer to header */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16 lg:pt-12 lg:pb-20">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <motion.div
             key={`content-${currentIndex}`}
