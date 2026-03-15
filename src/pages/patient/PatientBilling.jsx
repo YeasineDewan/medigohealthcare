@@ -19,15 +19,16 @@ export default function PatientBilling() {
           <h1 className="text-2xl font-bold text-[#111827]">Billing & Invoices</h1>
           <p className="text-gray-500 mt-1">View and download your bills</p>
         </div>
-        <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
-          >
-            <option value="all">All</option>
-            <option value="paid">Paid</option>
-            <option value="pending">Pending</option>
-          </select>
+        <div>
+          <select
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              className="px-4 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
+            >
+              <option value="all">All</option>
+              <option value="paid">Paid</option>
+              <option value="pending">Pending</option>
+            </select>
         </div>
       </div>
 

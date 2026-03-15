@@ -32,7 +32,7 @@ import {
   Download,
   Loader2,
 } from 'lucide-react';
-import VideoCarousel from '../components/core/VideoCarousel';
+import DynamicVideoCarousel from '../components/features/DynamicVideoCarousel';
 
 const values = [
   { icon: Shield, title: 'Trust', desc: 'Verified doctors and pharmacies', color: 'from-blue-500 to-blue-600' },
@@ -268,41 +268,17 @@ export default function About() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl font-bold text-[#165028] mb-4">Our Story in Videos</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-              Discover our journey, facilities, and commitment to healthcare excellence
-            </p>
-          </motion.div>
-          <VideoCarousel 
-            videos={[
-              {
-                id: 1,
-                title: "Advanced Medical Technology",
-                description: "State-of-the-art equipment and facilities",
-                url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-                thumbnail: "https://picsum.photos/seed/about1/800/450"
-              },
-              {
-                id: 2,
-                title: "Our Healthcare Journey",
-                description: "Transforming healthcare delivery since 2020",
-                url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-                thumbnail: "https://picsum.photos/seed/about2/800/450"
-              },
-              {
-                id: 3,
-                title: "Patient Success Stories",
-                description: "Real stories from our valued patients",
-                url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-                thumbnail: "https://picsum.photos/seed/about3/800/450"
-              }
-            ]}
+            <DynamicVideoCarousel
+            page="about"
+            sectionTitle="Our Story in Videos"
+            sectionSubtitle="Discover our journey, facilities, and commitment to healthcare excellence"
             autoPlay={true}
             interval={8000}
             showControls={true}
             showThumbnails={true}
             height="h-96 md:h-[500px]"
           />
+          </motion.div>
         </div>
       </section>
 

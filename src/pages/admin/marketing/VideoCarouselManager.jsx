@@ -1,343 +1,213 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'react-hot-toast';
 import {
   Search,
   Plus,
   Edit3,
   Trash2,
   Eye,
-  Upload,
   Film,
   X,
   Check,
-  AlertTriangle,
   Save,
   RefreshCw,
   Play,
   Pause,
-  Volume2,
-  VolumeX,
-  DragHandleDots2Icon,
   ArrowUp,
   ArrowDown,
-  Copy,
-  Share2,
-  Download,
-  Settings,
   Grid3x3,
   List,
-  Filter,
   Star,
-  MoreVertical,
-  Calendar,
-  Clock,
-  TrendingUp,
-  BarChart3,
-  PieChart,
-  Activity,
-  Zap,
-  Heart,
-  MessageSquare,
-  Link,
-  ExternalLink,
-  CopyCheck,
-  Trash,
-  Edit,
-  View,
-  SlidersHorizontal
+  Loader2,
+  AlertCircle,
 } from 'lucide-react';
+import { videoCarouselApi } from '../../../services/apiService';
+
+const defaultFormData = {
+  title: '',
+  description: '',
+  url: '',
+  thumbnail: '',
+  category: 'General',
+  status: 'active',
+  featured: false,
+  autoplay: true,
+  mute: true,
+  loop: true,
+  showControls: true,
+  displayPages: ['home'],
+  tags: [],
+};
 
 const VideoCarouselManager = () => {
-  const [videos, setVideos] = useState([
-    {
-      id: 1,
-      title: "Welcome to Medigo Healthcare",
-      description: "Experience world-class healthcare with our expert medical team",
-      url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-      thumbnail: "https://picsum.photos/seed/medigo1/400/225",
-      category: "General",
-      status: "active",
-      order: 1,
-      duration: "0:30",
-      views: 1250,
-      featured: true,
-      autoplay: true,
-      mute: true,
-      loop: true,
-      showControls: true,
-      displayPages: ["home", "doctors", "about"],
-      createdAt: "2025-01-15",
-      updatedAt: "2025-01-15",
-      tags: ["healthcare", "welcome", "intro"],
-      engagement: {
-        likes: 45,
-        shares: 12,
-        comments: 8,
-        avgWatchTime: "0:25"
-      }
-    },
-    {
-      id: 2,
-      title: "Our Expert Doctors",
-      description: "Meet our team of experienced medical professionals",
-      url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-      thumbnail: "https://picsum.photos/seed/medigo2/400/225",
-      category: "Doctors",
-      status: "active",
-      order: 2,
-      duration: "0:45",
-      views: 890,
-      featured: false,
-      autoplay: true,
-      mute: true,
-      loop: false,
-      showControls: true,
-      displayPages: ["home", "doctors"],
-      createdAt: "2025-01-14",
-      updatedAt: "2025-01-14",
-      tags: ["doctors", "medical", "team"],
-      engagement: {
-        likes: 32,
-        shares: 8,
-        comments: 5,
-        avgWatchTime: "0:38"
-      }
-    },
-    {
-      id: 3,
-      title: "Advanced Medical Technology",
-      description: "State-of-the-art equipment and facilities",
-      url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-      thumbnail: "https://picsum.photos/seed/medigo3/400/225",
-      category: "Technology",
-      status: "active",
-      order: 3,
-      duration: "0:25",
-      views: 650,
-      featured: false,
-      autoplay: true,
-      mute: true,
-      loop: true,
-      showControls: true,
-      displayPages: ["home", "about"],
-      createdAt: "2025-01-13",
-      updatedAt: "2025-01-13",
-      tags: ["technology", "equipment", "facilities"],
-      engagement: {
-        likes: 28,
-        shares: 6,
-        comments: 3,
-        avgWatchTime: "0:20"
-      }
-    }
-  ]);
-
+  const [videos, setVideos] = useState([]);
+  const [stats, setStats] = useState({ total: 0, active: 0, featured: 0, totalViews: 0 });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [saving, setSaving] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterFeatured, setFilterFeatured] = useState('all');
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
+  const [viewMode, setViewMode] = useState('grid');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showBulkActions, setShowBulkActions] = useState(false);
-  const [selectedVideos, setSelectedVideos] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [isPlaying, setIsPlaying] = useState({});
-  const [sortBy, setSortBy] = useState('order'); // 'order', 'title', 'views', 'date'
-  const [sortOrder, setSortOrder] = useState('asc'); // 'asc', 'desc'
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    url: '',
-    thumbnail: '',
-    category: 'General',
-    status: 'active',
-    featured: false,
-    autoplay: true,
-    mute: true,
-    loop: true,
-    showControls: true,
-    displayPages: ['home'],
-    tags: []
-  });
+  const [sortBy, setSortBy] = useState('order');
+  const [sortOrder, setSortOrder] = useState('asc');
+  const [formData, setFormData] = useState(defaultFormData);
+
+  const fetchVideos = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data } = await videoCarouselApi.adminList({
+        search: searchTerm || undefined,
+        category: filterCategory !== 'all' ? filterCategory : undefined,
+        status: filterStatus !== 'all' ? filterStatus : undefined,
+        featured: filterFeatured === 'featured' ? 'true' : filterFeatured === 'not-featured' ? 'false' : undefined,
+        per_page: 100,
+      });
+      const list = data?.videos ?? [];
+      setVideos(Array.isArray(list) ? list : []);
+      if (data?.stats) setStats(data.stats);
+    } catch (err) {
+      console.error('Video carousel fetch error:', err);
+      setError(err?.response?.data?.message || err?.message || 'Failed to load videos');
+      setVideos([]);
+      toast.error('Could not load video carousel');
+    } finally {
+      setLoading(false);
+    }
+  }, [searchTerm, filterCategory, filterStatus, filterFeatured]);
+
+  useEffect(() => {
+    fetchVideos();
+  }, [fetchVideos]);
 
   const categories = ['General', 'Doctors', 'Technology', 'Services', 'Patient Stories', 'Emergency'];
   const pageOptions = ['home', 'doctors', 'about', 'services', 'contact'];
 
-  // Enhanced filtering and sorting
   const filteredVideos = useMemo(() => {
-    return videos.filter(video => {
-      const matchesSearch = video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           video.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           video.tags?.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-      const matchesCategory = filterCategory === 'all' || video.category === filterCategory;
-      const matchesStatus = filterStatus === 'all' || video.status === filterStatus;
-      const matchesFeatured = filterFeatured === 'all' || 
-                           (filterFeatured === 'featured' && video.featured) ||
-                           (filterFeatured === 'not-featured' && !video.featured);
-      
-      return matchesSearch && matchesCategory && matchesStatus && matchesFeatured;
-    }).sort((a, b) => {
+    return [...videos].sort((a, b) => {
       let comparison = 0;
-      
       switch (sortBy) {
-        case 'title':
-          comparison = a.title.localeCompare(b.title);
-          break;
-        case 'views':
-          comparison = a.views - b.views;
-          break;
-        case 'date':
-          comparison = new Date(a.createdAt) - new Date(b.createdAt);
-          break;
-        case 'order':
-        default:
-          comparison = a.order - b.order;
-          break;
+        case 'title': comparison = (a.title || '').localeCompare(b.title || ''); break;
+        case 'views': comparison = (a.views || 0) - (b.views || 0); break;
+        case 'date': comparison = new Date(a.createdAt || 0) - new Date(b.createdAt || 0); break;
+        default: comparison = (a.order ?? 0) - (b.order ?? 0);
       }
-      
       return sortOrder === 'asc' ? comparison : -comparison;
     });
-  }, [videos, searchTerm, filterCategory, filterStatus, filterFeatured, sortBy, sortOrder]);
+  }, [videos, sortBy, sortOrder]);
 
-  const stats = useMemo(() => ({
-    total: videos.length,
-    active: videos.filter(v => v.status === 'active').length,
-    featured: videos.filter(v => v.featured).length,
-    totalViews: videos.reduce((sum, v) => sum + v.views, 0),
-    totalEngagement: videos.reduce((sum, v) => 
-      sum + (v.engagement?.likes || 0) + (v.engagement?.shares || 0) + (v.engagement?.comments || 0), 0
-    ),
-    avgWatchTime: videos.length > 0 
-      ? videos.reduce((sum, v) => sum + (v.engagement?.avgWatchTime ? parseInt(v.engagement.avgWatchTime.split(':')[0]) * 60 + parseInt(v.engagement.avgWatchTime.split(':')[1]) : 0), 0) / videos.length
-      : 0
-  }), [videos]);
+  const toPayload = (fd) => ({
+    title: fd.title,
+    description: fd.description || null,
+    video_url: fd.url,
+    thumbnail_url: fd.thumbnail || null,
+    category: fd.category || 'General',
+    status: fd.status,
+    featured: fd.featured,
+    autoplay: fd.autoplay,
+    mute: fd.mute,
+    loop: fd.loop,
+    show_controls: fd.showControls,
+    display_pages: Array.isArray(fd.displayPages) ? fd.displayPages : ['home'],
+    tags: Array.isArray(fd.tags) ? fd.tags : [],
+  });
 
-  // Enhanced handlers
-  const handleSelectVideo = useCallback((videoId) => {
-    setSelectedVideos(prev => 
-      prev.includes(videoId) 
-        ? prev.filter(id => id !== videoId)
-        : [...prev, videoId]
-    );
-  }, []);
-
-  const handleSelectAll = useCallback(() => {
-    if (selectedVideos.length === filteredVideos.length) {
-      setSelectedVideos([]);
-    } else {
-      setSelectedVideos(filteredVideos.map(v => v.id));
+  const handleAddVideo = async () => {
+    if (!formData.title?.trim() || !formData.url?.trim()) {
+      toast.error('Title and video URL are required');
+      return;
     }
-  }, [selectedVideos.length, filteredVideos]);
-
-  const handleBulkDelete = useCallback(() => {
-    setVideos(prev => prev.filter(video => !selectedVideos.includes(video.id)));
-    setSelectedVideos([]);
-    setShowBulkActions(false);
-  }, [selectedVideos]);
-
-  const handleBulkStatusChange = useCallback((status) => {
-    setVideos(prev => prev.map(video => 
-      selectedVideos.includes(video.id) 
-        ? { ...video, status, updatedAt: new Date().toISOString().split('T')[0] }
-        : video
-    ));
-    setSelectedVideos([]);
-    setShowBulkActions(false);
-  }, [selectedVideos]);
-
-  const handleDuplicateVideo = useCallback((video) => {
-    const duplicatedVideo = {
-      ...video,
-      id: Math.max(...videos.map(v => v.id)) + 1,
-      title: `${video.title} (Copy)`,
-      views: 0,
-      createdAt: new Date().toISOString().split('T')[0],
-      updatedAt: new Date().toISOString().split('T')[0],
-      engagement: {
-        likes: 0,
-        shares: 0,
-        comments: 0,
-        avgWatchTime: "0:00"
-      }
-    };
-    setVideos(prev => [...prev, duplicatedVideo]);
-  }, [videos]);
-
-  const handleExportData = useCallback(() => {
-    const dataStr = JSON.stringify(videos, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'video-carousel-data.json';
-    link.click();
-    URL.revokeObjectURL(url);
-  }, [videos]);
-
-  const handleAddVideo = () => {
-    const newVideo = {
-      id: Math.max(...videos.map(v => v.id)) + 1,
-      ...formData,
-      order: videos.length + 1,
-      duration: "0:30",
-      views: 0,
-      createdAt: new Date().toISOString().split('T')[0],
-      updatedAt: new Date().toISOString().split('T')[0],
-      engagement: {
-        likes: 0,
-        shares: 0,
-        comments: 0,
-        avgWatchTime: "0:00"
-      }
-    };
-    setVideos([...videos, newVideo]);
-    setShowAddModal(false);
-    resetForm();
+    setSaving(true);
+    try {
+      const { data } = await videoCarouselApi.create(toPayload(formData));
+      const newVideo = data?.video;
+      if (newVideo) setVideos(prev => [...prev, newVideo]);
+      setShowAddModal(false);
+      setFormData(defaultFormData);
+      if (data?.stats) setStats(data.stats);
+      toast.success('Video added successfully');
+      fetchVideos();
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Failed to add video');
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleEditVideo = () => {
-    setVideos(videos.map(video => 
-      video.id === selectedVideo.id 
-        ? { ...video, ...formData, updatedAt: new Date().toISOString().split('T')[0] }
-        : video
-    ));
-    setShowEditModal(false);
-    resetForm();
+  const handleEditVideo = async () => {
+    if (!selectedVideo?.id || !formData.title?.trim() || !formData.url?.trim()) {
+      toast.error('Title and video URL are required');
+      return;
+    }
+    setSaving(true);
+    try {
+      const { data } = await videoCarouselApi.update(selectedVideo.id, toPayload(formData));
+      if (data?.video) setVideos(prev => prev.map(v => v.id === selectedVideo.id ? data.video : v));
+      setShowEditModal(false);
+      setFormData(defaultFormData);
+      setSelectedVideo(null);
+      toast.success('Video updated successfully');
+      fetchVideos();
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Failed to update video');
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleDeleteVideo = (id) => {
-    setVideos(videos.filter(video => video.id !== id));
+  const handleDeleteVideo = async (id) => {
+    try {
+      await videoCarouselApi.delete(id);
+      setVideos(prev => prev.filter(v => v.id !== id));
+      toast.success('Video removed');
+      fetchVideos();
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Failed to delete video');
+    }
   };
 
-  const handleToggleStatus = (id) => {
-    setVideos(videos.map(video => 
-      video.id === id 
-        ? { ...video, status: video.status === 'active' ? 'inactive' : 'active' }
-        : video
-    ));
+  const handleToggleStatus = async (id) => {
+    try {
+      const { data } = await videoCarouselApi.toggleStatus(id);
+      if (data?.video) setVideos(prev => prev.map(v => v.id === id ? data.video : v));
+      toast.success(data?.video?.status === 'active' ? 'Video activated' : 'Video deactivated');
+    } catch (err) {
+      toast.error('Failed to update status');
+    }
   };
 
-  const handleToggleFeatured = (id) => {
-    setVideos(videos.map(video => 
-      video.id === id 
-        ? { ...video, featured: !video.featured }
-        : video
-    ));
+  const handleToggleFeatured = async (id) => {
+    try {
+      const { data } = await videoCarouselApi.toggleFeatured(id);
+      if (data?.video) setVideos(prev => prev.map(v => v.id === id ? data.video : v));
+      toast.success(data?.video?.featured ? 'Marked as featured' : 'Removed from featured');
+    } catch (err) {
+      toast.error('Failed to update featured');
+    }
   };
 
-  const handleReorder = (id, direction) => {
+  const handleReorder = async (id, direction) => {
     const index = videos.findIndex(v => v.id === id);
+    const newOrder = [...videos];
     if (direction === 'up' && index > 0) {
-      const newVideos = [...videos];
-      [newVideos[index], newVideos[index - 1]] = [newVideos[index - 1], newVideos[index]];
-      setVideos(newVideos.map((v, i) => ({ ...v, order: i + 1 })));
-    } else if (direction === 'down' && index < videos.length - 1) {
-      const newVideos = [...videos];
-      [newVideos[index], newVideos[index + 1]] = [newVideos[index + 1], newVideos[index]];
-      setVideos(newVideos.map((v, i) => ({ ...v, order: i + 1 })));
+      [newOrder[index - 1], newOrder[index]] = [newOrder[index], newOrder[index - 1]];
+    } else if (direction === 'down' && index < videos.length - 1 && index >= 0) {
+      [newOrder[index], newOrder[index + 1]] = [newOrder[index + 1], newOrder[index]];
+    } else return;
+    const orderIds = newOrder.map(v => v.id);
+    try {
+      const { data } = await videoCarouselApi.reorder(orderIds);
+      if (data?.videos?.length) setVideos(data.videos);
+      toast.success('Order updated');
+    } catch (err) {
+      toast.error('Failed to reorder');
     }
   };
 
@@ -345,38 +215,24 @@ const VideoCarouselManager = () => {
     setIsPlaying(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const resetForm = () => {
-    setFormData({
-      title: '',
-      description: '',
-      url: '',
-      thumbnail: '',
-      category: 'General',
-      status: 'active',
-      featured: false,
-      autoplay: true,
-      mute: true,
-      loop: true,
-      showControls: true,
-      displayPages: ['home']
-    });
-  };
+  const resetForm = () => setFormData(defaultFormData);
 
   const openEditModal = (video) => {
     setSelectedVideo(video);
     setFormData({
-      title: video.title,
-      description: video.description,
-      url: video.url,
-      thumbnail: video.thumbnail,
-      category: video.category,
-      status: video.status,
-      featured: video.featured,
-      autoplay: video.autoplay,
-      mute: video.mute,
-      loop: video.loop,
-      showControls: video.showControls,
-      displayPages: video.displayPages
+      title: video.title ?? '',
+      description: video.description ?? '',
+      url: video.url ?? video.video_url ?? '',
+      thumbnail: video.thumbnail ?? video.thumbnail_url ?? '',
+      category: video.category ?? 'General',
+      status: video.status ?? 'active',
+      featured: !!video.featured,
+      autoplay: video.autoplay !== false,
+      mute: video.mute !== false,
+      loop: video.loop !== false,
+      showControls: (video.showControls ?? video.show_controls) !== false,
+      displayPages: Array.isArray(video.displayPages) ? video.displayPages : (Array.isArray(video.display_pages) ? video.display_pages : ['home']),
+      tags: Array.isArray(video.tags) ? video.tags : [],
     });
     setShowEditModal(true);
   };
@@ -384,26 +240,48 @@ const VideoCarouselManager = () => {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl p-8 text-white"
+        className="bg-gradient-to-r from-[#165028] to-[#5DBB63] rounded-3xl p-8 text-white shadow-xl"
       >
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div>
             <h1 className="text-4xl font-bold mb-2">Video Carousel Manager</h1>
-            <p className="text-xl opacity-90">Manage promotional videos across all pages</p>
+            <p className="text-xl opacity-90">Manage promotional videos across Home, Doctors, About and more</p>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-3 px-8 py-4 bg-white text-purple-600 font-bold rounded-2xl hover:bg-gray-100 transition-all"
-          >
-            <Plus className="w-6 h-6" /> Add New Video
-          </motion.button>
+          <div className="flex items-center gap-3">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={fetchVideos}
+              disabled={loading}
+              className="flex items-center gap-2 px-4 py-3 bg-white/20 rounded-xl hover:bg-white/30 transition-all disabled:opacity-60"
+            >
+              <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} /> Refresh
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowAddModal(true)}
+              className="flex items-center gap-3 px-8 py-4 bg-white text-[#165028] font-bold rounded-2xl hover:bg-gray-100 transition-all"
+            >
+              <Plus className="w-6 h-6" /> Add New Video
+            </motion.button>
+          </div>
         </div>
       </motion.div>
+
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-between gap-4 p-4 bg-amber-50 border border-amber-200 rounded-2xl text-amber-800"
+        >
+          <span className="flex items-center gap-2"><AlertCircle className="w-5 h-5" /> {error}</span>
+          <button onClick={fetchVideos} className="px-4 py-2 bg-amber-200 rounded-lg font-medium hover:bg-amber-300">Retry</button>
+        </motion.div>
+      )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -411,7 +289,7 @@ const VideoCarouselManager = () => {
           { title: 'Total Videos', value: stats.total, icon: Film, color: 'from-blue-500 to-blue-600' },
           { title: 'Active Videos', value: stats.active, icon: Play, color: 'from-green-500 to-green-600' },
           { title: 'Featured Videos', value: stats.featured, icon: Star, color: 'from-yellow-500 to-orange-500' },
-          { title: 'Total Views', value: stats.totalViews.toLocaleString(), icon: Eye, color: 'from-purple-500 to-pink-500' }
+          { title: 'Total Views', value: (stats.totalViews ?? 0).toLocaleString(), icon: Eye, color: 'from-purple-500 to-pink-500' }
         ].map((stat, index) => (
           <motion.div
             key={stat.title}
@@ -495,6 +373,22 @@ const VideoCarouselManager = () => {
 
       {/* Videos Grid/List */}
       <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}>
+        {loading ? (
+          [...Array(6)].map((_, i) => (
+            <div key={i} className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden animate-pulse">
+              <div className="h-48 bg-gray-200" />
+              <div className="p-6 space-y-3">
+                <div className="h-5 bg-gray-200 rounded w-3/4" />
+                <div className="h-4 bg-gray-100 rounded w-full" />
+                <div className="h-4 bg-gray-100 rounded w-1/2" />
+                <div className="flex gap-2 mt-4">
+                  <div className="h-8 w-20 bg-gray-100 rounded-lg" />
+                  <div className="h-8 w-16 bg-gray-100 rounded-lg" />
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
         <AnimatePresence>
           {filteredVideos.map((video, index) => (
             <motion.div
@@ -510,9 +404,10 @@ const VideoCarouselManager = () => {
               {/* Video Thumbnail */}
               <div className={`relative ${viewMode === 'list' ? 'w-48' : ''} bg-gray-100`}>
                 <img
-                  src={video.thumbnail}
+                  src={video.thumbnail || video.thumbnail_url || ''}
                   alt={video.title}
                   className={`w-full ${viewMode === 'list' ? 'h-full' : 'h-48'} object-cover`}
+                  onError={(e) => { e.target.src = 'https://placehold.co/400x225?text=No+thumbnail'; }}
                 />
                 <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
                   <motion.button
@@ -548,7 +443,7 @@ const VideoCarouselManager = () => {
                 {/* Duration */}
                 <div className="absolute bottom-3 right-3">
                   <span className="px-2 py-1 bg-black/70 text-white rounded text-xs">
-                    {video.duration}
+                    {video.duration || '–'}
                   </span>
                 </div>
               </div>
@@ -563,7 +458,7 @@ const VideoCarouselManager = () => {
                     {video.category}
                   </span>
                   <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
-                    {video.views.toLocaleString()} views
+                    {(video.views ?? 0).toLocaleString()} views
                   </span>
                 </div>
 
@@ -571,7 +466,7 @@ const VideoCarouselManager = () => {
                 <div className="mb-4">
                   <p className="text-sm text-gray-500 mb-2">Display on:</p>
                   <div className="flex flex-wrap gap-1">
-                    {video.displayPages.map(page => (
+                    {(video.displayPages || video.display_pages || []).map(page => (
                       <span key={page} className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
                         {page}
                       </span>
@@ -650,6 +545,7 @@ const VideoCarouselManager = () => {
             </motion.div>
           ))}
         </AnimatePresence>
+        )}
       </div>
 
       {/* Add/Edit Modal */}
@@ -840,9 +736,10 @@ const VideoCarouselManager = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={showAddModal ? handleAddVideo : handleEditVideo}
-                  className="flex-1 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all"
+                  disabled={saving}
+                  className="flex-1 py-3 bg-gradient-to-r from-[#165028] to-[#5DBB63] text-white font-bold rounded-xl hover:opacity-90 transition-all disabled:opacity-60 flex items-center justify-center gap-2"
                 >
-                  <Save className="w-5 h-5 inline mr-2" />
+                  {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                   {showAddModal ? 'Add Video' : 'Save Changes'}
                 </motion.button>
                 <motion.button

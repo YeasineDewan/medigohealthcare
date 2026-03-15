@@ -7,7 +7,8 @@ import {
 import { Button } from '../../components/core/Button';
 import axios from 'axios';
 
-const API_BASE = import.meta.env.VITE_API_URL || '/api/v1';
+import { env } from '../../config/env';
+const API_BASE = env.apiBase;
 
 export default function AdminBanners() {
   const [banners, setBanners] = useState([]);

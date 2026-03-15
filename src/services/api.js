@@ -1,17 +1,15 @@
 import axios from 'axios';
-
-const API_BASE = import.meta.env.VITE_API_URL || '/api/v1';
+import { env } from '../config/env';
 
 export const api = axios.create({
-  baseURL: API_BASE,
+  baseURL: env.apiBase,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
-  timeout: 10000, // 10 second timeout
+  timeout: 10000,
 });
 
-// Add request interceptor for error handling
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -24,26 +22,11 @@ api.interceptors.response.use(
   }
 );
 
-// Menu APIs
+// Menu APIs – data from your backend only (no mock fallback)
 export const menuService = {
   getServices: () => api.get('/menus/services'),
   getEmergencyServices: () => api.get('/menus/emergency'),
 };
-
-// Fallback menu data when API is unavailable
-export const fallbackServices = [
-  { id: 1, title: 'Specialist Doctor', slug: 'specialist-doctor', icon: 'stethoscope', route_url: '/doctors', description: 'Book appointments with specialists' },
-  { id: 2, title: 'Video Consultation', slug: 'video-consultation', icon: 'video', route_url: '/consult', description: 'Online video calls with doctors' },
-  { id: 3, title: 'Pharmacy', slug: 'pharmacy', icon: 'pill', route_url: '/pharmacy', description: 'Order medicines online' },
-  { id: 4, title: 'Lab Tests', slug: 'lab-tests', icon: 'flask', route_url: '/lab-tests', description: 'Home collection & reports' },
-  { id: 5, title: 'Health Records', slug: 'health-records', icon: 'folder', route_url: '/records', description: 'Your medical history' },
-];
-
-export const fallbackEmergencyServices = [
-  { id: 1, title: 'Ambulance Request', description: 'Live Tracking', icon: 'ambulance', bg_color_hex: '#FEE2E2' },
-  { id: 2, title: 'Emergency Doctor', description: '24/7 Available', icon: 'phone-call', bg_color_hex: '#FEE2E2' },
-  { id: 3, title: 'Blood Bank', description: 'Find Donors', icon: 'droplet', bg_color_hex: '#FEE2E2' },
-];
 
 // Product Category APIs
 export const categoryService = {

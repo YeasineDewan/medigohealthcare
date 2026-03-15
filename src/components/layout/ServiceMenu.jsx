@@ -24,16 +24,7 @@ const iconMap = {
 };
 
 export default function ServiceMenu({ services, isOpen, onClose }) {
-  // Ensure services is always an array and has fallback data
-  const servicesList = Array.isArray(services) && services.length > 0 
-    ? services 
-    : [
-        { id: 1, title: 'Specialist Doctor', slug: 'specialist-doctor', icon: 'stethoscope', route_url: '/doctors', description: 'Book appointments with specialists' },
-        { id: 2, title: 'Video Consultation', slug: 'video-consultation', icon: 'video', route_url: '/consult', description: 'Online video calls with doctors' },
-        { id: 3, title: 'Pharmacy', slug: 'pharmacy', icon: 'pill', route_url: '/pharmacy', description: 'Order medicines online' },
-        { id: 4, title: 'Lab Tests', slug: 'lab-tests', icon: 'flask', route_url: '/lab-tests', description: 'Home collection & reports' },
-        { id: 5, title: 'Health Records', slug: 'health-records', icon: 'folder', route_url: '/records', description: 'Your medical history' },
-      ];
+  const servicesList = Array.isArray(services) ? services : [];
 
   return (
     <AnimatePresence>

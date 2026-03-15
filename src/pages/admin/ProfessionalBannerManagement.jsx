@@ -10,7 +10,8 @@ import { Button } from '../../components/core/Button';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
-const API_BASE = import.meta.env.VITE_API_URL || '/api/v1';
+import { env } from '../../config/env';
+const API_BASE = env.apiBase;
 
 export default function ProfessionalBannerManagement() {
   const [banners, setBanners] = useState([]);

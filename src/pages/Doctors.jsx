@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Search, Filter, MapPin } from 'lucide-react';
 import DoctorCard from '../components/features/DoctorCard';
-import VideoCarousel from '../components/core/VideoCarousel';
+import DynamicVideoCarousel from '../components/features/DynamicVideoCarousel';
 
 const specialties = ['All', 'Cardiology', 'Pediatrics', 'General Medicine', 'Dermatology', 'Orthopedics'];
 const mockDoctors = [
@@ -37,23 +37,10 @@ export default function Doctors() {
       {/* Video Carousel Section */}
       <section className="py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <VideoCarousel 
-            videos={[
-              {
-                id: 1,
-                title: "Our Expert Doctors",
-                description: "Meet our team of experienced medical professionals",
-                url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-                thumbnail: "https://picsum.photos/seed/doctors1/800/450"
-              },
-              {
-                id: 2,
-                title: "Doctor Consultation Process",
-                description: "How to book and attend your consultation",
-                url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-                thumbnail: "https://picsum.photos/seed/doctors2/800/450"
-              }
-            ]}
+          <DynamicVideoCarousel
+            page="doctors"
+            sectionTitle="Our Expert Doctors"
+            sectionSubtitle="Meet our team and see how consultations work"
             autoPlay={true}
             interval={7000}
             showControls={true}

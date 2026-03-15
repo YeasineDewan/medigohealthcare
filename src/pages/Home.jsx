@@ -20,10 +20,11 @@ import HeroBanner from '../components/features/HeroBanner';
 import FeaturedProducts from '../components/features/FeaturedProducts';
 import BestDoctors from '../components/features/BestDoctors';
 import { Button } from '../components/core/Button';
-import VideoCarousel from '../components/core/VideoCarousel';
+import DynamicVideoCarousel from '../components/features/DynamicVideoCarousel';
 import axios from 'axios';
 
-const API_BASE = import.meta.env.VITE_API_URL || '/api/v1';
+import { env } from '../config/env';
+const API_BASE = env.apiBase;
 
 const services = [
   { icon: Stethoscope, title: 'Specialist Doctors', desc: 'Book appointments with certified specialists', href: '/doctors', color: 'from-[#5DBB63] to-[#165028]' },
@@ -321,13 +322,7 @@ export default function Home() {
       setBanners(response.data.data || []);
     } catch (error) {
       console.error('Error fetching banners:', error);
-      // Use default banners if API fails - set empty array to use HeroBanner defaults
       setBanners([]);
-      
-      // Show user-friendly notification for development
-      if (import.meta.env.DEV) {
-        console.log('🔧 Using default banners due to API error. Check if backend server is running.');
-      }
     } finally {
       setLoading(false);
     }
@@ -335,14 +330,13 @@ export default function Home() {
 
   return (
     <div>
-      {/* Development Notice - compact, only in dev when API fails */}
-      {import.meta.env.DEV && !loading && banners.length === 0 && (
+      {/* Show notice only in dev when no .env API URL is set and banners failed to load */}
+      {env.isDevelopment && !env.hasExplicitApiUrl && !loading && banners.length === 0 && (
         <div className="bg-amber-50 border-b border-amber-200 px-4 py-1.5">
           <div className="max-w-7xl mx-auto flex items-center gap-2">
             <div className="w-2.5 h-2.5 bg-amber-500 rounded-full animate-pulse flex-shrink-0"></div>
             <p className="text-amber-800 text-xs">
-              <strong>Development Mode:</strong> Backend server appears to be offline. Using default content.
-              <span className="ml-1.5 text-amber-600">Start backend at localhost:8000</span>
+              <strong>Development:</strong> Set VITE_API_URL in .env and run backend to load content from your database.
             </p>
           </div>
         </div>
@@ -366,41 +360,17 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl font-bold text-[#165028] mb-4">Featured Videos</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-              Discover our healthcare services through engaging videos
-            </p>
-          </motion.div>
-          <VideoCarousel 
-            videos={[
-              {
-                id: 1,
-                title: "Welcome to Medigo Healthcare",
-                description: "Experience world-class healthcare with our expert medical team",
-                url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-                thumbnail: "https://picsum.photos/seed/medigo1/800/450"
-              },
-              {
-                id: 2,
-                title: "Our Expert Doctors",
-                description: "Meet our team of experienced medical professionals",
-                url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-                thumbnail: "https://picsum.photos/seed/medigo2/800/450"
-              },
-              {
-                id: 3,
-                title: "Advanced Medical Technology",
-                description: "State-of-the-art equipment and facilities",
-                url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-                thumbnail: "https://picsum.photos/seed/medigo3/800/450"
-              }
-            ]}
+            <DynamicVideoCarousel
+            page="home"
+            sectionTitle="Featured Videos"
+            sectionSubtitle="Discover our healthcare services through engaging videos"
             autoPlay={true}
             interval={6000}
             showControls={true}
             showThumbnails={true}
             height="h-96 md:h-[500px]"
           />
+          </motion.div>
         </div>
       </section>
 

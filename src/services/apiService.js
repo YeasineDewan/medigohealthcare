@@ -1,8 +1,8 @@
 import axios from 'axios';
+import { env } from '../config/env';
 
-// Create axios instance with base configuration
 const api = axios.create({
-  baseURL: '/api/v1',
+  baseURL: env.apiBase,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -137,6 +137,21 @@ export const medicinesApi = {
   
   // Get stats
   getStats: () => api.get('/medicines/stats'),
+};
+
+// Video Carousel API (public list + admin CRUD)
+export const videoCarouselApi = {
+  // Public: list active videos, optionally by display page (home, doctors, about, etc.)
+  list: (params = {}) => api.get('/video-carousel', { params }),
+  // Admin: full list with filters and pagination
+  adminList: (params = {}) => api.get('/video-carousel/admin', { params }),
+  get: (id) => api.get(`/video-carousel/${id}`),
+  create: (data) => api.post('/video-carousel', data),
+  update: (id, data) => api.put(`/video-carousel/${id}`, data),
+  delete: (id) => api.delete(`/video-carousel/${id}`),
+  reorder: (order) => api.put('/video-carousel/reorder', { order }),
+  toggleStatus: (id) => api.put(`/video-carousel/${id}/toggle-status`),
+  toggleFeatured: (id) => api.put(`/video-carousel/${id}/toggle-featured`),
 };
 
 // Reports API (uses backend ReportController + dashboard for stats)

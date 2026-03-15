@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-hot-toast';
+import { env } from '../config/env';
 
 // Custom hook for managing API data with loading, error states and caching
 export function useAdminData(serviceFunction, dependencies = [], options = {}) {
@@ -123,7 +124,7 @@ export function useRealTimeUpdates(endpoint, initialData = null) {
 
   useEffect(() => {
     // WebSocket connection for real-time updates
-    const ws = new WebSocket(`${import.meta.env.VITE_WS_URL || 'ws://localhost:8000'}${endpoint}`);
+    const ws = new WebSocket(`${env.wsBase}${endpoint}`);
 
     ws.onopen = () => {
       setConnected(true);

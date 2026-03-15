@@ -99,11 +99,11 @@ export default function Navbar() {
             </div>
 
             {/* Center Navigation */}
-            <div className="hidden lg:flex items-center justify-center flex-1 max-w-4xl mx-8">
-              <div className="flex items-center gap-4">
+            <div className="hidden lg:flex items-center justify-center flex-1 max-w-3xl mx-12">
+              <div className="flex items-center gap-2">
                 <Link
                   to="/"
-                  className="px-3 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors text-[15px]"
+                  className="px-4 py-2 rounded-lg text-black hover:text-[#5DBB63] hover:bg-[#f0fdf2] font-medium transition-colors"
                 >
                   Home
                 </Link>
@@ -118,7 +118,7 @@ export default function Navbar() {
                       setEmergencyMenuOpen(false);
                       setServiceMenuOpen(!serviceMenuOpen);
                     }}
-                    className="flex items-center gap-1 px-3 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors text-[15px]"
+                    className="flex items-center gap-1 px-4 py-2 rounded-lg text-black hover:text-[#5DBB63] hover:bg-[#f0fdf2] font-medium transition-colors"
                   >
                     Services
                     <ChevronDown
@@ -142,29 +142,29 @@ export default function Navbar() {
                 </div>
                 <Link
                   to="/about"
-                  className="px-3 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors text-[15px]"
+                  className="px-4 py-2 rounded-lg text-black hover:text-[#5DBB63] hover:bg-[#f0fdf2] font-medium transition-colors whitespace-nowrap"
                 >
                   About Us
                 </Link>
                 <Link
                   to="/careers"
-                  className="px-3 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors text-[15px]"
+                  className="px-4 py-2 rounded-lg text-black hover:text-[#5DBB63] hover:bg-[#f0fdf2] font-medium transition-colors"
                 >
                   Careers
                 </Link>
                 <Link
                   to="/contact"
-                  className="px-3 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors text-[15px]"
+                  className="px-4 py-2 rounded-lg text-black hover:text-[#5DBB63] hover:bg-[#f0fdf2] font-medium transition-colors"
                 >
                   Contact
                 </Link>
                 <Link
                   to="/blog"
-                  className="px-3 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors text-[15px]"
+                  className="px-4 py-2 rounded-lg text-black hover:text-[#5DBB63] hover:bg-[#f0fdf2] font-medium transition-colors"
                 >
                   Blog
                 </Link>
-                <div className="relative ml-1">
+                <div className="relative">
                   <button
                     ref={emergencyButtonRef}
                     onMouseEnter={() => {
@@ -175,7 +175,7 @@ export default function Navbar() {
                       setServiceMenuOpen(false);
                       setEmergencyMenuOpen(!emergencyMenuOpen);
                     }}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 font-semibold transition-colors border border-red-100 text-[15px]"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 font-semibold transition-colors border border-red-100"
                   >
                     Emergency
                     <ChevronDown

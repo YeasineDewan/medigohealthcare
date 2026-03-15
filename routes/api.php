@@ -29,6 +29,7 @@ use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\InventoryController;
 use App\Http\Controllers\Api\DoctorProfileController;
+use App\Http\Controllers\Api\VideoCarouselController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -102,6 +103,9 @@ Route::prefix('v1')->group(function () {
     Route::get('/lab-tests/{id}', [LabTestController::class, 'show']);
     Route::get('/blog', [BlogController::class, 'index']);
     Route::get('/blog/{id}', [BlogController::class, 'show']);
+
+    // Video Carousel (public: active videos by page)
+    Route::get('/video-carousel', [VideoCarouselController::class, 'index']);
     
     // Protected Routes
     Route::middleware('auth:sanctum')->group(function () {
@@ -202,6 +206,16 @@ Route::prefix('v1')->group(function () {
             Route::delete('/banners/{id}', [BannerController::class, 'destroy']);
             Route::put('/banners/{id}/toggle', [BannerController::class, 'toggleActive']);
             Route::get('/banners/stats', [BannerController::class, 'getStats']);
+
+            // Video Carousel Management (Marketing)
+            Route::get('/video-carousel/admin', [VideoCarouselController::class, 'adminIndex']);
+            Route::post('/video-carousel', [VideoCarouselController::class, 'store']);
+            Route::put('/video-carousel/reorder', [VideoCarouselController::class, 'reorder']);
+            Route::get('/video-carousel/{id}', [VideoCarouselController::class, 'show']);
+            Route::put('/video-carousel/{id}', [VideoCarouselController::class, 'update']);
+            Route::delete('/video-carousel/{id}', [VideoCarouselController::class, 'destroy']);
+            Route::put('/video-carousel/{id}/toggle-status', [VideoCarouselController::class, 'toggleStatus']);
+            Route::put('/video-carousel/{id}/toggle-featured', [VideoCarouselController::class, 'toggleFeatured']);
             
             Route::post('/doctors', [DoctorController::class, 'store']);
             Route::put('/doctors/{id}', [DoctorController::class, 'update']);

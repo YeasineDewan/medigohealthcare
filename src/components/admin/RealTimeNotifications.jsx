@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, X, CheckCircle, AlertTriangle, Info, AlertCircle, User, Calendar, ShoppingCart, FileText } from 'lucide-react';
+import { env } from '../../config/env';
 
 export default function RealTimeNotifications() {
   const [notifications, setNotifications] = useState([]);
@@ -24,7 +25,7 @@ export default function RealTimeNotifications() {
   // WebSocket connection
   useEffect(() => {
     const connectWebSocket = () => {
-      const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:8000/notifications';
+      const wsUrl = `${env.wsBase}/notifications`;
       
       try {
         wsRef.current = new WebSocket(wsUrl);
