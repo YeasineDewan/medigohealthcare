@@ -24,6 +24,8 @@ export default function PatientBook() {
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input
             type="search"
+            id="doctor-search"
+            name="doctor-search"
             placeholder="Search by name or specialty..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}

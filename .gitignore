@@ -7,6 +7,9 @@
 /dist-ssr
 *.local
 
+# Stray Vite hashed bundles at repo root (build output belongs in /dist or /public)
+/assets/
+
 # Laravel
 /bootstrap/cache/*.php
 /storage/*.key

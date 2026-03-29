@@ -5,95 +5,129 @@ import {
   Video,
   Pill,
   FlaskConical,
-  FolderOpen,
   Heart,
-  Activity,
-  Syringe,
+  FolderOpen,
   ChevronRight,
 } from 'lucide-react';
+import { defaultServicesMenu } from '../../data/defaultServicesMenu';
 
 const iconMap = {
   stethoscope: Stethoscope,
   video: Video,
   pill: Pill,
   flask: FlaskConical,
-  folder: FolderOpen,
   heart: Heart,
-  activity: Activity,
-  syringe: Syringe,
+  folder: FolderOpen,
 };
 
 export default function ServiceMenu({ services, isOpen, onClose }) {
-  const servicesList = Array.isArray(services) ? services : [];
+  // Hardcode services directly to ensure dropdown always works
+  const menuData = [
+    {
+      id: 1,
+      title: 'Specialist Doctor',
+      slug: 'specialist-doctor',
+      route_url: '/doctors',
+      description: 'Book appointments with speci...',
+      icon: 'stethoscope',
+      bg_color_hex: '#f8fafc',
+    },
+    {
+      id: 2,
+      title: 'Video Consultation',
+      slug: 'video-consultation',
+      route_url: '/consult',
+      description: 'Online video calls with doctors',
+      icon: 'video',
+      bg_color_hex: '#f8fafc',
+    },
+    {
+      id: 3,
+      title: 'Pharmacy',
+      slug: 'pharmacy',
+      route_url: '/pharmacy',
+      description: 'Order medicines online',
+      icon: 'pill',
+      bg_color_hex: '#f8fafc',
+    },
+    {
+      id: 4,
+      title: 'Lab Tests',
+      slug: 'lab-tests',
+      route_url: '/lab-tests',
+      description: 'Home collection & reports',
+      icon: 'flask',
+      bg_color_hex: '#f8fafc',
+    },
+    {
+      id: 5,
+      title: 'Health Records',
+      slug: 'health-records',
+      route_url: '/records',
+      description: 'Your medical history',
+      icon: 'folder',
+      bg_color_hex: '#f8fafc',
+    },
+  ];
+  
+  // Debug: Log the menu data to verify it's loaded
+  console.log('ServiceMenu - hardcoded menuData length:', menuData.length);
 
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.2 }}
-          className="absolute left-0 top-full mt-2 z-50"
-          onMouseEnter={(e) => e.stopPropagation()}
-          onMouseLeave={(e) => {
-            e.stopPropagation();
-            setTimeout(() => onClose(), 100);
-          }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          className="relative w-[min(100vw-2rem,320px)]"
+          onMouseDown={(e) => e.stopPropagation()}
         >
-          <div
-            className="min-w-[320px] rounded-xl bg-white shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden"
-            onMouseEnter={(e) => e.stopPropagation()}
-          >
-            <div className="p-4">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-[#165028]/70 mb-3 px-1">
-                Our Services
-              </h3>
-              <div className="grid grid-cols-1 gap-0.5">
-                {servicesList.map((service) => {
-                  const Icon = iconMap[service.icon?.toLowerCase()] || Stethoscope;
-                  return (
-                    <Link
-                      key={service.id}
-                      to={service.route_url || `/${service.slug}`}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-800 hover:bg-[#f0fdf2] transition-colors duration-150 group"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        onClose();
-                      }}
-                    >
-                      <span className="flex-shrink-0 w-10 h-10 rounded-full bg-[#f0fdf2] flex items-center justify-center group-hover:bg-[#dcfce7] transition-colors">
-                        <Icon className="w-5 h-5 text-[#5DBB63]" />
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <span className="font-medium text-[#111827] block truncate">
-                          {service.title}
-                        </span>
-                        {service.description && (
-                          <span className="text-xs text-gray-500 block truncate">
-                            {service.description}
-                          </span>
-                        )}
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-                    </Link>
-                  );
-                })}
-              </div>
+          <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-[0_24px_48px_-12px_rgba(0,0,0,0.18)] ring-1 ring-black/5">
+            <div className="border-b border-gray-100 bg-gray-50 px-4 py-3">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-green-600">OUR SERVICES</h3>
             </div>
-            <div className="border-t border-gray-100 px-4 py-3 bg-gray-50/50">
+            {/* Temporary test element */}
+            <div className="p-4 bg-red-100 text-red-800">
+              TEST: Dropdown is open! Services count: {menuData.length}
+            </div>
+            <div className="max-h-[min(60vh,360px)] overflow-y-auto p-2">
+              {menuData.map((service) => {
+                console.log('Rendering service:', service.title);
+                const key = (service.icon || 'heart').toLowerCase();
+                const Icon = iconMap[key] || Heart;
+                const bgColor = service.bg_color_hex || '#f8fafc';
+                return (
+                  <Link
+                    key={service.id}
+                    to={service.route_url || '/services'}
+                    className="flex items-center gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-gray-50 group"
+                    onClick={() => onClose()}
+                  >
+                    <span
+                      className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg shadow-sm group-hover:shadow-md transition-shadow"
+                      style={{ backgroundColor: bgColor }}
+                    >
+                      <Icon className="h-5 w-5 text-gray-700" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <span className="block font-semibold text-gray-900 text-sm">{service.title}</span>
+                      <span className="block text-xs text-gray-500 mt-0.5">{service.description}</span>
+                    </div>
+                    <ChevronRight className="h-4 w-4 flex-shrink-0 text-gray-400 opacity-0 transition-opacity group-hover:opacity-100" />
+                  </Link>
+                );
+              })}
+            </div>
+            <div className="border-t border-gray-100 px-4 py-3">
               <Link
                 to="/services"
-                className="text-sm font-medium text-[#5DBB63] hover:text-[#165028] transition-colors flex items-center gap-1"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onClose();
-                }}
+                className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 transition-colors hover:text-blue-700"
+                onClick={() => onClose()}
               >
                 View all services
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className="h-4 w-4" />
               </Link>
             </div>
           </div>

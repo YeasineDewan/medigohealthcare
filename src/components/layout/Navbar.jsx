@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ChevronDown, ShoppingCart, User, Stethoscope } from 'lucide-react';
+import { Menu, X, ChevronDown, ShoppingCart, User } from 'lucide-react';
 import ServiceMenu from './ServiceMenu';
 import EmergencyMenu from './EmergencyMenu';
+import HealthCardMenu from './HealthCardMenu';
 import { useServicesMenu, useEmergencyMenu } from '../../hooks/useMenus';
+import { useHeaderDropdowns } from '../../hooks/useHeaderDropdowns';
 import { useCartStore } from '../../store/cartStore';
 import SubHeader from './SubHeader';
 
@@ -16,300 +18,363 @@ const navLinks = [
   { label: 'Blog', href: '/blog' },
 ];
 
+const linkClass =
+  'rounded-xl px-3.5 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-[#f0fdf2] hover:text-[#165028] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5DBB63]/40 focus-visible:ring-offset-2';
+
+const btnDropdownClass = (open) =>
+  [
+    'inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-semibold transition-all',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5DBB63]/40 focus-visible:ring-offset-2',
+    open ? 'bg-[#f0fdf2] text-[#165028] shadow-inner' : 'text-gray-800 hover:bg-[#f0fdf2] hover:text-[#165028]',
+  ].join(' ');
+
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [serviceMenuOpen, setServiceMenuOpen] = useState(false);
-  const [emergencyMenuOpen, setEmergencyMenuOpen] = useState(false);
+  const { openMenu, scheduleClose, cancelClose, closeAll, toggleMenu, isOpen } = useHeaderDropdowns();
+
+
   const { services } = useServicesMenu();
   const { emergencyServices } = useEmergencyMenu();
   const items = useCartStore((s) => s.items);
   const cartCount = items.reduce((sum, i) => sum + i.quantity, 0);
   const navigate = useNavigate();
-  
-  const serviceMenuRef = useRef(null);
-  const emergencyMenuRef = useRef(null);
-  const serviceButtonRef = useRef(null);
-  const emergencyButtonRef = useRef(null);
 
-  // Close dropdowns when clicking outside
+  const servicesClusterRef = useRef(null);
+  const healthClusterRef = useRef(null);
+  const emergencyClusterRef = useRef(null);
+
+  // One mousedown handler: close if click outside all three clusters
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      // Close service menu if clicking outside
-      if (serviceMenuOpen && 
-          serviceMenuRef.current && 
-          !serviceMenuRef.current.contains(event.target) &&
-          serviceButtonRef.current &&
-          !serviceButtonRef.current.contains(event.target)) {
-        setServiceMenuOpen(false);
-      }
-      
-      // Close emergency menu if clicking outside
-      if (emergencyMenuOpen && 
-          emergencyMenuRef.current && 
-          !emergencyMenuRef.current.contains(event.target) &&
-          emergencyButtonRef.current &&
-          !emergencyButtonRef.current.contains(event.target)) {
-        setEmergencyMenuOpen(false);
-      }
+    const onDocMouseDown = (event) => {
+      const t = event.target;
+      const inside =
+        servicesClusterRef.current?.contains(t) ||
+        healthClusterRef.current?.contains(t) ||
+        emergencyClusterRef.current?.contains(t);
+      if (!inside) closeAll();
     };
+    document.addEventListener('mousedown', onDocMouseDown);
+    return () => document.removeEventListener('mousedown', onDocMouseDown);
+  }, [closeAll]);
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [serviceMenuOpen, emergencyMenuOpen]);
-
-  // Close dropdowns on escape key
   useEffect(() => {
-    const handleEscape = (event) => {
-      if (event.key === 'Escape') {
-        setServiceMenuOpen(false);
-        setEmergencyMenuOpen(false);
-      }
+    const onKey = (e) => {
+      if (e.key === 'Escape') closeAll();
     };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [closeAll]);
 
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
-  }, []);
+  useEffect(() => {
+    if (mobileOpen) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prev;
+      };
+    }
+  }, [mobileOpen]);
 
   return (
     <>
-      {/* Sub Header */}
       <SubHeader />
-      
-      {/* Main Header */}
-      <header className="sticky top-0 left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo - Left Corner */}
-            <div className="flex-shrink-0">
-              <Link to="/" className="flex items-center gap-3 group">
-                <img 
-                  src="/assets/logo.png" 
-                  alt="Medigo Healthcare" 
-                  className="w-12 h-12 rounded-lg object-contain transition-transform group-hover:scale-105"
-                />
-                <div className="hidden sm:block">
-                  <span className="font-bold text-xl text-[#165028] block leading-tight">
-                    Medigo
-                  </span>
-                  <span className="font-medium text-sm text-[#165028]/80 block leading-tight">
-                    Healthcare
-                  </span>
-                </div>
-              </Link>
-            </div>
 
-            {/* Center Navigation */}
-            <div className="hidden lg:flex items-center justify-center flex-1 max-w-3xl mx-12">
-              <div className="flex items-center gap-2">
-                <Link
-                  to="/"
-                  className="px-4 py-2 rounded-lg text-black hover:text-[#5DBB63] hover:bg-[#f0fdf2] font-medium transition-colors"
+      <header className="sticky top-0 left-0 right-0 z-50 border-b border-gray-200/80 bg-white/95 shadow-sm backdrop-blur-md supports-[backdrop-filter]:bg-white/90">
+        <nav
+          className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8"
+          role="navigation"
+          aria-label="Main"
+        >
+          <div className="flex h-[4.25rem] flex-shrink-0 items-center">
+            <Link to="/" className="group flex items-center gap-3 rounded-xl py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5DBB63]/40 focus-visible:ring-offset-2">
+              <img
+                src="/assets/logo.png"
+                alt="Medigo Healthcare"
+                className="h-11 w-11 rounded-xl object-contain shadow-sm ring-1 ring-gray-100 transition-transform group-hover:scale-[1.02]"
+              />
+              <div className="hidden sm:block leading-tight">
+                <span className="block text-lg font-bold tracking-tight text-[#165028]">Medigo</span>
+                <span className="block text-xs font-medium text-[#165028]/75">Healthcare</span>
+              </div>
+            </Link>
+          </div>
+
+          {/* Desktop nav */}
+          <div className="hidden flex-1 items-center justify-center lg:flex">
+            <div className="flex items-center gap-0.5 rounded-2xl border border-gray-100/80 bg-gray-50/50 p-1 shadow-inner">
+              <Link to="/" className={linkClass}>
+                Home
+              </Link>
+
+              <div
+                ref={servicesClusterRef}
+                className="relative"
+                onMouseEnter={() => {
+                  cancelClose();
+                  openMenu('services');
+                }}
+                onMouseLeave={scheduleClose}
+              >
+                <button
+                  type="button"
+                  className={[
+                    'inline-flex items-center gap-1.5 rounded-xl border border-green-100 bg-gradient-to-r from-green-50 to-emerald-50 px-3.5 py-2 text-sm font-semibold text-green-700 transition-all hover:from-green-100 hover:to-emerald-100',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-400 focus-visible:ring-offset-2',
+                    isOpen('services') ? 'border-green-200 shadow-inner' : '',
+                  ].join(' ')}
+                  aria-expanded={isOpen('services')}
+                  aria-haspopup="true"
+                  aria-controls="nav-services-menu"
+                  id="nav-services-trigger"
+                  onClick={(e) => {
+                    if (!isOpen('services')) {
+                      navigate('/services');
+                    } else {
+                      toggleMenu('services');
+                    }
+                  }}
                 >
-                  Home
-                </Link>
-                <div className="relative">
-                  <button
-                    ref={serviceButtonRef}
-                    onMouseEnter={() => {
-                      setEmergencyMenuOpen(false);
-                      setServiceMenuOpen(true);
-                    }}
-                    onClick={() => {
-                      setEmergencyMenuOpen(false);
-                      setServiceMenuOpen(!serviceMenuOpen);
-                    }}
-                    className="flex items-center gap-1 px-4 py-2 rounded-lg text-black hover:text-[#5DBB63] hover:bg-[#f0fdf2] font-medium transition-colors"
-                  >
-                    Services
-                    <ChevronDown
-                      className={`w-4 h-4 transition-transform ${serviceMenuOpen ? 'rotate-180' : ''}`}
-                    />
-                  </button>
-                  <div 
-                    ref={serviceMenuRef}
-                    className="absolute left-0 top-full"
-                    onMouseEnter={() => setServiceMenuOpen(true)}
-                    onMouseLeave={() => {
-                      setTimeout(() => setServiceMenuOpen(false), 150);
-                    }}
-                  >
-                    <ServiceMenu
-                      services={services}
-                      isOpen={serviceMenuOpen}
-                      onClose={() => setServiceMenuOpen(false)}
-                    />
-                  </div>
+                  Services
+                  <ChevronDown className={`h-4 w-4 shrink-0 transition-transform duration-200 ${isOpen('services') ? 'rotate-180' : ''}`} />
+                </button>
+                <div
+                  id="nav-services-menu"
+                  role="region"
+                  aria-labelledby="nav-services-trigger"
+                  className="absolute left-0 top-full z-[100] pt-2"
+                >
+                  <ServiceMenu
+                    services={services}
+                    isOpen={isOpen('services')}
+                    onClose={closeAll}
+                  />
                 </div>
-                <Link
-                  to="/about"
-                  className="px-4 py-2 rounded-lg text-black hover:text-[#5DBB63] hover:bg-[#f0fdf2] font-medium transition-colors whitespace-nowrap"
+              </div>
+
+              <Link to="/about" className={`${linkClass} whitespace-nowrap`}>
+                About Us
+              </Link>
+              <Link to="/careers" className={linkClass}>
+                Careers
+              </Link>
+              <Link to="/contact" className={linkClass}>
+                Contact
+              </Link>
+              <Link to="/blog" className={linkClass}>
+                Blog
+              </Link>
+
+              <div
+                ref={healthClusterRef}
+                className="relative"
+                onMouseEnter={() => {
+                  cancelClose();
+                  openMenu('health');
+                }}
+                onMouseLeave={scheduleClose}
+              >
+                <button
+                  type="button"
+                  className={[
+                    'inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold uppercase tracking-wide text-white shadow-sm transition-all',
+                    'bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2',
+                    isOpen('health') ? 'ring-2 ring-white/40 ring-offset-2 ring-offset-teal-800' : '',
+                  ].join(' ')}
+                  aria-expanded={isOpen('health')}
+                  aria-haspopup="true"
+                  aria-controls="nav-health-menu"
+                  id="nav-health-trigger"
+                  onClick={() => toggleMenu('health')}
                 >
-                  About Us
-                </Link>
-                <Link
-                  to="/careers"
-                  className="px-4 py-2 rounded-lg text-black hover:text-[#5DBB63] hover:bg-[#f0fdf2] font-medium transition-colors"
+                  Health Card
+                  <ChevronDown className={`h-4 w-4 shrink-0 transition-transform duration-200 ${isOpen('health') ? 'rotate-180' : ''}`} />
+                </button>
+                <div
+                  id="nav-health-menu"
+                  className="absolute left-0 top-full z-[100] pt-2"
+                  role="region"
+                  aria-labelledby="nav-health-trigger"
                 >
-                  Careers
-                </Link>
-                <Link
-                  to="/contact"
-                  className="px-4 py-2 rounded-lg text-black hover:text-[#5DBB63] hover:bg-[#f0fdf2] font-medium transition-colors"
+                  <HealthCardMenu isOpen={isOpen('health')} onClose={closeAll} />
+                </div>
+              </div>
+
+              <div
+                ref={emergencyClusterRef}
+                className="relative"
+                onMouseEnter={() => {
+                  cancelClose();
+                  openMenu('emergency');
+                }}
+                onMouseLeave={scheduleClose}
+              >
+                <button
+                  type="button"
+                  className={[
+                    'inline-flex items-center gap-1.5 rounded-xl border border-red-100 bg-gradient-to-r from-red-50 to-rose-50 px-3.5 py-2 text-sm font-semibold text-red-700 transition-all hover:from-red-100 hover:to-rose-100',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2',
+                    isOpen('emergency') ? 'border-red-200 shadow-inner' : '',
+                  ].join(' ')}
+                  aria-expanded={isOpen('emergency')}
+                  aria-haspopup="true"
+                  aria-controls="nav-emergency-menu"
+                  id="nav-emergency-trigger"
+                  onClick={() => toggleMenu('emergency')}
                 >
-                  Contact
-                </Link>
-                <Link
-                  to="/blog"
-                  className="px-4 py-2 rounded-lg text-black hover:text-[#5DBB63] hover:bg-[#f0fdf2] font-medium transition-colors"
+                  Emergency
+                  <ChevronDown className={`h-4 w-4 shrink-0 transition-transform duration-200 ${isOpen('emergency') ? 'rotate-180' : ''}`} />
+                </button>
+                <div
+                  id="nav-emergency-menu"
+                  className="absolute right-0 top-full z-[100] pt-2"
+                  role="region"
+                  aria-labelledby="nav-emergency-trigger"
                 >
-                  Blog
-                </Link>
-                <div className="relative">
-                  <button
-                    ref={emergencyButtonRef}
-                    onMouseEnter={() => {
-                      setServiceMenuOpen(false);
-                      setEmergencyMenuOpen(true);
-                    }}
-                    onClick={() => {
-                      setServiceMenuOpen(false);
-                      setEmergencyMenuOpen(!emergencyMenuOpen);
-                    }}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 font-semibold transition-colors border border-red-100"
-                  >
-                    Emergency
-                    <ChevronDown
-                      className={`w-4 h-4 transition-transform ${emergencyMenuOpen ? 'rotate-180' : ''}`}
-                    />
-                  </button>
-                  <div 
-                    ref={emergencyMenuRef}
-                    className="absolute right-0 top-full"
-                    onMouseEnter={() => setEmergencyMenuOpen(true)}
-                    onMouseLeave={() => {
-                      setTimeout(() => setEmergencyMenuOpen(false), 150);
-                    }}
-                  >
-                    <EmergencyMenu
-                      emergencyServices={emergencyServices}
-                      isOpen={emergencyMenuOpen}
-                      onClose={() => setEmergencyMenuOpen(false)}
-                    />
-                  </div>
+                  <EmergencyMenu
+                    emergencyServices={emergencyServices}
+                    isOpen={isOpen('emergency')}
+                    onClose={closeAll}
+                  />
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Right Actions - Signup, Login, Cart */}
-            <div className="flex items-center gap-3 flex-shrink-0">
-              <button
-                onClick={() => navigate('/cart')}
-                className="relative p-2 rounded-lg text-gray-600 hover:bg-[#f0fdf2] hover:text-[#165028] transition-colors"
-                aria-label="Cart"
-              >
-                <ShoppingCart className="w-5 h-5" />
-                {cartCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#5DBB63] text-white text-xs font-bold flex items-center justify-center">
-                    {cartCount}
-                  </span>
-                )}
-              </button>
-              <Link
-                to="/auth?tab=signup"
-                className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg bg-[#165028] text-white hover:bg-[#0f3d1c] font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
-              >
-                <User className="w-4 h-4" />
-                Sign Up
-              </Link>
-              <Link
-                to="/auth"
-                className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg bg-[#165028] text-white hover:bg-[#0f3d1c] font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
-              >
-                <User className="w-4 h-4" />
-                Login
-              </Link>
-              <button
-                onClick={() => setMobileOpen(true)}
-                className="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100"
-                aria-label="Menu"
-              >
-                <Menu className="w-6 h-6" />
-              </button>
-            </div>
+          {/* Actions */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              type="button"
+              onClick={() => navigate('/cart')}
+              className="relative rounded-xl p-2.5 text-gray-600 transition-colors hover:bg-[#f0fdf2] hover:text-[#165028] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5DBB63]/40"
+              aria-label={`Shopping cart${cartCount > 0 ? `, ${cartCount} items` : ''}`}
+            >
+              <ShoppingCart className="h-5 w-5" />
+              {cartCount > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-[#5DBB63] px-1 text-[11px] font-bold text-white shadow-sm">
+                  {cartCount > 99 ? '99+' : cartCount}
+                </span>
+              )}
+            </button>
+            <Link
+              to="/auth?tab=signup"
+              className="hidden rounded-xl bg-[#165028] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#0f3d1c] hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5DBB63]/40 focus-visible:ring-offset-2 sm:inline-flex sm:items-center sm:gap-2"
+            >
+              <User className="h-4 w-4" />
+              Sign Up
+            </Link>
+            <Link
+              to="/auth"
+              className="hidden rounded-xl border border-[#165028]/20 bg-white px-4 py-2.5 text-sm font-semibold text-[#165028] shadow-sm transition-all hover:bg-[#f0fdf2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5DBB63]/40 focus-visible:ring-offset-2 sm:inline-flex sm:items-center sm:gap-2"
+            >
+              <User className="h-4 w-4" />
+              Login
+            </Link>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileOpen(true);
+                closeAll();
+              }}
+              className="rounded-xl p-2.5 text-gray-700 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5DBB63]/40 lg:hidden"
+              aria-expanded={mobileOpen}
+              aria-label="Open menu"
+            >
+              <Menu className="h-6 w-6" />
+            </button>
           </div>
         </nav>
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 lg:hidden"
-          >
-            <div
-              className="absolute inset-0 bg-black/30"
-              onClick={() => setMobileOpen(false)}
-            />
+        <AnimatePresence>
+          {mobileOpen && (
             <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'tween', duration: 0.3 }}
-              className="absolute right-0 top-0 bottom-0 w-[280px] bg-white shadow-xl"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[200] lg:hidden"
             >
-              <div className="p-4 flex justify-between items-center border-b">
-                <span className="font-bold text-[#165028]">Menu</span>
-                <button
-                  onClick={() => setMobileOpen(false)}
-                  className="p-2 rounded-lg hover:bg-gray-100"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              <div className="p-4 space-y-1 overflow-y-auto">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    to={link.href}
+              <button
+                type="button"
+                className="absolute inset-0 bg-gray-900/40 backdrop-blur-[2px]"
+                aria-label="Close menu"
+                onClick={() => setMobileOpen(false)}
+              />
+              <motion.div
+                initial={{ x: '100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '100%' }}
+                transition={{ type: 'tween', duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                className="absolute right-0 top-0 flex h-full w-[min(100%,320px)] flex-col bg-white shadow-2xl"
+              >
+                <div className="flex items-center justify-between border-b border-gray-100 px-4 py-4">
+                  <span className="text-lg font-bold text-[#165028]">Menu</span>
+                  <button
+                    type="button"
                     onClick={() => setMobileOpen(false)}
-                    className="block px-4 py-3 rounded-lg text-gray-700 hover:bg-[#f0fdf2] font-medium"
+                    className="rounded-xl p-2 text-gray-600 hover:bg-gray-100"
+                    aria-label="Close"
                   >
-                    {link.label}
-                  </Link>
-                ))}
-                <Link
-                  to="/emergency"
-                  onClick={() => setMobileOpen(false)}
-                  className="block px-4 py-3 rounded-lg bg-red-50 text-red-600 font-semibold"
-                >
-                  Emergency Services
-                </Link>
-                <div className="pt-4 border-t mt-4 space-y-2">
-                  <Link
-                    to="/auth?tab=signup"
-                    onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-[#165028] text-white font-semibold hover:bg-[#0f3d1c] transition-all duration-200 shadow-sm"
-                  >
-                    <User className="w-4 h-4" />
-                    Sign Up
-                  </Link>
-                  <Link
-                    to="/auth"
-                    onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-[#165028] text-white font-semibold hover:bg-[#0f3d1c] transition-all duration-200 shadow-sm"
-                  >
-                    <User className="w-4 h-4" />
-                    Login
-                  </Link>
+                    <X className="h-5 w-5" />
+                  </button>
                 </div>
-              </div>
+                <div className="flex-1 overflow-y-auto px-3 py-3">
+                  <div className="space-y-1">
+                    {navLinks.map((link) => (
+                      <Link
+                        key={link.href}
+                        to={link.href}
+                        onClick={() => setMobileOpen(false)}
+                        className="block rounded-xl px-4 py-3.5 text-[15px] font-medium text-gray-800 hover:bg-[#f0fdf2]"
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                    <Link
+                      to="/services"
+                      onClick={() => setMobileOpen(false)}
+                      className="block rounded-xl px-4 py-3.5 text-[15px] font-semibold text-[#165028] hover:bg-[#f0fdf2]"
+                    >
+                      All Services
+                    </Link>
+                    <Link
+                      to="/health-cards"
+                      onClick={() => setMobileOpen(false)}
+                      className="block rounded-xl border border-teal-200 bg-teal-50/80 px-4 py-3.5 text-[15px] font-semibold text-teal-800"
+                    >
+                      Health Cards
+                    </Link>
+                    <Link
+                      to="/emergency"
+                      onClick={() => setMobileOpen(false)}
+                      className="block rounded-xl border border-red-100 bg-red-50 px-4 py-3.5 text-[15px] font-semibold text-red-700"
+                    >
+                      Emergency
+                    </Link>
+                  </div>
+                  <div className="mt-6 space-y-2 border-t border-gray-100 pt-6">
+                    <Link
+                      to="/auth?tab=signup"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#165028] py-3.5 text-sm font-semibold text-white shadow-sm"
+                    >
+                      <User className="h-4 w-4" />
+                      Sign Up
+                    </Link>
+                    <Link
+                      to="/auth"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 py-3.5 text-sm font-semibold text-[#165028]"
+                    >
+                      <User className="h-4 w-4" />
+                      Login
+                    </Link>
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </header>
+          )}
+        </AnimatePresence>
+      </header>
     </>
   );
 }

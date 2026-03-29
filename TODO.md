@@ -1,17 +1,29 @@
-# Task: Fix Signup Button to Match Login Button Design in Header
+# Services Header Dropdown Fix - TODO
 
-## Steps:
-- [x] 1. Create this TODO.md file
-- [x] 2. Edit src/components/layout/Navbar.jsx - Update mobile signup button styling to filled green background matching login
-- [x] 3. Edit src/pages/auth/AuthGate.jsx - Update signup button styling to filled green background matching login
-- [x] 4. Update TODO.md with completion status
-- [x] 5. Test in browser (npm run dev) and verify mobile/responsive views
-- [x] 6. Task complete
+## Approved Plan Summary
+- Match EmergencyMenu design/style for Services section
+- Ensure dropdown populates with menus from defaultServicesMenu.js or API
+- Add navigation to /services page on main button click
+- Update defaultServicesMenu.js with proper public paths matching existing pages
+- Test navigation and hover functionality
 
-## Summary
-Signup buttons now consistently use filled dark green background (#165028 → hover #0f3d1c, white text) matching login buttons across:
-- Desktop navbar (already matching)
-- Mobile navbar (fixed from outlined)
-- AuthGate role selector (fixed from outlined)
+## Steps (5/7 complete)
 
-All buttons have smooth transitions and icons for professional UI/UX.
+### 1. ✅ Create TODO.md
+
+### 2. ✅ Updated defaultServicesMenu.js public paths
+
+### 3. ✅ Analyzed EmergencyMenu.jsx
+
+### 4. ✅ Updated ServiceMenu.jsx - matches Emergency design (flat green theme)
+
+### 5. ✅ Updated Navbar.jsx Services button - navigates /services when closed, toggles when open
+
+### 6. Test: dev server, dropdown hover/click, navigation to /services & subs
+
+### 7. Complete task
+
+**Next: Step 6 - Testing**
+
+
+

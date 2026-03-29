@@ -55,6 +55,8 @@ export default function PatientMessages() {
                 <div className="p-4 border-t border-gray-100 flex gap-2">
                   <input
                     type="text"
+                    id="patient-message"
+                    name="patient-message"
                     placeholder="Type a message..."
                     className="flex-1 px-4 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
                   />

@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { FlaskConical, Home, FileText, Truck, Search, Star, Clock, MapPin, Shield, CheckCircle, TrendingUp, Award, Heart, Activity, Droplet, Brain, Stethoscope, Thermometer, Pill, Syringe, Microscope, TestTube, AlertCircle, Heart as HeartIcon, Sun, Calendar, Users, Zap, Gift, ChevronRight, X, Phone, Mail, MessageCircle, Filter, Tag, ThumbsUp, UserCheck, BadgeCheck, ArrowRight, Loader } from 'lucide-react';
 import { Button } from '../components/core/Button';
+import SEOHead from '../components/seo/SEOHead';
+import { debounce, throttle, cacheManager, createIntersectionObserver } from '../utils/performanceOptimizer';
 import labTestService from '../services/labTestService';
 
 const testCategories = [
@@ -197,7 +199,75 @@ export default function LabTests() {
 
   const categories = ['all', 'Hematology', 'Cardiology', 'Endocrinology', 'Gastroenterology', 'Nephrology', 'Nutrition', 'Infectious Diseases'];
 
-  // Fetch lab tests from API
+  // Debounced search function
+  const debouncedSearch = useMemo(
+    () => debounce((value) => {
+      setSearch(value);
+    }, 300),
+    []
+  );
+
+  // Memoized filtered and sorted tests
+  const filteredAndSortedTests = useMemo(() => {
+    const filtered = labTests.filter((test) => {
+      const matchesSearch = !search || test.name.toLowerCase().includes(search.toLowerCase()) || 
+                           test.description.toLowerCase().includes(search.toLowerCase());
+      const matchesCategory = selectedCategory === 'all' || test.category === selectedCategory;
+      
+      // Apply additional filters
+      let matchesFilters = true;
+      if (selectedFilters.homeCollection && !test.homeCollection) matchesFilters = false;
+      if (selectedFilters.fastingRequired && test.fasting === 'Required') matchesFilters = false;
+      if (selectedFilters.sameDayReport && test.reportTime !== 'Same day') matchesFilters = false;
+      
+      // Apply price range filter
+      if (test.price < priceRange.min || test.price > priceRange.max) matchesFilters = false;
+      
+      return matchesSearch && matchesCategory && matchesFilters;
+    });
+
+    return [...filtered].sort((a, b) => {
+      if (sortBy === 'price-low') return a.price - b.price;
+      if (sortBy === 'price-high') return b.price - a.price;
+      if (sortBy === 'discount') return b.discount - a.discount;
+      if (sortBy === 'popular') return b.popular - a.popular;
+      return 0;
+    });
+  }, [labTests, search, selectedCategory, sortBy, selectedFilters, priceRange]);
+
+  // SEO structured data for lab tests
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "MedicalWebPage",
+    "name": "Lab Tests - Medigo Healthcare",
+    "description": "Book comprehensive lab tests with home collection. Get accurate results from NABL certified labs.",
+    "url": "https://medigohealthcare.com/lab-tests",
+    "mainContentOfPage": {
+      "@type": "CollectionPage",
+      "name": "Lab Test Services",
+      "description": "Wide range of lab tests including blood tests, imaging, and diagnostic services",
+      "numberOfItems": labTests.length
+    },
+    "medicalSpecialty": [
+      "Hematology",
+      "Cardiology", 
+      "Endocrinology",
+      "Gastroenterology",
+      "Nephrology",
+      "Nutrition",
+      "Infectious Diseases"
+    ],
+    "offers": labTests.map(test => ({
+      "@type": "Offer",
+      "name": test.name,
+      "description": test.description,
+      "price": test.price,
+      "priceCurrency": "BDT",
+      "availability": "https://schema.org/InStock"
+    }))
+  };
+
+  // Fetch lab tests from API with caching
   useEffect(() => {
     fetchLabTests();
   }, [search, selectedCategory]);
@@ -206,6 +276,16 @@ export default function LabTests() {
     try {
       setLoading(true);
       setError(null);
+      
+      // Try to get from cache first
+      const cacheKey = `lab_tests_${selectedCategory}_${search}`;
+      const cachedData = cacheManager.get(cacheKey);
+      
+      if (cachedData) {
+        setLabTests(cachedData);
+        setLoading(false);
+        return;
+      }
       
       // Load static data immediately as fallback
       setLabTests(testCategories);
@@ -243,6 +323,8 @@ export default function LabTests() {
         }));
         
         setLabTests(transformedTests);
+        // Cache the results for 1 hour
+        cacheManager.set(cacheKey, transformedTests, 3600000);
       } catch (apiErr) {
         // API failed, but we already have static data loaded
         console.log('API unavailable, using static test data');
@@ -283,33 +365,20 @@ export default function LabTests() {
     return colorMap[category] || 'from-gray-500 to-gray-600';
   };
 
-  const filtered = labTests.filter((test) => {
-    const matchesSearch = !search || test.name.toLowerCase().includes(search.toLowerCase()) || 
-                         test.description.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || test.category === selectedCategory;
-    
-    // Apply additional filters
-    let matchesFilters = true;
-    if (selectedFilters.homeCollection && !test.homeCollection) matchesFilters = false;
-    if (selectedFilters.fastingRequired && test.fasting === 'Required') matchesFilters = false;
-    if (selectedFilters.sameDayReport && test.reportTime !== 'Same day') matchesFilters = false;
-    
-    // Apply price range filter
-    if (test.price < priceRange.min || test.price > priceRange.max) matchesFilters = false;
-    
-    return matchesSearch && matchesCategory && matchesFilters;
-  });
-
-  const sorted = [...filtered].sort((a, b) => {
-    if (sortBy === 'price-low') return a.price - b.price;
-    if (sortBy === 'price-high') return b.price - a.price;
-    if (sortBy === 'discount') return b.discount - a.discount;
-    if (sortBy === 'popular') return b.popular - a.popular;
-    return 0;
-  });
-
+  
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <>
+      <SEOHead
+        title="Lab Tests - Book Comprehensive Health Tests"
+        description="Book comprehensive lab tests with home collection. Get accurate results from NABL certified labs. Wide range of blood tests, imaging, and diagnostic services available."
+        keywords="lab tests, blood tests, health checkup, diagnostic services, home collection, NABL certified, complete blood count, lipid profile, thyroid test, diabetes screening"
+        ogImage="/banners/healthcare-hero.jpg"
+        ogUrl="https://medigohealthcare.com/lab-tests"
+        canonicalUrl="https://medigohealthcare.com/lab-tests"
+        structuredData={structuredData}
+      />
+      
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Top Banner */}
       <div className="bg-gradient-to-r from-[#5DBB63] to-[#165028] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -563,7 +632,7 @@ export default function LabTests() {
               </div>
             ) : (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {sorted.map((test) => (
+                {filteredAndSortedTests.map((test) => (
                   <motion.div
                     key={test.id}
                     initial={{ opacity: 0, y: 20 }}
@@ -668,7 +737,7 @@ export default function LabTests() {
             )}
 
             {/* No Results */}
-            {sorted.length === 0 && (
+            {filteredAndSortedTests.length === 0 && (
               <div className="text-center py-12">
                 <FlaskConical className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-700 mb-2">No tests found</h3>
@@ -1177,6 +1246,7 @@ export default function LabTests() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+      </div>
+    </>
   );
 }

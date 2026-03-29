@@ -359,6 +359,8 @@ export default function Pharmacy() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               type="search"
+              id="pharmacy-search"
+              name="pharmacy-search"
               placeholder="Search medicines, brands, or generic names..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}

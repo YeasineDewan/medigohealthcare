@@ -26,7 +26,13 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  AlertCircle
+  AlertCircle,
+  BarChart3,
+  Target,
+  Zap,
+  Sparkles,
+  Crown,
+  Fire
 } from 'lucide-react';
 
 // Mock promotions data
@@ -177,195 +183,278 @@ export default function Promotions() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Promotions</h1>
-          <p className="text-gray-500 mt-1">Create and manage promotional campaigns</p>
-        </div>
-        <div className="flex gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-            <Download className="w-4 h-4" />
-            Export
-          </button>
-          <button
-            onClick={handleAddPromo}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#5DBB63] to-[#4CAF50] text-white rounded-lg hover:from-[#4CAF50] hover:to-[#45a049]"
-          >
-            <Plus className="w-4 h-4" />
-            New Promotion
-          </button>
+      {/* Enhanced Header */}
+      <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-8 text-white mb-8">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                <Tag className="w-6 h-6" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold">Promotions</h1>
+                <p className="text-purple-100">Create and manage high-converting promotional campaigns</p>
+              </div>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <button className="flex items-center gap-2 px-6 py-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl transition-all duration-300 border border-white/30">
+              <Download className="w-4 h-4" />
+              Export Report
+            </button>
+            <button
+              onClick={handleAddPromo}
+              className="flex items-center gap-2 px-6 py-3 bg-white text-purple-600 hover:bg-gray-100 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl font-semibold"
+            >
+              <Plus className="w-5 h-5" />
+              Create Promotion
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* Enhanced Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm"
+          className="bg-white rounded-2xl p-6 border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300"
         >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Active Promotions</p>
-              <p className="text-2xl font-bold text-green-600">{activePromos.length}</p>
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 bg-gradient-to-br from-green-400 to-green-600 rounded-xl">
+              <Tag className="w-6 h-6 text-white" />
             </div>
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <Tag className="w-6 h-6 text-green-600" />
+            <div className="flex items-center gap-1 text-green-600 text-sm font-medium">
+              <TrendingUp className="w-4 h-4" />
+              +12%
             </div>
           </div>
+          <div>
+            <p className="text-sm text-gray-500 mb-1">Active Promotions</p>
+            <p className="text-3xl font-bold text-gray-900">{activePromos.length}</p>
+            <p className="text-xs text-gray-400 mt-1">2 expiring soon</p>
+          </div>
         </motion.div>
+        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm"
+          className="bg-white rounded-2xl p-6 border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300"
         >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Total Views</p>
-              <p className="text-2xl font-bold text-blue-600">{totalViews.toLocaleString()}</p>
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl">
+              <Eye className="w-6 h-6 text-white" />
             </div>
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Eye className="w-6 h-6 text-blue-600" />
+            <div className="flex items-center gap-1 text-blue-600 text-sm font-medium">
+              <TrendingUp className="w-4 h-4" />
+              +8%
             </div>
           </div>
+          <div>
+            <p className="text-sm text-gray-500 mb-1">Total Views</p>
+            <p className="text-3xl font-bold text-gray-900">{totalViews.toLocaleString()}</p>
+            <p className="text-xs text-gray-400 mt-1">Last 30 days</p>
+          </div>
         </motion.div>
+        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm"
+          className="bg-white rounded-2xl p-6 border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300"
         >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Total Clicks</p>
-              <p className="text-2xl font-bold text-purple-600">{totalClicks.toLocaleString()}</p>
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl">
+              <MousePointer className="w-6 h-6 text-white" />
             </div>
-            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-              <MousePointer className="w-6 h-6 text-purple-600" />
+            <div className="flex items-center gap-1 text-purple-600 text-sm font-medium">
+              <TrendingUp className="w-4 h-4" />
+              +15%
             </div>
           </div>
+          <div>
+            <p className="text-sm text-gray-500 mb-1">Total Clicks</p>
+            <p className="text-3xl font-bold text-gray-900">{totalClicks.toLocaleString()}</p>
+            <p className="text-xs text-gray-400 mt-1">3.2% CTR avg</p>
+          </div>
         </motion.div>
+        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm"
+          className="bg-white rounded-2xl p-6 border border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300"
         >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Total Redemptions</p>
-              <p className="text-2xl font-bold text-orange-600">{totalUsage}</p>
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl">
+              <Gift className="w-6 h-6 text-white" />
             </div>
-            <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-              <Gift className="w-6 h-6 text-orange-600" />
+            <div className="flex items-center gap-1 text-orange-600 text-sm font-medium">
+              <TrendingUp className="w-4 h-4" />
+              +24%
             </div>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500 mb-1">Total Redemptions</p>
+            <p className="text-3xl font-bold text-gray-900">{totalUsage}</p>
+            <p className="text-xs text-gray-400 mt-1">$45.2K value</p>
           </div>
         </motion.div>
       </div>
 
-      {/* Search and Filters */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
+      {/* Enhanced Search and Filters */}
+      <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-lg mb-8">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               type="text"
-              placeholder="Search promotions..."
+              placeholder="Search promotions by title or code..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
+              className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
             />
           </div>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5DBB63] focus:border-transparent"
-          >
-            <option value="all">All Status</option>
-            <option value="active">Active</option>
-            <option value="scheduled">Scheduled</option>
-            <option value="expired">Expired</option>
-          </select>
+          <div className="flex gap-3">
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 min-w-[150px]"
+            >
+              <option value="all">All Status</option>
+              <option value="active">Active</option>
+              <option value="scheduled">Scheduled</option>
+              <option value="expired">Expired</option>
+            </select>
+            <button className="flex items-center gap-2 px-4 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-all duration-300">
+              <Filter className="w-4 h-4" />
+              More Filters
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Promotions Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Enhanced Promotions Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredPromotions.map((promo, index) => (
           <motion.div
             key={promo.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
-            className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
+            className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-2xl transition-all duration-300 group"
           >
-            <div className="p-5">
-              <div className="flex items-start justify-between mb-3">
+            {/* Card Header */}
+            <div className="p-6 border-b border-gray-100">
+              <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${typeColors[promo.type]}`}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${typeColors[promo.type]}`}>
                       {promo.type.toUpperCase()}
                     </span>
-                    <span className={`px-2 py-1 rounded text-xs font-medium border ${statusColors[promo.status]}`}>
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold border ${statusColors[promo.status]}`}>
                       {promo.status}
                     </span>
+                    {promo.priority === 'high' && (
+                      <div className="flex items-center gap-1 px-2 py-1 bg-red-100 text-red-600 rounded-full text-xs font-bold">
+                        <Fire className="w-3 h-3" />
+                        HIGH PRIORITY
+                      </div>
+                    )}
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900">{promo.title}</h3>
-                  <p className="text-sm text-gray-500 mt-1">{promo.description}</p>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">{promo.title}</h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">{promo.description}</p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 ml-4">
                   <button
                     onClick={() => handleEditPromo(promo)}
-                    className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg"
+                    className="p-2.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200"
                   >
                     <Edit3 className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleDeletePromo(promo)}
-                    className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                    className="p-2.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               </div>
 
-              <div className="bg-gray-50 rounded-lg p-3 mb-4">
+              {/* Promo Code */}
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 mb-4 border border-purple-100">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Promo Code:</span>
-                  <span className="font-mono font-bold text-lg text-[#5DBB63]">{promo.code}</span>
+                  <div>
+                    <span className="text-sm text-gray-600 font-medium">Promo Code:</span>
+                    <div className="font-mono font-bold text-xl text-purple-700 mt-1">{promo.code}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold text-gray-900">{promo.discount}%</div>
+                    <div className="text-xs text-gray-500">Discount</div>
+                  </div>
                 </div>
               </div>
 
+              {/* Performance Metrics */}
               <div className="grid grid-cols-3 gap-4 mb-4">
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-gray-900">{promo.discount}%</p>
-                  <p className="text-xs text-gray-500">Discount</p>
+                <div className="text-center p-3 bg-gray-50 rounded-xl">
+                  <div className="flex items-center justify-center gap-1 text-blue-600 mb-1">
+                    <Eye className="w-4 h-4" />
+                    <span className="text-xl font-bold text-gray-900">{promo.views.toLocaleString()}</span>
+                  </div>
+                  <div className="text-xs text-gray-500">Views</div>
                 </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-gray-900">{promo.usage}/{promo.limit}</p>
-                  <p className="text-xs text-gray-500">Usage</p>
+                <div className="text-center p-3 bg-gray-50 rounded-xl">
+                  <div className="flex items-center justify-center gap-1 text-purple-600 mb-1">
+                    <MousePointer className="w-4 h-4" />
+                    <span className="text-xl font-bold text-gray-900">{promo.clicks.toLocaleString()}</span>
+                  </div>
+                  <div className="text-xs text-gray-500">Clicks</div>
                 </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-gray-900">
-                    {promo.views > 0 ? ((promo.clicks / promo.views) * 100).toFixed(1) : 0}%
-                  </p>
-                  <p className="text-xs text-gray-500">CTR</p>
+                <div className="text-center p-3 bg-gray-50 rounded-xl">
+                  <div className="flex items-center justify-center gap-1 text-green-600 mb-1">
+                    <Gift className="w-4 h-4" />
+                    <span className="text-xl font-bold text-gray-900">{promo.usage}</span>
+                  </div>
+                  <div className="text-xs text-gray-500">Redemptions</div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-sm text-gray-500">
-                <div className="flex items-center gap-1">
+              {/* Progress Bar */}
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-gray-600">Usage Progress</span>
+                  <span className="text-sm font-medium text-gray-900">{Math.round((promo.usage / promo.limit) * 100)}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-500"
+                    style={{ width: `${(promo.usage / promo.limit) * 100}%` }}
+                  ></div>
+                </div>
+                <div className="flex justify-between mt-1">
+                  <span className="text-xs text-gray-500">{promo.usage} used</span>
+                  <span className="text-xs text-gray-500">{promo.limit} total</span>
+                </div>
+              </div>
+
+              {/* Date and Status */}
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2 text-gray-500">
                   <Calendar className="w-4 h-4" />
-                  {promo.startDate} - {promo.endDate}
+                  <span>{new Date(promo.startDate).toLocaleDateString()} - {new Date(promo.endDate).toLocaleDateString()}</span>
                 </div>
                 <button
                   onClick={() => handleToggleStatus(promo)}
-                  className={`flex items-center gap-1 ${promo.status === 'active' ? 'text-green-600' : 'text-gray-400'}`}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-200 ${
+                    promo.status === 'active' 
+                      ? 'bg-green-100 text-green-700 hover:bg-green-200' 
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
                 >
                   {promo.status === 'active' ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
-                  {promo.status === 'active' ? 'Active' : 'Inactive'}
+                  <span className="font-medium">{promo.status === 'active' ? 'Active' : 'Inactive'}</span>
                 </button>
               </div>
             </div>

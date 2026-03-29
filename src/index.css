@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Bengali copy — load Hind Siliguri in index.html */
+.font-bn {
+  font-family: "Hind Siliguri", "Inter", system-ui, sans-serif;
+}
+
 /* Custom styles for Medigo Healthcare */
 :root {
   --color-primary: #5DBB63;

@@ -184,6 +184,8 @@ export default function PatientProfile() {
                 </label>
                 <input
                   type={type}
+                  id={`patient-${field}`}
+                  name={`patient-${field}`}
                   value={personalInfo[field]}
                   onChange={(e) => handlePersonalInfoChange(field, e.target.value)}
                   disabled={!isEditing}
@@ -251,6 +253,8 @@ export default function PatientProfile() {
               <label className="block text-sm font-medium text-gray-700">Occupation</label>
               <input
                 type="text"
+                id="patient-occupation"
+                name="patient-occupation"
                 value={personalInfo.occupation}
                 onChange={(e) => handlePersonalInfoChange('occupation', e.target.value)}
                 disabled={!isEditing}
@@ -266,6 +270,8 @@ export default function PatientProfile() {
               <label className="block text-sm font-medium text-gray-700">Emergency Contact</label>
               <input
                 type="tel"
+                id="patient-emergency-contact"
+                name="patient-emergency-contact"
                 value={personalInfo.emergencyContact}
                 onChange={(e) => handlePersonalInfoChange('emergencyContact', e.target.value)}
                 disabled={!isEditing}
@@ -331,6 +337,8 @@ export default function PatientProfile() {
             <div className="flex gap-3 p-4 bg-red-50 rounded-xl border border-red-200">
               <input
                 type="text"
+                id="new-allergy"
+                name="new-allergy"
                 placeholder="Add new allergy"
                 className="flex-1 px-4 py-3 border border-red-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white"
                 onKeyPress={(e) => {
@@ -390,6 +398,8 @@ export default function PatientProfile() {
             <div className="flex gap-3 p-4 bg-blue-50 rounded-xl border border-blue-200">
               <input
                 type="text"
+                id="new-medication"
+                name="new-medication"
                 placeholder="Add new medication"
                 className="flex-1 px-4 py-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
                 onKeyPress={(e) => {
@@ -449,6 +459,8 @@ export default function PatientProfile() {
             <div className="flex gap-3 p-4 bg-yellow-50 rounded-xl border border-yellow-200">
               <input
                 type="text"
+                id="new-condition"
+                name="new-condition"
                 placeholder="Add chronic condition"
                 className="flex-1 px-4 py-3 border border-yellow-200 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-white"
                 onKeyPress={(e) => {

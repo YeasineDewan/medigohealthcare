@@ -19,6 +19,8 @@ import ProductCard from '../components/features/ProductCard';
 import HeroBanner from '../components/features/HeroBanner';
 import FeaturedProducts from '../components/features/FeaturedProducts';
 import BestDoctors from '../components/features/BestDoctors';
+import ClaimOfferSection from '../components/features/ClaimOfferSection';
+import WhyChooseUs from '../components/features/WhyChooseUs';
 import { Button } from '../components/core/Button';
 import DynamicVideoCarousel from '../components/features/DynamicVideoCarousel';
 import axios from 'axios';
@@ -351,6 +353,9 @@ export default function Home() {
         <HeroBanner banners={banners} autoSlide={true} interval={6000} />
       )}
 
+      {/* Why Choose Us Section */}
+      <WhyChooseUs />
+
       {/* Video Carousel Section */}
       <section className="py-16 bg-gradient-to-br from-gray-50 to-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -531,7 +536,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* Professional Claim Offer Section */}
+      <ClaimOfferSection />
+
+      {/* Final CTA */}
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div

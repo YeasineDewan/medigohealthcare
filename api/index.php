@@ -31,6 +31,10 @@ $routes = [
     // Admin Menu
     'GET /admin/menu' => 'admin/menu.php',
     
+    // Frontend Menus
+    'GET /menus/services' => 'menus/services.php',
+    'GET /menus/emergency' => 'menus/emergency.php',
+    
     // Video Carousel
     'GET /video-carousel' => 'video-carousel/list.php',
     'GET /video-carousel/{id}' => 'video-carousel/get.php',

@@ -1,97 +1,94 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Ambulance, PhoneCall, Droplet, AlertCircle, ChevronRight } from 'lucide-react';
+import {
+  Ambulance,
+  PhoneCall,
+  Droplet,
+  AlertCircle,
+  ChevronRight,
+  Truck,
+  Shield,
+  Scissors,
+  Heart,
+  Activity,
+} from 'lucide-react';
 
 const iconMap = {
   ambulance: Ambulance,
   'phone-call': PhoneCall,
+  phone: PhoneCall,
   droplet: Droplet,
   alert: AlertCircle,
+  truck: Truck,
+  shield: Shield,
+  scissors: Scissors,
+  heart: Heart,
+  activity: Activity,
 };
 
 export default function EmergencyMenu({ emergencyServices, isOpen, onClose }) {
-  // Ensure emergencyServices is always an array and has fallback data
-  const services = Array.isArray(emergencyServices) && emergencyServices.length > 0 
-    ? emergencyServices 
-    : [
-        { id: 1, title: 'Ambulance Request', description: 'Live Tracking', icon: 'ambulance', bg_color_hex: '#FEE2E2' },
-        { id: 2, title: 'Emergency Doctor', description: '24/7 Available', icon: 'phone-call', bg_color_hex: '#FEE2E2' },
-        { id: 3, title: 'Blood Bank', description: 'Find Donors', icon: 'droplet', bg_color_hex: '#FEE2E2' },
-        { id: 4, title: 'Emergency Room', description: 'Immediate Care', icon: 'alert', bg_color_hex: '#FEE2E2' },
-        { id: 5, title: 'Critical Care', description: 'ICU Services', icon: 'alert', bg_color_hex: '#FEE2E2' },
-      ];
-  
+  const services =
+    Array.isArray(emergencyServices) && emergencyServices.length > 0
+      ? emergencyServices
+      : [
+          { id: 1, title: 'Ambulance Request', description: 'Live Tracking', icon: 'ambulance', bg_color_hex: '#FEE2E2' },
+          { id: 2, title: 'Emergency Doctor', description: '24/7 Available', icon: 'phone-call', bg_color_hex: '#FEE2E2' },
+          { id: 3, title: 'Blood Bank', description: 'Find Donors', icon: 'droplet', bg_color_hex: '#FEE2E2' },
+          { id: 4, title: 'Emergency Room', description: 'Immediate Care', icon: 'alert', bg_color_hex: '#FEE2E2' },
+          { id: 5, title: 'Critical Care', description: 'ICU Services', icon: 'alert', bg_color_hex: '#FEE2E2' },
+        ];
+
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.2 }}
-          className="absolute right-0 top-full mt-2 z-50"
-          onMouseEnter={(e) => e.stopPropagation()}
-          onMouseLeave={(e) => {
-            e.stopPropagation();
-            setTimeout(() => onClose(), 100);
-          }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          className="relative w-[min(100vw-2rem,320px)]"
+          onMouseDown={(e) => e.stopPropagation()}
         >
-          <div
-            className="min-w-[280px] rounded-xl bg-white shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] border border-red-100 overflow-hidden"
-            onMouseEnter={(e) => e.stopPropagation()}
-          >
-            <div className="p-4 bg-red-50/30 border-b border-red-100">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-red-600 mb-1">
-                Emergency Services
-              </h3>
-              <p className="text-xs text-gray-600">24/7 available support</p>
+          <div className="overflow-hidden rounded-2xl border border-red-100/80 bg-white shadow-[0_24px_48px_-12px_rgba(0,0,0,0.18)] ring-1 ring-black/5">
+            <div className="border-b border-red-100 bg-gradient-to-r from-red-50 to-rose-50/80 px-4 py-3.5">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-red-700">Emergency Services</h3>
+              <p className="mt-0.5 text-xs text-gray-600">24/7 support — tap to open emergency center</p>
             </div>
-            <div className="p-2">
+            <div className="max-h-[min(60vh,360px)] overflow-y-auto p-2">
               {services.map((service) => {
-                const Icon = iconMap[service.icon?.toLowerCase()] || AlertCircle;
+                const key = (service.icon || 'alert').toLowerCase();
+                const Icon = iconMap[key] || AlertCircle;
                 const bgColor = service.bg_color_hex || '#FEE2E2';
                 return (
                   <Link
                     key={service.id}
                     to="/emergency"
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-red-50/50 transition-colors duration-150 group"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      onClose();
-                    }}
+                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-red-50/80 group"
+                    onClick={() => onClose()}
                   >
                     <span
-                      className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+                      className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full shadow-inner"
                       style={{ backgroundColor: bgColor }}
                     >
-                      <Icon className="w-5 h-5 text-red-600" />
+                      <Icon className="h-5 w-5 text-red-600" />
                     </span>
-                    <div className="flex-1 min-w-0">
-                      <span className="font-medium text-gray-900 block">
-                        {service.title}
-                      </span>
-                      <span className="text-xs text-red-500 block">
-                        {service.description}
-                      </span>
+                    <div className="min-w-0 flex-1">
+                      <span className="block font-medium text-gray-900">{service.title}</span>
+                      <span className="block text-xs text-red-600/90">{service.description}</span>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-red-400 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                    <ChevronRight className="h-4 w-4 flex-shrink-0 text-red-300 opacity-0 transition-opacity group-hover:opacity-100" />
                   </Link>
                 );
               })}
             </div>
-            <div className="border-t border-red-100 px-4 py-3 bg-red-50/30">
+            <div className="border-t border-red-100 bg-red-50/50 px-4 py-3">
               <Link
                 to="/emergency"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-red-600 hover:text-red-700 transition-colors"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onClose();
-                }}
+                className="inline-flex items-center gap-2 text-sm font-bold text-red-700 transition-colors hover:text-red-800"
+                onClick={() => onClose()}
               >
-                <AlertCircle className="w-4 h-4" />
-                Call Emergency: 999
+                <AlertCircle className="h-4 w-4" />
+                Emergency center & hotline
               </Link>
             </div>
           </div>

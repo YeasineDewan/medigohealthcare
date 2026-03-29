@@ -3,6 +3,7 @@ import { useEffect, Suspense, lazy } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Layout from './components/layout/Layout';
+import { setupErrorHandlers } from './utils/errorHandler';
 import Home from './pages/Home';
 import Doctors from './pages/Doctors';
 import PublicDoctorProfile from './pages/DoctorProfile';
@@ -194,6 +195,8 @@ const PatientMessages = lazy(() => import('./pages/patient/PatientMessages'));
 // Public pages
 import JoinAsDoctor from './pages/JoinAsDoctor';
 import PartnerHospital from './pages/PartnerHospital';
+import CorporateHealthCard from './pages/CorporateHealthCard';
+import HealthCards from './pages/HealthCards';
 
 // Loading component
 const LoadingSpinner = () => (
@@ -206,13 +209,20 @@ function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (!window.location.hash) {
+      window.scrollTo(0, 0);
+    }
   }, [pathname]);
 
   return null;
 }
 
 function App() {
+  // Setup error handlers to suppress browser extension errors
+  useEffect(() => {
+    setupErrorHandlers();
+  }, []);
+
   return (
     <BrowserRouter>
       <ScrollToTop />
@@ -246,6 +256,8 @@ function App() {
           <Route path="cookies" element={<Cookies />} />
           <Route path="join-as-doctor" element={<JoinAsDoctor />} />
           <Route path="partner-hospital" element={<PartnerHospital />} />
+          <Route path="corporate-health-card" element={<CorporateHealthCard />} />
+          <Route path="health-cards" element={<HealthCards />} />
         </Route>
 
         {/* Auth */}

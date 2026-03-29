@@ -1,142 +1,244 @@
 import { useState, useEffect } from 'react';
-import { X, Megaphone, Info, AlertCircle, Gift, Star, Sparkles, TrendingUp, Zap } from 'lucide-react';
+import { 
+  X, 
+  Phone,
+  Mail,
+  MapPin,
+  Facebook,
+  Twitter,
+  Linkedin,
+  Instagram,
+  Youtube,
+  Clock,
+  Calendar,
+  Users,
+  Stethoscope,
+  Heart,
+  ChevronRight,
+  Award
+} from 'lucide-react';
 
 export default function SubHeader() {
-  const [announcement, setAnnouncement] = useState(null);
   const [isVisible, setIsVisible] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
-  useEffect(() => {
-    // Simulate fetching from admin dashboard marketing section
-    const fetchMarketingAnnouncement = async () => {
-      try {
-        // This would be an API call to admin dashboard
-        // For now, using enhanced default announcements
-        const announcements = [
-          {
-            id: 1,
-            type: 'promotion',
-            text: '🎉 Limited Time Offer: Get 25% off on all health checkup packages!',
-            link: '/offers',
-            linkText: 'Claim Offer',
-            backgroundColor: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-            textColor: '#ffffff',
-            icon: 'gift',
-            priority: 'high',
-            animated: true
-          },
-          {
-            id: 2,
-            type: 'info',
-            text: '🏥 New Telemedicine Service: Consult doctors online from home',
-            link: '/telemedicine',
-            linkText: 'Learn More',
-            backgroundColor: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
-            textColor: '#ffffff',
-            icon: 'trending',
-            priority: 'medium',
-            animated: false
-          },
-          {
-            id: 3,
-            type: 'alert',
-            text: '⚡ Emergency Services Available 24/7 - Call 999 for immediate assistance',
-            link: '/emergency',
-            linkText: 'Contact Now',
-            backgroundColor: 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
-            textColor: '#ffffff',
-            icon: 'alert',
-            priority: 'high',
-            animated: true
-          }
-        ];
-
-        // Simulate API delay
-        setTimeout(() => {
-          // Select announcement based on priority or rotate
-          const activeAnnouncement = announcements.find(a => a.priority === 'high') || announcements[0];
-          setAnnouncement(activeAnnouncement);
-          setIsLoading(false);
-        }, 500);
-      } catch (error) {
-        console.error('Failed to fetch announcement:', error);
-        setIsLoading(false);
-      }
-    };
-
-    fetchMarketingAnnouncement();
-  }, []);
-
-  if (!isLoading && (!announcement || !isVisible)) return null;
-
-  const getIcon = (iconType) => {
-    switch (iconType) {
-      case 'megaphone': return Megaphone;
-      case 'info': return Info;
-      case 'alert': return AlertCircle;
-      case 'gift': return Gift;
-      case 'star': return Star;
-      case 'sparkles': return Sparkles;
-      case 'trending': return TrendingUp;
-      case 'zap': return Zap;
-      default: return Megaphone;
-    }
+  const contactInfo = {
+    phone: '+880 1234-567890',
+    email: 'info@medigohealthcare.com',
+    address: '123 Healthcare Avenue, Dhaka, Bangladesh'
   };
 
-  const Icon = getIcon(announcement?.icon);
+  const socialLinks = {
+    facebook: 'https://facebook.com/medigohealthcare',
+    twitter: 'https://twitter.com/medigohealth',
+    linkedin: 'https://linkedin.com/company/medigohealthcare',
+    instagram: 'https://instagram.com/medigohealthcare',
+    youtube: 'https://youtube.com/@medigohealthcare'
+  };
 
-  if (isLoading) {
-    return (
-      <div className="w-full py-3 px-4 text-center bg-gray-100 animate-pulse">
-        <div className="max-w-7xl mx-auto">
-          <div className="h-4 bg-gray-300 rounded w-3/4 mx-auto"></div>
-        </div>
-      </div>
-    );
-  }
+  const announcements = [
+    {
+      id: 1,
+      title: 'Excellence in Healthcare',
+      subtitle: 'Internationally Accredited Medical Services',
+      description: 'JCI Accredited facility with world-class medical expertise'
+    },
+    {
+      id: 2,
+      title: '24/7 Emergency Care',
+      subtitle: 'Immediate Medical Response When You Need It Most',
+      description: 'Round-the-clock emergency services with expert medical teams'
+    },
+    {
+      id: 3,
+      title: 'Comprehensive Health Packages',
+      subtitle: 'Personalized Healthcare Solutions for Every Need',
+      description: 'Customized health plans designed for your specific requirements'
+    }
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % announcements.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [announcements.length]);
+
+  if (!isVisible) return null;
+
+  const currentAnnouncement = announcements[currentSlide];
 
   return (
-    <div 
-      className="w-full py-2 px-4 text-center relative overflow-hidden shadow-sm"
-      style={{ 
-        background: announcement.backgroundColor || 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-        color: announcement.textColor || '#ffffff'
-      }}
-    >
-      {/* Animated background elements */}
-      {announcement.animated && (
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-2 -right-2 w-8 h-8 bg-white/10 rounded-full animate-ping"></div>
-          <div className="absolute -bottom-2 -left-2 w-6 h-6 bg-white/10 rounded-full animate-ping animation-delay-200"></div>
-          <div className="absolute top-1/2 left-1/4 w-4 h-4 bg-white/5 rounded-full animate-pulse"></div>
-        </div>
-      )}
-      
-      <div className="max-w-7xl mx-auto flex items-center justify-center gap-3 text-sm font-semibold relative z-10">
-        {Icon && (
-          <div className={`flex-shrink-0 ${announcement.animated ? 'animate-bounce' : ''}`}>
-            <Icon className="w-5 h-5" />
+    <div className="w-full">
+      {/* Top Contact Bar */}
+      <div className="bg-gray-50 border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between py-3 gap-4">
+            {/* Contact Information */}
+            <div className="flex items-center gap-6 text-sm text-gray-600">
+              <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-emerald-600" />
+                <span>{contactInfo.phone}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Mail className="w-4 h-4 text-emerald-600" />
+                <span className="hidden sm:inline">{contactInfo.email}</span>
+              </div>
+              <div className="hidden lg:flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-emerald-600" />
+                <span>{contactInfo.address}</span>
+              </div>
+            </div>
+
+            {/* Social Media Links */}
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-gray-500 font-medium">Follow Us</span>
+              <div className="flex items-center gap-2">
+                <a
+                  href={socialLinks.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                  aria-label="Facebook"
+                >
+                  <Facebook className="w-4 h-4" />
+                </a>
+                <a
+                  href={socialLinks.twitter}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded bg-sky-500 text-white hover:bg-sky-600 transition-colors"
+                  aria-label="Twitter"
+                >
+                  <Twitter className="w-4 h-4" />
+                </a>
+                <a
+                  href={socialLinks.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded bg-blue-700 text-white hover:bg-blue-800 transition-colors"
+                  aria-label="LinkedIn"
+                >
+                  <Linkedin className="w-4 h-4" />
+                </a>
+                <a
+                  href={socialLinks.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded bg-gradient-to-br from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 transition-all"
+                  aria-label="Instagram"
+                >
+                  <Instagram className="w-4 h-4" />
+                </a>
+                <a
+                  href={socialLinks.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded bg-red-600 text-white hover:bg-red-700 transition-colors"
+                  aria-label="YouTube"
+                >
+                  <Youtube className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
           </div>
-        )}
-        <span className="flex-1 text-center">{announcement.text}</span>
-        {announcement.link && announcement.linkText && (
-          <a 
-            href={announcement.link}
-            className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/20 hover:bg-white/30 transition-all duration-200 backdrop-blur-sm border border-white/30 text-white font-medium text-xs"
-          >
-            {announcement.linkText}
-            <Sparkles className="w-3 h-3" />
-          </a>
-        )}
+        </div>
       </div>
-      
-      <button
-        onClick={() => setIsVisible(false)}
-        className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-all duration-200 backdrop-blur-sm border border-white/30 group"
-        aria-label="Close announcement"
-      >
-        <X className="w-4 h-4 group-hover:rotate-90 transition-transform duration-200" />
-      </button>
+
+      {/* Main Announcement Bar */}
+      <div className="bg-white border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between py-6">
+            {/* Left Content */}
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-emerald-600 text-white">
+                <Award className="w-6 h-6" />
+              </div>
+              <div className="max-w-md">
+                <h3 className="text-lg font-bold text-gray-900 mb-1">
+                  {currentAnnouncement.title}
+                </h3>
+                <p className="text-sm text-gray-600 mb-1">
+                  {currentAnnouncement.subtitle}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {currentAnnouncement.description}
+                </p>
+              </div>
+            </div>
+
+            {/* Right Actions */}
+            <div className="flex items-center gap-3">
+              <button className="hidden sm:flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium text-sm transition-colors">
+                <Calendar className="w-4 h-4" />
+                Book Appointment
+              </button>
+              <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 hover:border-gray-400 text-gray-700 rounded-lg font-medium text-sm transition-colors">
+                <Phone className="w-4 h-4" />
+                <span className="hidden sm:inline">Emergency</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Slide Indicators */}
+          <div className="flex justify-center pb-4">
+            <div className="flex items-center gap-2">
+              {announcements.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    index === currentSlide ? 'bg-emerald-600' : 'bg-gray-300'
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Close Button */}
+          <button
+            onClick={() => setIsVisible(false)}
+            className="absolute right-4 top-6 p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors"
+            aria-label="Close announcement"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Quick Stats Bar */}
+      <div className="bg-emerald-600 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between py-4 gap-4">
+            <div className="flex items-center gap-6 text-sm">
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4" />
+                <span>24/7 Emergency Available</span>
+              </div>
+              <div className="hidden sm:flex items-center gap-2">
+                <Users className="w-4 h-4" />
+                <span>500+ Expert Doctors</span>
+              </div>
+              <div className="hidden lg:flex items-center gap-2">
+                <Stethoscope className="w-4 h-4" />
+                <span>50+ Specialties</span>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <button className="flex items-center gap-2 px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded text-xs font-medium transition-colors">
+                <Heart className="w-3 h-3" />
+                Blood Donation
+              </button>
+              <button className="flex items-center gap-2 px-3 py-1.5 bg-white text-emerald-700 hover:bg-gray-100 rounded text-xs font-semibold transition-colors">
+                <Award className="w-3 h-3" />
+                Health Card
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
