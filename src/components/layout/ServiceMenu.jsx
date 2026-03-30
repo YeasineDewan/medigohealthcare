@@ -10,6 +10,7 @@ import {
   Activity,
   Syringe,
   ChevronRight,
+  CreditCard,
 } from 'lucide-react';
 
 const iconMap = {
@@ -21,6 +22,7 @@ const iconMap = {
   heart: Heart,
   activity: Activity,
   syringe: Syringe,
+  'credit-card': CreditCard,
 };
 
 export default function ServiceMenu({ services, isOpen, onClose }) {
@@ -44,7 +46,7 @@ export default function ServiceMenu({ services, isOpen, onClose }) {
                 Our Services
               </h3>
               <div className="grid grid-cols-1 gap-0.5">
-                {services.map((service) => {
+                {Array.isArray(services) && services.map((service) => {
                   const Icon = iconMap[service.icon?.toLowerCase()] || Stethoscope;
                   return (
                     <Link

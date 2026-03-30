@@ -39,9 +39,11 @@ export default function Navbar() {
     const fetchNotices = async () => {
       try {
         const fetchedNotices = await noticeService.getActiveNotices();
-        setNotices(fetchedNotices);
+        // Ensure notices is always an array
+        setNotices(Array.isArray(fetchedNotices) ? fetchedNotices : []);
       } catch (error) {
         console.error('Failed to fetch notices:', error);
+        setNotices([]); // Set to empty array on error
       } finally {
         setLoading(false);
       }
@@ -188,7 +190,7 @@ export default function Navbar() {
                     <span className="animate-spin">⏳</span>
                     <span>Loading notices...</span>
                   </div>
-                ) : notices.length > 0 ? (
+                ) : Array.isArray(notices) && notices.length > 0 ? (
                   <div className="flex items-center gap-4 animate-slide">
                     {notices.concat(notices).map((notice, index) => (
                       <div

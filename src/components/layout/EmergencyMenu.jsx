@@ -31,7 +31,7 @@ export default function EmergencyMenu({ emergencyServices, isOpen, onClose }) {
               <p className="text-xs text-gray-600">24/7 available support</p>
             </div>
             <div className="p-2">
-              {emergencyServices.map((service) => {
+              {Array.isArray(emergencyServices) && emergencyServices.map((service) => {
                 const Icon = iconMap[service.icon?.toLowerCase()] || AlertCircle;
                 const bgColor = service.bg_color_hex || '#FEE2E2';
                 return (

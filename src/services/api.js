@@ -36,6 +36,7 @@ export const fallbackServices = [
   { id: 3, title: 'Pharmacy', slug: 'pharmacy', icon: 'pill', route_url: '/pharmacy', description: 'Order medicines online' },
   { id: 4, title: 'Lab Tests', slug: 'lab-tests', icon: 'flask', route_url: '/lab-tests', description: 'Home collection & reports' },
   { id: 5, title: 'Health Records', slug: 'health-records', icon: 'folder', route_url: '/records', description: 'Your medical history' },
+  { id: 6, title: 'Health Card', slug: 'health-card', icon: 'credit-card', route_url: '/health-cards', description: 'Exclusive health membership cards' },
 ];
 
 export const fallbackEmergencyServices = [

@@ -26,6 +26,12 @@ import Records from './pages/Records';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import Cookies from './pages/Cookies';
+import HealthCards from './pages/HealthCards';
+import PremiumHealthCard from './pages/PremiumHealthCard';
+import FamilyHealthCard from './pages/FamilyHealthCard';
+import CorporateHealthCard from './pages/CorporateHealthCard';
+import CharityHealthCard from './pages/CharityHealthCard';
+import MedicareHealthCard from './pages/MedicareHealthCard';
 import AuthGate from './pages/auth/AuthGate';
 import RoleLogin from './pages/auth/RoleLogin';
 import RoleSignup from './pages/auth/RoleSignup';
@@ -100,6 +106,12 @@ function App() {
           <Route path="privacy" element={<Privacy />} />
           <Route path="terms" element={<Terms />} />
           <Route path="cookies" element={<Cookies />} />
+          <Route path="health-cards" element={<HealthCards />} />
+          <Route path="health-cards/premium" element={<PremiumHealthCard />} />
+          <Route path="health-cards/family" element={<FamilyHealthCard />} />
+          <Route path="health-cards/corporate" element={<CorporateHealthCard />} />
+          <Route path="health-cards/charity" element={<CharityHealthCard />} />
+          <Route path="health-cards/medicare" element={<MedicareHealthCard />} />
         </Route>
 
         {/* Auth */}

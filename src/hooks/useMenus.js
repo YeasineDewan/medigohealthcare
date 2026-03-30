@@ -7,7 +7,10 @@ export function useServicesMenu() {
 
   useEffect(() => {
     menuService.getServices()
-      .then(({ data }) => setServices(data.data || data || []))
+      .then(({ data }) => {
+        const servicesData = data.data || data || [];
+        setServices(Array.isArray(servicesData) ? servicesData : fallbackServices);
+      })
       .catch(() => setServices(fallbackServices))
       .finally(() => setLoading(false));
   }, []);
@@ -21,7 +24,10 @@ export function useEmergencyMenu() {
 
   useEffect(() => {
     menuService.getEmergencyServices()
-      .then(({ data }) => setEmergencyServices(data.data || data || []))
+      .then(({ data }) => {
+        const emergencyData = data.data || data || [];
+        setEmergencyServices(Array.isArray(emergencyData) ? emergencyData : fallbackEmergencyServices);
+      })
       .catch(() => setEmergencyServices(fallbackEmergencyServices))
       .finally(() => setLoading(false));
   }, []);
