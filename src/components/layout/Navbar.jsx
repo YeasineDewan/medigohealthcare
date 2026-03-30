@@ -105,10 +105,11 @@ export default function Navbar() {
                 <button
                   onMouseEnter={() => setHoveredIcon('phone')}
                   onMouseLeave={() => setHoveredIcon(null)}
-                  className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-all duration-300 hover:scale-110"
+                  className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/30 hover:shadow-lg hover:shadow-white/20 transition-all duration-300 hover:scale-110 relative overflow-hidden group"
                   aria-label="Phone"
                 >
-                  <Phone className="w-4 h-4" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <Phone className="w-4 h-4 relative z-10" />
                 </button>
                 <AnimatePresence>
                   {hoveredIcon === 'phone' && (
@@ -116,9 +117,9 @@ export default function Navbar() {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="absolute top-10 left-0 bg-white text-gray-800 rounded-lg shadow-lg p-3 whitespace-nowrap z-50"
+                      className="absolute top-10 left-0 bg-white text-gray-800 rounded-lg shadow-lg p-3 whitespace-nowrap z-50 border border-blue-200"
                     >
-                      <div className="font-semibold">Call Us</div>
+                      <div className="font-semibold text-blue-600">Call Us</div>
                       <div className="text-sm">+1 (234) 567-890</div>
                       <div className="text-xs text-gray-500">24/7 Available</div>
                     </motion.div>
@@ -130,10 +131,11 @@ export default function Navbar() {
                 <button
                   onMouseEnter={() => setHoveredIcon('email')}
                   onMouseLeave={() => setHoveredIcon(null)}
-                  className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-all duration-300 hover:scale-110"
+                  className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/30 hover:shadow-lg hover:shadow-white/20 transition-all duration-300 hover:scale-110 relative overflow-hidden group"
                   aria-label="Email"
                 >
-                  <Mail className="w-4 h-4" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-emerald-400/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <Mail className="w-4 h-4 relative z-10" />
                 </button>
                 <AnimatePresence>
                   {hoveredIcon === 'email' && (
@@ -141,9 +143,9 @@ export default function Navbar() {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="absolute top-10 left-0 bg-white text-gray-800 rounded-lg shadow-lg p-3 whitespace-nowrap z-50"
+                      className="absolute top-10 left-0 bg-white text-gray-800 rounded-lg shadow-lg p-3 whitespace-nowrap z-50 border border-green-200"
                     >
-                      <div className="font-semibold">Email Us</div>
+                      <div className="font-semibold text-green-600">Email Us</div>
                       <div className="text-sm">info@medigo.com</div>
                       <div className="text-xs text-gray-500">Quick Response</div>
                     </motion.div>
@@ -155,10 +157,11 @@ export default function Navbar() {
                 <button
                   onMouseEnter={() => setHoveredIcon('address')}
                   onMouseLeave={() => setHoveredIcon(null)}
-                  className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-all duration-300 hover:scale-110"
+                  className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/30 hover:shadow-lg hover:shadow-white/20 transition-all duration-300 hover:scale-110 relative overflow-hidden group"
                   aria-label="Address"
                 >
-                  <MapPin className="w-4 h-4" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <MapPin className="w-4 h-4 relative z-10" />
                 </button>
                 <AnimatePresence>
                   {hoveredIcon === 'address' && (
@@ -166,9 +169,9 @@ export default function Navbar() {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="absolute top-10 left-0 bg-white text-gray-800 rounded-lg shadow-lg p-3 whitespace-nowrap z-50"
+                      className="absolute top-10 left-0 bg-white text-gray-800 rounded-lg shadow-lg p-3 whitespace-nowrap z-50 border border-purple-200"
                     >
-                      <div className="font-semibold">Visit Us</div>
+                      <div className="font-semibold text-purple-600">Visit Us</div>
                       <div className="text-sm">123 Medical St</div>
                       <div className="text-xs text-gray-500">Health City, HC 12345</div>
                     </motion.div>
@@ -215,42 +218,46 @@ export default function Navbar() {
             </div>
 
             {/* Right Side - Social Media Icons */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <a 
                 href="https://facebook.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-6 h-6 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 hover:scale-110"
+                className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 hover:shadow-lg hover:shadow-blue-400/30 transition-all duration-300 hover:scale-110 relative overflow-hidden group"
                 aria-label="Facebook"
               >
-                <Facebook className="w-3 h-3" />
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-blue-600/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <Facebook className="w-4 h-4 relative z-10" />
               </a>
               <a 
                 href="https://twitter.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-6 h-6 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 hover:scale-110"
+                className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 hover:shadow-lg hover:shadow-sky-400/30 transition-all duration-300 hover:scale-110 relative overflow-hidden group"
                 aria-label="Twitter"
               >
-                <Twitter className="w-3 h-3" />
+                <div className="absolute inset-0 bg-gradient-to-r from-sky-400/20 to-cyan-400/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <Twitter className="w-4 h-4 relative z-10" />
               </a>
               <a 
                 href="https://linkedin.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-6 h-6 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 hover:scale-110"
+                className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 hover:shadow-lg hover:shadow-blue-600/30 transition-all duration-300 hover:scale-110 relative overflow-hidden group"
                 aria-label="LinkedIn"
               >
-                <Linkedin className="w-3 h-3" />
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-blue-700/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <Linkedin className="w-4 h-4 relative z-10" />
               </a>
               <a 
                 href="https://instagram.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-6 h-6 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 hover:scale-110"
+                className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 hover:shadow-lg hover:shadow-pink-400/30 transition-all duration-300 hover:scale-110 relative overflow-hidden group"
                 aria-label="Instagram"
               >
-                <Instagram className="w-3 h-3" />
+                <div className="absolute inset-0 bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <Instagram className="w-4 h-4 relative z-10" />
               </a>
             </div>
           </div>
