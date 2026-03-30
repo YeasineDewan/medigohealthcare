@@ -72,32 +72,32 @@ export default function Navbar() {
   return (
     <>
       {/* Top Bar - Sub-header */}
-      <div className="bg-[#165028] text-white py-2">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-[#165028] to-[#0f3d1c] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between py-3">
             {/* Contact Information */}
             <div className="hidden md:flex items-center gap-6 text-sm">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm">
                 <Phone className="w-4 h-4" />
                 <span>+1 (234) 567-890</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm">
                 <Mail className="w-4 h-4" />
                 <span>info@medigo.com</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm">
                 <MapPin className="w-4 h-4" />
                 <span>123 Medical St, Health City</span>
               </div>
             </div>
 
             {/* Social Media Icons */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <a 
                 href="https://facebook.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-white hover:text-[#5DBB63] transition-colors"
+                className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 hover:scale-110"
                 aria-label="Facebook"
               >
                 <Facebook className="w-4 h-4" />
@@ -106,7 +106,7 @@ export default function Navbar() {
                 href="https://twitter.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-white hover:text-[#5DBB63] transition-colors"
+                className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 hover:scale-110"
                 aria-label="Twitter"
               >
                 <Twitter className="w-4 h-4" />
@@ -115,7 +115,7 @@ export default function Navbar() {
                 href="https://linkedin.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-white hover:text-[#5DBB63] transition-colors"
+                className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 hover:scale-110"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="w-4 h-4" />
@@ -124,7 +124,7 @@ export default function Navbar() {
                 href="https://instagram.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-white hover:text-[#5DBB63] transition-colors"
+                className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 hover:scale-110"
                 aria-label="Instagram"
               >
                 <Instagram className="w-4 h-4" />
@@ -135,136 +135,137 @@ export default function Navbar() {
       </div>
 
       {/* Main Header */}
-      <header className="fixed top-8 left-0 right-0 z-50 glass border-b border-gray-200/80">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-18">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-10 h-10 rounded-xl bg-[#165028] flex items-center justify-center">
-              <Stethoscope className="w-6 h-6 text-white" />
-            </div>
-            <span className="font-bold text-xl text-[#165028] hidden sm:block">
-              Medigo
-            </span>
-          </Link>
+      <header className="fixed top-14 left-0 right-0 z-40 bg-white/95 backdrop-blur-lg border-b border-gray-200/60 shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <Link to="/" className="flex items-center gap-2 flex-shrink-0 group">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#165028] to-[#0f3d1c] flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                <Stethoscope className="w-6 h-6 text-white" />
+              </div>
+              <span className="font-bold text-xl text-[#165028] hidden sm:block group-hover:text-[#0f3d1c] transition-colors">
+                Medigo
+              </span>
+            </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center gap-1">
-            <Link
-              to="/"
-              className="px-4 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors"
-            >
-              Home
-            </Link>
-            <div className="relative">
-              <button
-                ref={serviceButtonRef}
-                onMouseEnter={() => {
-                  setEmergencyMenuOpen(false);
-                  setServiceMenuOpen(true);
-                }}
-                onClick={() => {
-                  setEmergencyMenuOpen(false);
-                  setServiceMenuOpen(!serviceMenuOpen);
-                }}
-                className="flex items-center gap-1 px-4 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors"
+            <div className="hidden lg:flex items-center gap-1">
+              <Link
+                to="/"
+                className="px-4 py-2 rounded-full text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-all duration-300 hover:scale-105"
               >
-                Services
-                <ChevronDown
-                  className={`w-4 h-4 transition-transform ${serviceMenuOpen ? 'rotate-180' : ''}`}
-                />
-              </button>
-              <div ref={serviceMenuRef}>
-                <ServiceMenu
-                  services={services}
-                  isOpen={serviceMenuOpen}
-                  onClose={() => setServiceMenuOpen(false)}
-                />
+                Home
+              </Link>
+              <div className="relative">
+                <button
+                  ref={serviceButtonRef}
+                  onMouseEnter={() => {
+                    setEmergencyMenuOpen(false);
+                    setServiceMenuOpen(true);
+                  }}
+                  onClick={() => {
+                    setEmergencyMenuOpen(false);
+                    setServiceMenuOpen(!serviceMenuOpen);
+                  }}
+                  className="flex items-center gap-1 px-4 py-2 rounded-full text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-all duration-300 hover:scale-105"
+                >
+                  Services
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform ${serviceMenuOpen ? 'rotate-180' : ''}`}
+                  />
+                </button>
+                <div ref={serviceMenuRef}>
+                  <ServiceMenu
+                    services={services}
+                    isOpen={serviceMenuOpen}
+                    onClose={() => setServiceMenuOpen(false)}
+                  />
+                </div>
+              </div>
+              <Link
+                to="/about"
+                className="px-4 py-2 rounded-full text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-all duration-300 hover:scale-105"
+              >
+                About Us
+              </Link>
+              <Link
+                to="/careers"
+                className="px-4 py-2 rounded-full text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-all duration-300 hover:scale-105"
+              >
+                Careers
+              </Link>
+              <Link
+                to="/contact"
+                className="px-4 py-2 rounded-full text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-all duration-300 hover:scale-105"
+              >
+                Contact
+              </Link>
+              <Link
+                to="/blog"
+                className="px-4 py-2 rounded-full text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-all duration-300 hover:scale-105"
+              >
+                Blog
+              </Link>
+              <div className="relative ml-2">
+                <button
+                  ref={emergencyButtonRef}
+                  onMouseEnter={() => {
+                    setServiceMenuOpen(false);
+                    setEmergencyMenuOpen(true);
+                  }}
+                  onClick={() => {
+                    setServiceMenuOpen(false);
+                    setEmergencyMenuOpen(!emergencyMenuOpen);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 font-semibold transition-all duration-300 hover:scale-105 shadow-md hover:shadow-lg"
+                >
+                  Emergency
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform ${emergencyMenuOpen ? 'rotate-180' : ''}`}
+                  />
+                </button>
+                <div ref={emergencyMenuRef}>
+                  <EmergencyMenu
+                    emergencyServices={emergencyServices}
+                    isOpen={emergencyMenuOpen}
+                    onClose={() => setEmergencyMenuOpen(false)}
+                  />
+                </div>
               </div>
             </div>
-            <Link
-              to="/about"
-              className="px-4 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors"
-            >
-              About Us
-            </Link>
-            <Link
-              to="/careers"
-              className="px-4 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors"
-            >
-              Careers
-            </Link>
-            <Link
-              to="/contact"
-              className="px-4 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors"
-            >
-              Contact
-            </Link>
-            <Link
-              to="/blog"
-              className="px-4 py-2 rounded-lg text-gray-700 hover:text-[#165028] hover:bg-[#f0fdf2] font-medium transition-colors"
-            >
-              Blog
-            </Link>
-            <div className="relative ml-2">
-              <button
-                ref={emergencyButtonRef}
-                onMouseEnter={() => {
-                  setServiceMenuOpen(false);
-                  setEmergencyMenuOpen(true);
-                }}
-                onClick={() => {
-                  setServiceMenuOpen(false);
-                  setEmergencyMenuOpen(!emergencyMenuOpen);
-                }}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 font-semibold transition-colors border border-red-100"
-              >
-                Emergency
-                <ChevronDown
-                  className={`w-4 h-4 transition-transform ${emergencyMenuOpen ? 'rotate-180' : ''}`}
-                />
-              </button>
-              <div ref={emergencyMenuRef}>
-                <EmergencyMenu
-                  emergencyServices={emergencyServices}
-                  isOpen={emergencyMenuOpen}
-                  onClose={() => setEmergencyMenuOpen(false)}
-                />
-              </div>
-            </div>
-          </div>
 
-          {/* Actions */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => navigate('/cart')}
-              className="relative p-2 rounded-lg text-gray-600 hover:bg-[#f0fdf2] hover:text-[#165028] transition-colors"
-              aria-label="Cart"
-            >
-              <ShoppingCart className="w-5 h-5" />
-              {cartCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#5DBB63] text-white text-xs font-bold flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
-            </button>
-            <Link
-              to="/auth"
-              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg bg-[#165028] text-white hover:bg-[#0f3d1c] font-medium transition-colors"
-            >
-              <User className="w-4 h-4" />
-              Signup/Login
-            </Link>
-            <button
-              onClick={() => setMobileOpen(true)}
-              className="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100"
-              aria-label="Menu"
-            >
-              <Menu className="w-6 h-6" />
-            </button>
+            {/* Actions */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => navigate('/cart')}
+                className="relative p-2 rounded-full text-gray-600 hover:bg-[#f0fdf2] hover:text-[#165028] transition-all duration-300 hover:scale-110"
+                aria-label="Cart"
+              >
+                <ShoppingCart className="w-5 h-5" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full bg-[#5DBB63] text-white text-xs font-bold flex items-center justify-center shadow-md">
+                    {cartCount}
+                  </span>
+                )}
+              </button>
+              <Link
+                to="/auth"
+                className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#165028] to-[#0f3d1c] text-white hover:from-[#0f3d1c] hover:to-[#0a2e14] font-medium transition-all duration-300 hover:scale-105 shadow-md hover:shadow-lg"
+              >
+                <User className="w-4 h-4" />
+                Signup/Login
+              </Link>
+              <button
+                onClick={() => setMobileOpen(true)}
+                className="lg:hidden p-2 rounded-full text-gray-600 hover:bg-gray-100 transition-all duration-300 hover:scale-110"
+                aria-label="Menu"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+            </div>
           </div>
         </div>
-      </nav>
+      </header>
 
       {/* Mobile Menu */}
       <AnimatePresence>
@@ -290,7 +291,7 @@ export default function Navbar() {
                 <span className="font-bold text-[#165028]">Menu</span>
                 <button
                   onClick={() => setMobileOpen(false)}
-                  className="p-2 rounded-lg hover:bg-gray-100"
+                  className="p-2 rounded-full hover:bg-gray-100 transition-all duration-300 hover:scale-110"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -301,7 +302,7 @@ export default function Navbar() {
                     key={link.href}
                     to={link.href}
                     onClick={() => setMobileOpen(false)}
-                    className="block px-4 py-3 rounded-lg text-gray-700 hover:bg-[#f0fdf2] font-medium"
+                    className="block px-4 py-3 rounded-full text-gray-700 hover:bg-[#f0fdf2] font-medium transition-all duration-300 hover:scale-105"
                   >
                     {link.label}
                   </Link>
@@ -309,7 +310,7 @@ export default function Navbar() {
                 <Link
                   to="/emergency"
                   onClick={() => setMobileOpen(false)}
-                  className="block px-4 py-3 rounded-lg bg-red-50 text-red-600 font-semibold"
+                  className="block px-4 py-3 rounded-full bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold transition-all duration-300 hover:scale-105 shadow-md"
                 >
                   Emergency Services
                 </Link>
@@ -317,7 +318,7 @@ export default function Navbar() {
                   <Link
                     to="/auth"
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-[#165028] text-white font-medium"
+                    className="flex items-center justify-center gap-2 w-full py-3 rounded-full bg-gradient-to-r from-[#165028] to-[#0f3d1c] text-white font-medium transition-all duration-300 hover:scale-105 shadow-md"
                   >
                     <User className="w-4 h-4" />
                     Signup/Login
@@ -328,7 +329,6 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
     </>
   );
 }
