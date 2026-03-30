@@ -46,6 +46,7 @@ import AdminLabTests from './pages/admin/AdminLabTests';
 import AdminServices from './pages/admin/AdminServices';
 import AdminEmergency from './pages/admin/AdminEmergency';
 import AdminNotices from './pages/admin/AdminNotices';
+import AdminSettings from './pages/admin/AdminSettings';
 import AdminInventory from './pages/admin/AdminInventory';
 import AdminCategories from './pages/admin/AdminCategories';
 import AdminBanners from './pages/admin/AdminBanners';
