@@ -2,27 +2,29 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   Stethoscope, Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram,
-  Send, ArrowUp, Shield, Clock, Award, Heart, Youtube
+  Send, ArrowUp, Shield, Clock, Award, Heart, Youtube,
+  User, Pill, TestTube, AlertTriangle, Building, Briefcase, HelpCircle,
+  FileText, ShieldCheck, BookOpen
 } from 'lucide-react';
 import { useState } from 'react';
 
 const footerLinks = {
   Quick: [
-    { label: 'Find Doctors', href: '/doctors' },
-    { label: 'Pharmacy', href: '/pharmacy' },
-    { label: 'Lab Tests', href: '/lab-tests' },
-    { label: 'Emergency', href: '/emergency' },
+    { label: 'Find Doctors', href: '/doctors', icon: User },
+    { label: 'Pharmacy', href: '/pharmacy', icon: Pill },
+    { label: 'Lab Tests', href: '/lab-tests', icon: TestTube },
+    { label: 'Emergency', href: '/emergency', icon: AlertTriangle },
   ],
   Company: [
-    { label: 'About Us', href: '/about' },
-    { label: 'Careers', href: '/careers' },
-    { label: 'Contact', href: '/contact' },
-    { label: 'Help Center', href: '/help' },
+    { label: 'About Us', href: '/about', icon: Building },
+    { label: 'Careers', href: '/careers', icon: Briefcase },
+    { label: 'Contact', href: '/contact', icon: Phone },
+    { label: 'Help Center', href: '/help', icon: HelpCircle },
   ],
   Legal: [
-    { label: 'Privacy Policy', href: '/privacy' },
-    { label: 'Terms of Service', href: '/terms' },
-    { label: 'Blog', href: '/blog' },
+    { label: 'Privacy Policy', href: '/privacy', icon: ShieldCheck },
+    { label: 'Terms of Service', href: '/terms', icon: FileText },
+    { label: 'Blog', href: '/blog', icon: BookOpen },
   ],
 };
 
@@ -114,7 +116,8 @@ export default function Footer() {
             <ul className="space-y-2.5">
               {footerLinks.Quick.map((link) => (
                 <li key={link.href}>
-                  <Link to={link.href} className="text-gray-300 hover:text-white hover:translate-x-1 text-sm transition-all inline-block">
+                  <Link to={link.href} className="flex items-center gap-2 text-gray-300 hover:text-white hover:translate-x-1 text-sm transition-all">
+                    <link.icon className="w-4 h-4 text-[#5DBB63]" />
                     {link.label}
                   </Link>
                 </li>
@@ -128,7 +131,8 @@ export default function Footer() {
             <ul className="space-y-2.5">
               {footerLinks.Company.map((link) => (
                 <li key={link.href}>
-                  <Link to={link.href} className="text-gray-300 hover:text-white hover:translate-x-1 text-sm transition-all inline-block">
+                  <Link to={link.href} className="flex items-center gap-2 text-gray-300 hover:text-white hover:translate-x-1 text-sm transition-all">
+                    <link.icon className="w-4 h-4 text-[#5DBB63]" />
                     {link.label}
                   </Link>
                 </li>
@@ -142,7 +146,8 @@ export default function Footer() {
             <ul className="space-y-2.5">
               {footerLinks.Legal.map((link) => (
                 <li key={link.href}>
-                  <Link to={link.href} className="text-gray-300 hover:text-white hover:translate-x-1 text-sm transition-all inline-block">
+                  <Link to={link.href} className="flex items-center gap-2 text-gray-300 hover:text-white hover:translate-x-1 text-sm transition-all">
+                    <link.icon className="w-4 h-4 text-[#5DBB63]" />
                     {link.label}
                   </Link>
                 </li>
