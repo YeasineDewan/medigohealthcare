@@ -38,12 +38,81 @@ export default function Navbar() {
   useEffect(() => {
     const fetchNotices = async () => {
       try {
+        console.log('Fetching notices...');
         const fetchedNotices = await noticeService.getActiveNotices();
+        console.log('Fetched notices:', fetchedNotices);
         // Ensure notices is always an array
-        setNotices(Array.isArray(fetchedNotices) ? fetchedNotices : []);
+        const noticesArray = Array.isArray(fetchedNotices) ? fetchedNotices : [];
+        
+        // If no notices returned, use fallback data
+        if (noticesArray.length === 0) {
+          console.log('No notices returned, using fallback data');
+          const fallbackNotices = [
+            {
+              id: 1,
+              text: "🎉 Special Offer: 20% off on all health checkups this month!",
+              type: "offer",
+              priority: "high",
+              isActive: true,
+              startDate: "2024-01-01",
+              endDate: "2024-12-31"
+            },
+            {
+              id: 2,
+              text: "📢 New: Online doctor consultations now available 24/7",
+              type: "notice",
+              priority: "medium",
+              isActive: true,
+              startDate: "2024-01-01",
+              endDate: "2024-12-31"
+            },
+            {
+              id: 3,
+              text: "🏥 Health Card members get exclusive discounts on lab tests",
+              type: "offer",
+              priority: "medium",
+              isActive: true,
+              startDate: "2024-01-01",
+              endDate: "2024-12-31"
+            },
+            {
+              id: 4,
+              text: "💊 Free medicine delivery for orders above 1000 BDT",
+              type: "notice",
+              priority: "low",
+              isActive: true,
+              startDate: "2024-01-01",
+              endDate: "2024-12-31"
+            }
+          ];
+          setNotices(fallbackNotices);
+        } else {
+          setNotices(noticesArray);
+        }
       } catch (error) {
         console.error('Failed to fetch notices:', error);
-        setNotices([]); // Set to empty array on error
+        // Set fallback notices on error
+        const fallbackNotices = [
+          {
+            id: 1,
+            text: "🎉 Special Offer: 20% off on all health checkups this month!",
+            type: "offer",
+            priority: "high",
+            isActive: true,
+            startDate: "2024-01-01",
+            endDate: "2024-12-31"
+          },
+          {
+            id: 2,
+            text: "📢 New: Online doctor consultations now available 24/7",
+            type: "notice",
+            priority: "medium",
+            isActive: true,
+            startDate: "2024-01-01",
+            endDate: "2024-12-31"
+          }
+        ];
+        setNotices(fallbackNotices);
       } finally {
         setLoading(false);
       }
@@ -186,34 +255,31 @@ export default function Navbar() {
             <div className="flex-1 mx-6 overflow-hidden">
               <div className="relative h-5 flex items-center">
                 {loading ? (
-                  <div className="flex items-center gap-2 text-xs">
-                    <span className="animate-spin">⏳</span>
-                    <span>Loading notices...</span>
+                  <div className="flex items-center gap-2 text-xs text-gray-400">
+                    <span className="animate-pulse">⚡</span>
+                    <span>Loading updates...</span>
                   </div>
                 ) : Array.isArray(notices) && notices.length > 0 ? (
-                  <div className="flex items-center gap-4 animate-slide">
+                  <div className="flex items-center animate-slide">
                     {notices.concat(notices).map((notice, index) => (
                       <div
                         key={`${notice.id}-${index}`}
-                        className={`flex items-center gap-1 px-2 py-0.5 rounded-full whitespace-nowrap text-xs ${
-                          notice.type === 'offer' 
-                            ? 'bg-yellow-400/20 border border-yellow-400/30' 
-                            : 'bg-blue-400/20 border border-blue-400/30'
-                        } backdrop-blur-sm`}
+                        className="flex items-center gap-2 whitespace-nowrap text-xs text-gray-300"
                       >
-                        <span className="text-xs">
+                        <span>
                           {notice.priority === 'high' && '🔥'}
                           {notice.priority === 'medium' && '⭐'}
                           {notice.priority === 'low' && '📌'}
                         </span>
                         <span>{notice.text}</span>
+                        <span className="mx-4">•</span>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 text-xs">
-                    <span>✨</span>
-                    <span>No current notices or offers</span>
+                  <div className="flex items-center gap-2 text-xs text-gray-400">
+                    <span>ℹ️</span>
+                    <span>Stay tuned for latest updates and offers</span>
                   </div>
                 )}
               </div>

@@ -5,11 +5,13 @@ export const noticeService = {
   getActiveNotices: async () => {
     try {
       const response = await api.get('/notices/active');
+      console.log('Notices API response:', response.data);
       return response.data;
     } catch (error) {
       console.error('Error fetching notices:', error);
+      console.log('Using fallback notices data');
       // Return fallback notices for development
-      return [
+      const fallbackNotices = [
         {
           id: 1,
           text: "🎉 Special Offer: 20% off on all health checkups this month!",
@@ -27,8 +29,28 @@ export const noticeService = {
           isActive: true,
           startDate: "2024-01-01",
           endDate: "2024-12-31"
+        },
+        {
+          id: 3,
+          text: "🏥 Health Card members get exclusive discounts on lab tests",
+          type: "offer",
+          priority: "medium",
+          isActive: true,
+          startDate: "2024-01-01",
+          endDate: "2024-12-31"
+        },
+        {
+          id: 4,
+          text: "💊 Free medicine delivery for orders above 1000 BDT",
+          type: "notice",
+          priority: "low",
+          isActive: true,
+          startDate: "2024-01-01",
+          endDate: "2024-12-31"
         }
       ];
+      console.log('Returning fallback notices:', fallbackNotices);
+      return fallbackNotices;
     }
   },
 
