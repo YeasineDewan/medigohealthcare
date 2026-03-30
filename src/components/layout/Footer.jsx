@@ -65,10 +65,15 @@ export default function Footer() {
           {/* Brand & Newsletter */}
           <div className="lg:col-span-2">
             <Link to="/" className="inline-flex items-center gap-3 mb-4 group">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#5DBB63] to-[#4a9a4f] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                <Stethoscope className="w-7 h-7 text-white" />
+              <img 
+                src="/logo.png" 
+                alt="Medigo Healthcare Logo" 
+                className="w-12 h-12 group-hover:scale-110 transition-transform object-contain"
+              />
+              <div className="flex flex-col">
+                <span className="font-bold text-2xl text-white">Medigo</span>
+                <span className="text-sm text-[#5DBB63]">Healthcare</span>
               </div>
-              <span className="font-bold text-2xl text-white">Medigo</span>
             </Link>
             
             <p className="text-gray-300 text-sm mb-6 leading-relaxed">

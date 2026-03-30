@@ -52,10 +52,15 @@ export default function AdminLayout() {
       <aside className="hidden lg:flex flex-col w-64 bg-[#165028] text-white fixed inset-y-0 left-0 z-40">
         <div className="p-6 border-b border-white/10">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-[#5DBB63] flex items-center justify-center">
-              <Stethoscope className="w-6 h-6 text-white" />
+            <img 
+              src="/logo.png" 
+              alt="Medigo Healthcare Logo" 
+              className="w-10 h-10 object-contain"
+            />
+            <div className="flex flex-col">
+              <span className="font-bold text-xl text-white">Medigo</span>
+              <span className="text-xs text-[#5DBB63]">Admin</span>
             </div>
-            <span className="font-bold text-xl">Medigo Admin</span>
           </Link>
         </div>
         <nav className="flex-1 p-4 overflow-y-auto">

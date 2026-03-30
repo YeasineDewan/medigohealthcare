@@ -16,6 +16,7 @@ $this->call([
             LabTestSeeder::class,
             BannerSeeder::class,
             ServiceSeeder::class,
+            NoticeSeeder::class,
         ]);
     }
 }

@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function () {
     
     // Public Routes
+    Route::get('/notices/active', [NoticeController::class, 'active']);
     Route::get('/menus/services', [MenuController::class, 'services']);
     Route::get('/menus/emergency', [MenuController::class, 'emergency']);
     
@@ -85,6 +86,14 @@ Route::prefix('v1')->group(function () {
         
         // Admin/Doctor Routes
         Route::middleware(['role:admin,doctor'])->group(function () {
+            // Admin Notices
+            Route::middleware('role:admin')->group(function () {
+                Route::get('/admin/notices', [NoticeController::class, 'index']);
+                Route::post('/admin/notices', [NoticeController::class, 'store']);
+                Route::put('/admin/notices/{id}', [NoticeController::class, 'update']);
+                Route::delete('/admin/notices/{id}', [NoticeController::class, 'destroy']);
+                Route::patch('/admin/notices/{id}/toggle', [NoticeController::class, 'toggle']);
+            });
             Route::post('/doctors', [DoctorController::class, 'store']);
             Route::put('/doctors/{id}', [DoctorController::class, 'update']);
             Route::post('/categories', [ProductCategoryController::class, 'store']);
