@@ -45,7 +45,7 @@ import AdminOrders from './pages/admin/AdminOrders';
 import AdminLabTests from './pages/admin/AdminLabTests';
 import AdminServices from './pages/admin/AdminServices';
 import AdminEmergency from './pages/admin/AdminEmergency';
-import AdminSettings from './pages/admin/AdminSettings';
+import AdminNotices from './pages/admin/AdminNotices';
 import AdminInventory from './pages/admin/AdminInventory';
 import AdminCategories from './pages/admin/AdminCategories';
 import AdminBanners from './pages/admin/AdminBanners';
@@ -132,6 +132,7 @@ function App() {
           <Route path="lab-tests" element={<AdminLabTests />} />
           <Route path="services" element={<AdminServices />} />
           <Route path="emergency" element={<AdminEmergency />} />
+          <Route path="notices" element={<AdminNotices />} />
           <Route path="banners" element={<AdminBanners />} />
           <Route path="settings" element={<AdminSettings />} />
         </Route>

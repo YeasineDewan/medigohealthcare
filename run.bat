@@ -1,16 +1,12 @@
 @echo off
 if "%1"=="dev" (
-    node node_modules\vite\bin\vite.js
+    start "Backend" cmd /k "php artisan serve"
+    start "Frontend" cmd /k "npm run dev"
 ) else if "%1"=="build" (
-    node node_modules\vite\bin\vite.js build
-) else if "%1"=="build:prod" (
-    node node_modules\vite\bin\vite.js build --mode production
-) else if "%1"=="lint" (
-    node node_modules\eslint\bin\eslint.js .
-) else if "%1"=="preview" (
-    node node_modules\vite\bin\vite.js preview
-) else if "%1"=="start" (
-    node node_modules\vite\bin\vite.js preview --host
+    npm run build
 ) else (
-    echo Usage: run.bat [dev^|build^|build:prod^|lint^|preview^|start]
+    echo Usage: run.bat [dev|build]
+    echo dev: Starts Laravel + Vite
+    echo build: Vite production build
 )
+
