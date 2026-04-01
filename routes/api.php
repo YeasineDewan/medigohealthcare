@@ -85,7 +85,15 @@ Route::prefix('v1')->group(function () {
         Route::get('/medical-records/{id}', [MedicalRecordController::class, 'show']);
         
         // Admin/Doctor Routes
-        Route::middleware(['role:admin,doctor'])->group(function () {
+Route::middleware(['role:admin,doctor'])->group(function () {
+            // Admin Dashboard Stats
+            Route::middleware('role:admin')->group(function () {
+                Route::get('/admin/stats', [AdminDashboardController::class, 'stats']);
+                Route::get('/admin/activity', [AdminDashboardController::class, 'recentActivity']);
+                Route::get('/admin/appointments/upcoming', [AdminDashboardController::class, 'upcomingAppointments']);
+                Route::get('/admin/departments/stats', [AdminDashboardController::class, 'departmentStats']);
+            });
+            
             // Admin Notices
             Route::middleware('role:admin')->group(function () {
                 Route::get('/admin/notices', [NoticeController::class, 'index']);
@@ -105,10 +113,10 @@ Route::prefix('v1')->group(function () {
             Route::put('/lab-tests/{id}', [LabTestController::class, 'update']);
             
             // Banner Management (Admin only)
-            Route::post('/banners', [BannerController::class, 'store']);
-            Route::put('/banners/{id}', [BannerController::class, 'update']);
-            Route::delete('/banners/{id}', [BannerController::class, 'destroy']);
-            Route::put('/banners/{id}/toggle', [BannerController::class, 'toggleActive']);
+            Route::post('/admin/banners', [BannerController::class, 'store']);
+            Route::put('/admin/banners/{id}', [BannerController::class, 'update']);
+            Route::delete('/admin/banners/{id}', [BannerController::class, 'destroy']);
+            Route::put('/admin/banners/{id}/toggle', [BannerController::class, 'toggleActive']);
         });
     });
 });

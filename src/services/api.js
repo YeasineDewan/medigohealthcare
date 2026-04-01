@@ -11,13 +11,29 @@ export const api = axios.create({
   timeout: 10000, // 10 second timeout
 });
 
-// Add request interceptor for error handling
+// Add request interceptor for auth token
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  }
+);
+
+// Add response interceptor for error handling
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     // Handle network errors gracefully
     if (!error.response) {
       console.warn('API request failed - network error or server unavailable');
+    }
+    // Handle 401 - logout
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
     }
     return Promise.reject(error);
   }
@@ -78,4 +94,60 @@ export const prescriptionService = {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
 };
+
+// Doctor APIs
+export const doctorService = {
+  getAll: (params) => api.get('/doctors', { params }),
+  getById: (id) => api.get(`/doctors/${id}`),
+  create: (data) => api.post('/doctors', data),
+  update: (id, data) => api.put(`/doctors/${id}`, data),
+  delete: (id) => api.delete(`/doctors/${id}`),
+};
+
+// Appointment APIs
+export const appointmentService = {
+  getAll: (params) => api.get('/appointments', { params }),
+  getById: (id) => api.get(`/appointments/${id}`),
+  create: (data) => api.post('/appointments', data),
+  update: (id, data) => api.put(`/appointments/${id}`, data),
+  delete: (id) => api.delete(`/appointments/${id}`),
+};
+
+// Patient APIs
+export const patientService = {
+  getAll: (params) => api.get('/patients', { params }),
+  getById: (id) => api.get(`/patients/${id}`),
+  create: (data) => api.post('/patients', data),
+  update: (id, data) => api.put(`/patients/${id}`, data),
+  delete: (id) => api.delete(`/patients/${id}`),
+};
+
+// Admin APIs
+export const adminService = {
+  // Dashboard stats and activity
+  getStats: () => api.get('/admin/stats'),
+  getRecentActivity: () => api.get('/admin/activity'),
+  getUpcomingAppointments: () => api.get('/admin/appointments/upcoming'),
+  getDepartmentStats: () => api.get('/admin/departments/stats'),
+  
+  // Notices CRUD
+  getNotices: (params) => api.get('/admin/notices', { params }),
+  createNotice: (data) => api.post('/admin/notices', data),
+  updateNotice: (id, data) => api.put(`/admin/notices/${id}`, data),
+  deleteNotice: (id) => api.delete(`/admin/notices/${id}`),
+  toggleNotice: (id) => api.patch(`/admin/notices/${id}/toggle`),
+  
+  // Banners CRUD
+  getBanners: (params) => api.get('/admin/banners', { params }),
+  createBanner: (formData) => api.post('/admin/banners', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  updateBanner: (id, formData) => api.put(`/admin/banners/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  deleteBanner: (id) => api.delete(`/admin/banners/${id}`),
+  toggleBanner: (id) => api.patch(`/admin/banners/${id}/toggle`)
+};
+
+
 
