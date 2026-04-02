@@ -10,6 +10,11 @@ import {
   Shield,
   Clock,
   Truck,
+  CreditCard,
+  Heart,
+  Star,
+  Users,
+  CheckCircle,
 } from 'lucide-react';
 
 const services = [
@@ -47,6 +52,13 @@ const services = [
     desc: 'Your medical history',
     href: '/records',
     features: ['Secure storage', 'Prescriptions', 'Lab reports'],
+  },
+  {
+    icon: CreditCard,
+    title: 'Health Card',
+    desc: 'Exclusive membership benefits',
+    href: '/health-cards',
+    features: ['Cashless hospitalization', 'Family coverage', 'Premium discounts'],
   },
 ];
 

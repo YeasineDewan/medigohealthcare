@@ -445,17 +445,81 @@ export default function Contact() {
           </motion.div>
           
           <div className="bg-gray-100 rounded-2xl overflow-hidden" style={{ height: '500px' }}>
-            {/* Google Maps integration */}
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.278628367075!2d90.4078!3d23.7925!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z!4m2!3m1!1s0x0%3A0x0!5e0!3m2!1sen!2sbd!4v1635000000000!5m2!1sen!2sbd"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen=""
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title="Medigo Healthcare Locations Map"
-            ></iframe>
+            {/* Interactive Map with Multiple Locations */}
+            <div className="w-full h-full relative">
+              {/* Primary: Google Maps Embed */}
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14608.20210080366!2d90.37630319595335!3d23.74557761231977!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b896706bb089%3A0xb56f55b074efcf06!2sRupayan%20Trade%20Center%2C%20114%20Kazi%20Nazrul%20Islam%20Ave%2C%20Dhaka%201205!5e0!3m2!1sen!2sbd!4v1775163244064!5m2!1sen!2sbd"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Medigo Healthcare Locations Map - Rupayan Trade Center"
+                className="w-full h-full"
+                onError={(e) => {
+                  // Fallback if iframe fails to load
+                  e.target.style.display = 'none';
+                  document.getElementById('map-fallback').style.display = 'flex';
+                }}
+              ></iframe>
+              
+              {/* Fallback: Static Map Display */}
+              <div 
+                id="map-fallback" 
+                className="absolute inset-0 bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center"
+                style={{ display: 'none' }}
+              >
+                <div className="text-center p-8 max-w-md">
+                  <MapPin className="w-20 h-20 text-[#5DBB63] mx-auto mb-6" />
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Find Our Locations</h3>
+                  <p className="text-gray-600 mb-8">Click on any location below to view it on Google Maps and get directions</p>
+                  <div className="space-y-3">
+                    {offices.map((office) => (
+                      <button
+                        key={office.city}
+                        onClick={() => window.open(`https://www.google.com/maps/search/${encodeURIComponent(office.address)}`, '_blank')}
+                        className="w-full p-4 bg-white rounded-lg border border-gray-200 hover:border-[#5DBB63] hover:shadow-md transition-all duration-300 text-left"
+                      >
+                        <div className="flex items-center gap-3">
+                          <MapPin className="w-5 h-5 text-[#5DBB63] flex-shrink-0" />
+                          <div>
+                            <span className="font-semibold text-gray-900 block">{office.city}</span>
+                            <span className="text-sm text-gray-600">{office.address}</span>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              
+              {/* Location buttons overlay */}
+              <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-3 max-w-xs">
+                <p className="text-sm font-semibold text-gray-700 mb-3">Our Locations:</p>
+                <div className="space-y-2">
+                  {offices.map((office) => (
+                    <button
+                      key={office.city}
+                      onClick={() => window.open(`https://www.google.com/maps/search/${encodeURIComponent(office.address)}`, '_blank')}
+                      className="w-full text-left px-3 py-2 text-sm hover:bg-[#5DBB63]/10 rounded transition-colors flex items-center gap-2 border border-gray-200 hover:border-[#5DBB63]/30"
+                    >
+                      <MapPin className="w-4 h-4 text-[#5DBB63]" />
+                      <div>
+                        <span className="font-medium text-gray-900">{office.city}</span>
+                        <p className="text-xs text-gray-500">{office.address.split(',')[0]}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Map attribution */}
+              <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 text-xs text-gray-600">
+                📍 Click any location above for detailed directions
+              </div>
+            </div>
           </div>
           
           {/* Alternative: Interactive location selector */}
