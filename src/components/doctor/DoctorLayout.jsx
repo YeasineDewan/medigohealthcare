@@ -13,15 +13,17 @@ import {
   ChevronRight,
   Bell,
   Stethoscope,
+  FileText,
 } from 'lucide-react';
 
 const menuItems = [
   { path: '/doctor', icon: LayoutDashboard, label: 'Dashboard' },
-  { path: '/doctor/schedule', icon: Calendar, label: 'Appointments' },
+  { path: '/doctor/appointments', icon: FileText, label: 'Appointments' },
+  { path: '/doctor/schedule', icon: Calendar, label: 'Schedule' },
   { path: '/doctor/live-consult', icon: Video, label: '24/7 Live Consult' },
+  { path: '/doctor/profile', icon: User, label: 'Professional Profile' },
   { path: '/doctor/patients', icon: Users, label: 'My Patients' },
   { path: '/doctor/earnings', icon: DollarSign, label: 'Earnings' },
-  { path: '/doctor/profile', icon: User, label: 'Profile' },
 ];
 
 export default function DoctorLayout() {

@@ -1,35 +1,60 @@
 // API Service for admin operations
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
+// Check if backend is available
+const isBackendAvailable = API_BASE_URL && !API_BASE_URL.includes('localhost:8000');
+
+// Import mock API for development
+import mockApiService from './mockApi.js';
+
 class ApiService {
   constructor() {
     this.baseURL = API_BASE_URL;
+    this.useMock = !isBackendAvailable;
   }
 
   async request(endpoint, options = {}) {
+    // Use mock API if backend is not available
+    if (this.useMock) {
+      return mockApiService.request(endpoint, options);
+    }
+
     const url = `${this.baseURL}${endpoint}`;
     const config = {
       headers: {
         'Content-Type': 'application/json',
-        ...options.headers,
+        'Accept': 'application/json',
+        ...options.headers
       },
-      ...options,
+      ...options
     };
-
-    // Add auth token if available
-    const token = localStorage.getItem('admin_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
+    
     try {
       const response = await fetch(url, config);
       
       if (!response.ok) {
+        // Handle HTTP errors gracefully
+        const errorText = await response.text();
+        console.error(`HTTP ${response.status}:`, errorText);
+        
+        // Check if it's an HTML error page (404, 500, etc.)
+        if (errorText.includes('<!DOCTYPE') || errorText.includes('<html')) {
+          throw new Error(`API endpoint not found: ${endpoint}`);
+        }
+        
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      return await response.json();
+      // Check if response is JSON before parsing
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        return await response.json();
+      } else {
+        // Handle non-JSON responses
+        const text = await response.text();
+        console.warn('Non-JSON response received:', text);
+        throw new Error('Invalid response format');
+      }
     } catch (error) {
       console.error('API request failed:', error);
       throw error;

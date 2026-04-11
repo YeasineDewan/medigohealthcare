@@ -10,11 +10,8 @@ import { noticeService } from '../../services/noticeService';
 
 const navLinks = [
   { label: 'Home', href: '/' },
-  { label: 'About Us', href: '/about' },
-  { label: 'Careers', href: '/careers' },
-  { label: 'Contact', href: '/contact' },
-  { label: 'Blog', href: '/blog' },
 ];
+
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);

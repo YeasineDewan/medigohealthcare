@@ -16,16 +16,15 @@ const footerLinks = {
     { label: 'Emergency', href: '/emergency', icon: AlertTriangle },
   ],
   Company: [
-    { label: 'About Us', href: '/about', icon: Building },
-    { label: 'Careers', href: '/careers', icon: Briefcase },
-    { label: 'Contact', href: '/contact', icon: Phone },
+    { label: 'Services', href: '/services', icon: Stethoscope },
+    { label: 'Emergency', href: '/emergency', icon: AlertTriangle },
     { label: 'Help Center', href: '/help', icon: HelpCircle },
   ],
   Legal: [
     { label: 'Privacy Policy', href: '/privacy', icon: ShieldCheck },
     { label: 'Terms of Service', href: '/terms', icon: FileText },
-    { label: 'Blog', href: '/blog', icon: BookOpen },
   ],
+
 };
 
 const socialLinks = [

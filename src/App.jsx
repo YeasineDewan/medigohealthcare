@@ -1,6 +1,4 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
 import Doctors from './pages/Doctors';
@@ -14,6 +12,8 @@ import Checkout from './pages/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import JoinAsDoctor from './pages/JoinAsDoctor';
+import PartnerHospital from './pages/PartnerHospital';
 import Services from './pages/Services';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
@@ -35,13 +35,16 @@ import MedicareHealthCard from './pages/MedicareHealthCard';
 import AuthGate from './pages/auth/AuthGate';
 import RoleLogin from './pages/auth/RoleLogin';
 import RoleSignup from './pages/auth/RoleSignup';
-import ProfessionalAdminLayout from './components/admin/AdminLayout';
+import AdminLayout from './components/admin/AdminLayout';
+import AdvancedAdminLayout from './components/admin/AdvancedAdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import AdvancedDashboard from './pages/admin/AdvancedDashboard';
 import AdminDoctors from './pages/admin/AdminDoctors';
 import AdminPatients from './pages/admin/AdminPatients';
 import AdminAppointments from './pages/admin/AdminAppointments';
 import AdminProducts from './pages/admin/AdminProducts';
 import AdminOrders from './pages/admin/AdminOrders';
+import ProfessionalAdminLayout from './components/admin/AdminLayout';
 import AdminLabTests from './pages/admin/AdminLabTests';
 import AdminLabCategories from './pages/admin/AdminLabCategories';
 import AdminServices from './pages/admin/AdminServices';
@@ -72,6 +75,16 @@ import PatientRegistrationForm from './pages/admin/patients/PatientRegistrationF
 import PatientMedicalHistory from './pages/admin/patients/MedicalHistory';
 import PatientBilling from './pages/admin/patients/PatientBilling';
 import AdminPatientRecords from './pages/admin/patients/PatientRecords';
+
+// Medical Checkup Management
+import AllValueEntry from './pages/admin/medicalCheckup/AllValueEntry';
+import BillList from './pages/admin/medicalCheckup/BillList';
+import CompleteReportList from './pages/admin/medicalCheckup/CompleteReportList';
+import DueCollection from './pages/admin/medicalCheckup/DueCollection';
+import DueCollectionHistory from './pages/admin/medicalCheckup/DueCollectionHistory';
+import MedicalExaminationReport from './pages/admin/medicalCheckup/MedicalExaminationReport';
+import PendingReportList from './pages/admin/medicalCheckup/PendingReportList';
+import Registration from './pages/admin/medicalCheckup/Registration';
 
 // Pharmacy Management
 import MedicalDevices from './pages/admin/pharmacy/MedicalDevices';
@@ -163,7 +176,9 @@ import DoctorSchedule from './pages/doctor/DoctorSchedule';
 import DoctorLiveConsult from './pages/doctor/DoctorLiveConsult';
 import DoctorPatients from './pages/doctor/DoctorPatients';
 import DoctorEarnings from './pages/doctor/DoctorEarnings';
-import DoctorProfile from './pages/doctor/DoctorProfile';
+import DoctorProfilePro from './pages/doctor/DoctorProfilePro';
+import ProfessionalDoctorProfile from './pages/doctor/ProfessionalDoctorProfile';
+import Appointments from './pages/doctor/Appointments';
 import PatientLayout from './components/patient/PatientLayout';
 import PatientDashboard from './pages/patient/PatientDashboard';
 import PatientBook from './pages/patient/PatientBook';
@@ -173,6 +188,12 @@ import PatientOrders from './pages/patient/PatientOrders';
 import PatientRecords from './pages/patient/PatientRecords';
 import PatientPrescriptions from './pages/patient/PatientPrescriptions';
 import PatientProfile from './pages/patient/PatientProfile';
+import AdvancedPatientDashboard from './pages/patient/AdvancedPatientDashboard';
+import AdvancedPatientLayout from './components/patient/AdvancedPatientLayout';
+import PatientMedicalRecords from './pages/patient/PatientMedicalRecords';
+
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -202,6 +223,8 @@ function App() {
           <Route path="order-confirmation/:id" element={<OrderConfirmation />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="join-as-doctor" element={<JoinAsDoctor />} />
+          <Route path="partner-hospital" element={<PartnerHospital />} />
           <Route path="services" element={<Services />} />
           <Route path="blog" element={<Blog />} />
           <Route path="blog/:id" element={<BlogPost />} />
@@ -237,6 +260,11 @@ function App() {
           <Route path="dynamic-dashboard" element={<DynamicAdminDashboard />} />
           <Route path="enhanced-dashboard" element={<EnhancedDashboard />} />
           
+          {/* Advanced Admin Layout */}
+          <Route path="advanced" element={<AdvancedAdminLayout />}>
+            <Route index element={<AdvancedDashboard />} />
+          </Route>
+          
           {/* User Management */}
           <Route path="doctors" element={<DoctorsManagementBroken />} />
           <Route path="patients" element={<PatientsManagementBroken />} />
@@ -255,6 +283,16 @@ function App() {
           <Route path="patients/medical-history" element={<PatientMedicalHistory />} />
           <Route path="patients/billing" element={<PatientBilling />} />
           <Route path="patients/records" element={<AdminPatientRecords />} />
+          
+          {/* Medical Checkup Management */}
+          <Route path="medical-checkup/registration" element={<Registration />} />
+          <Route path="medical-checkup/all-value-entry" element={<AllValueEntry />} />
+          <Route path="medical-checkup/bill-list" element={<BillList />} />
+          <Route path="medical-checkup/pending-report-list" element={<PendingReportList />} />
+          <Route path="medical-checkup/complete-report-list" element={<CompleteReportList />} />
+          <Route path="medical-checkup/due-collection" element={<DueCollection />} />
+          <Route path="medical-checkup/due-collection-history" element={<DueCollectionHistory />} />
+          <Route path="medical-checkup/medical-examination-report" element={<MedicalExaminationReport />} />
           
           {/* Pharmacy Management */}
           <Route path="products" element={<AdminProducts />} />
@@ -369,26 +407,42 @@ function App() {
           <Route index element={<DoctorDashboard />} />
           <Route path="schedule" element={<DoctorSchedule />} />
           <Route path="live-consult" element={<DoctorLiveConsult />} />
+          <Route path="appointments" element={<Appointments />} />
+          <Route path="profile" element={<ProfessionalDoctorProfile />} />
+          <Route path="profile-crud" element={<DoctorProfilePro />} />
+          <Route path="profile" element={<DoctorProfilePro />} />
           <Route path="patients" element={<DoctorPatients />} />
           <Route path="earnings" element={<DoctorEarnings />} />
-          <Route path="profile" element={<DoctorProfile />} />
         </Route>
 
+        {/* Patient Routes */}
         <Route path="/patient" element={<PatientLayout />}>
           <Route index element={<PatientDashboard />} />
+          <Route path="dashboard" element={<AdvancedPatientDashboard />} />
           <Route path="book" element={<PatientBook />} />
           <Route path="live-consult" element={<PatientLiveConsult />} />
           <Route path="appointments" element={<PatientAppointments />} />
           <Route path="orders" element={<PatientOrders />} />
           <Route path="records" element={<PatientRecords />} />
           <Route path="prescriptions" element={<PatientPrescriptions />} />
+          <Route path="medical-records" element={<PatientMedicalRecords />} />
           <Route path="profile" element={<PatientProfile />} />
         </Route>
 
-        <Route path="/login" element={<Navigate to="/auth" replace />} />
-        <Route path="/signup" element={<Navigate to="/auth" replace />} />
-      </Routes>
-    </BrowserRouter>
+  {/* Advanced Patient Layout */}
+  <Route path="/patient/advanced" element={<AdvancedPatientLayout />}>
+    <Route index element={<AdvancedPatientDashboard />} />
+    <Route path="dashboard" element={<AdvancedPatientDashboard />} />
+    <Route path="appointments" element={<PatientAppointments />} />
+    <Route path="records" element={<PatientMedicalRecords />} />
+    <Route path="prescriptions" element={<PatientPrescriptions />} />
+    <Route path="profile" element={<PatientProfile />} />
+    <Route path="book" element={<PatientBook />} />
+    <Route path="live-consult" element={<PatientLiveConsult />} />
+    <Route path="orders" element={<PatientOrders />} />
+  </Route>
+</Routes>
+</BrowserRouter>
   );
 }
 

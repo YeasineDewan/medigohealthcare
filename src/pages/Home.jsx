@@ -18,6 +18,7 @@ import DoctorCard from '../components/features/DoctorCard';
 import ProductCard from '../components/features/ProductCard';
 import HeroBanner from '../components/features/HeroBanner';
 import FeaturedProducts from '../components/features/FeaturedProducts';
+import ProfessionalStats from '../components/shared/ProfessionalStats';
 import { Button } from '../components/core/Button';
 import axios from 'axios';
 
@@ -28,12 +29,6 @@ const services = [
   { icon: Video, title: 'Video Consultation', desc: 'Consult doctors online 24/7', href: '/consult', color: 'from-[#165028] to-[#0f3d1c]' },
   { icon: Pill, title: 'Pharmacy', desc: 'Order medicines with home delivery', href: '/pharmacy', color: 'from-[#5DBB63] to-[#4a9a4f]' },
   { icon: FlaskConical, title: 'Lab Tests', desc: 'Home collection & digital reports', href: '/lab-tests', color: 'from-[#165028] to-[#5DBB63]' },
-];
-
-const features = [
-  { icon: Shield, title: 'Trusted', desc: 'Verified doctors & pharmacies' },
-  { icon: Clock, title: '24/7', desc: 'Emergency support anytime' },
-  { icon: Users, title: '2M+', desc: 'Patients served' },
 ];
 
 const featuredDoctors = [
@@ -258,6 +253,41 @@ const featuredProducts = [
 
 export default function Home() {
   const [banners, setBanners] = useState([]);
+  
+  const stats = [
+    { 
+      id: 1,
+      icon: Shield, 
+      title: '2M+', 
+      label: 'Patients Served',
+      description: 'Trusted by millions across the country',
+      badge: 'Since 2020'
+    },
+    { 
+      id: 2,
+      icon: Clock, 
+      title: '24/7', 
+      label: 'Emergency Support',
+      description: 'Available round the clock for your health needs',
+      badge: 'Always On'
+    },
+    { 
+      id: 3,
+      icon: Users, 
+      title: '5000+', 
+      label: 'Verified Doctors',
+      description: 'Certified medical professionals in our network',
+      badge: 'Verified'
+    },
+    { 
+      id: 4,
+      icon: Star, 
+      title: '4.9/5', 
+      label: 'Average Rating',
+      description: 'Excellence in patient care and satisfaction',
+      badge: 'Top Rated'
+    },
+  ];
 
   useEffect(() => {
     fetchBanners();
@@ -382,29 +412,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="py-16 bg-[#165028]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {features.map((f, i) => (
-              <motion.div
-                key={f.title}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="text-center text-white"
-              >
-                <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-4">
-                  <f.icon className="w-7 h-7" />
-                </div>
-                <h3 className="font-bold text-xl mb-1">{f.title}</h3>
-                <p className="text-gray-300">{f.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Professional Stats */}
+      <ProfessionalStats 
+        stats={stats}
+        title="Trusted by Millions"
+        subtitle="Your health is our priority, with proven excellence in healthcare"
+        background="bg-gradient-to-br from-[#165028] to-[#0f3d1c]"
+      />
 
       {/* Featured Doctors */}
       <section className="py-20 bg-[#F9FAFB]">

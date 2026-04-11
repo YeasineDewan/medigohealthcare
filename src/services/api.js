@@ -99,6 +99,9 @@ export const prescriptionService = {
 export const doctorService = {
   getAll: (params) => api.get('/doctors', { params }),
   getById: (id) => api.get(`/doctors/${id}`),
+  updateProfile: (id, formData) => api.put(`/doctors/${id}/profile`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
   create: (data) => api.post('/doctors', data),
   update: (id, data) => api.put(`/doctors/${id}`, data),
   delete: (id) => api.delete(`/doctors/${id}`),

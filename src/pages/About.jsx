@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import {
   Shield,
   Heart,
@@ -400,14 +401,20 @@ export default function About() {
               Medigo has something for you.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#165028] rounded-lg hover:bg-gray-100 transition-colors">
+              <Link 
+                to="/join-as-doctor" 
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#165028] rounded-lg hover:bg-gray-100 transition-colors"
+              >
                 <Stethoscope className="w-5 h-5" />
                 Join as Doctor
-              </button>
-              <button className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 text-white border border-white/30 rounded-lg hover:bg-white/20 transition-colors">
+              </Link>
+              <Link 
+                to="/partner-hospital" 
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 text-white border border-white/30 rounded-lg hover:bg-white/20 transition-colors"
+              >
                 <Hospital className="w-5 h-5" />
                 Partner Hospital
-              </button>
+              </Link>
             </div>
           </motion.div>
         </div>

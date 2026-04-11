@@ -34,9 +34,18 @@ class Doctor extends Model
         'available_days' => 'array',
         'consultation_fee' => 'decimal:2',
         'video_consultation_fee' => 'decimal:2',
+        'consultation_fee_online' => 'decimal:2',
+        'consultation_fee_emergency' => 'decimal:2',
         'rating' => 'decimal:2',
         'is_available' => 'boolean',
         'accepts_video_consultation' => 'boolean',
+        'experience' => 'array',
+        'education' => 'array',
+        'services' => 'array',
+        'publications' => 'array',
+        'awards' => 'array',
+        'affiliations' => 'array',
+        'memberships' => 'array',
     ];
 
     // Relationships

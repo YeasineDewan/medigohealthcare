@@ -103,7 +103,8 @@ Route::middleware(['role:admin,doctor'])->group(function () {
                 Route::patch('/admin/notices/{id}/toggle', [NoticeController::class, 'toggle']);
             });
             Route::post('/doctors', [DoctorController::class, 'store']);
-            Route::put('/doctors/{id}', [DoctorController::class, 'update']);
+            Route::put('/doctors/{id}/profile', [DoctorController::class, 'updateProfile']);
+            Route::put('/doctors/{id}', [DoctorController::class, 'update']); 
             Route::post('/categories', [ProductCategoryController::class, 'store']);
             Route::put('/categories/{id}', [ProductCategoryController::class, 'update']);
             Route::delete('/categories/{id}', [ProductCategoryController::class, 'destroy']);
