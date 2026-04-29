@@ -5,8 +5,19 @@
     "description": "Medigo Healthcare - Telemedicine & E-Commerce Platform",
     "keywords": ["laravel", "healthcare", "api"],
     "license": "MIT",
+    "repositories": [
+        {
+            "name": "packagist",
+            "type": "composer",
+            "url": "https://packagist.jp"
+        },
+        {
+            "type": "composer",
+            "url": "https://packagist.org"
+        }
+    ],
     "require": {
-        "php": "^8.2",
+        "php": "^8.2|^8.3|^8.4|^8.5",
         "laravel/framework": "^11.31",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9"
@@ -51,12 +62,19 @@
         }
     },
     "config": {
+        "platform": {
+            "php": "8.5"
+        },
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
+        },
+        "disable-tls": true,
+        "audit": {
+            "block-insecure": false
         }
     },
     "minimum-stability": "stable",

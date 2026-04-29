@@ -63,7 +63,7 @@ export const useAdminData = () => {
       ]);
 
       setStats(statsRes.data.data || FALLBACK_STATS);
-      setRecentActivity(statsRes.data.data || FALLBACK_ACTIVITY);
+      setRecentActivity(activityRes.data.data || FALLBACK_ACTIVITY);
       setUpcomingAppointments(appointmentsRes.data.data || FALLBACK_APPOINTMENTS);
       setDepartmentStats(deptRes.data.data || []);
     } catch (err) {

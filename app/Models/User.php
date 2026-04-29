@@ -22,11 +22,14 @@ class User extends Authenticatable
         'gender',
         'address',
         'city',
-        'state',
-        'zip_code',
         'country',
-        'avatar',
+        'profile_image',
         'is_active',
+        'email_verified',
+        'phone_verified',
+        'last_login_at',
+        'last_login_ip',
+        'preferences',
     ];
 
     protected $hidden = [
@@ -38,6 +41,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'date_of_birth' => 'date',
         'is_active' => 'boolean',
+        'email_verified' => 'boolean',
+        'phone_verified' => 'boolean',
+        'last_login_at' => 'datetime',
+        'preferences' => 'array',
         'password' => 'hashed',
     ];
 
@@ -70,5 +77,68 @@ class User extends Authenticatable
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+    public function patient()
+    {
+        return $this->hasOne(Patient::class);
+    }
+
+    public function doctorApplication()
+    {
+        return $this->hasOne(DoctorApplication::class, 'email', 'email');
+    }
+
+    public function hospitalApplications()
+    {
+        return $this->hasMany(HospitalApplication::class, 'reviewed_by');
+    }
+
+    public function prescriptions()
+    {
+        return $this->hasMany(Prescription::class, 'doctor_id');
+    }
+
+    public function medicalRecordsAsDoctor()
+    {
+        return $this->hasMany(MedicalRecord::class, 'doctor_id');
+    }
+
+    // Scopes
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function scopeByRole($query, $role)
+    {
+        return $query->where('role', $role);
+    }
+
+    // Accessors
+    public function getFullNameAttribute()
+    {
+        return $this->name;
+    }
+
+    public function getRoleLabelAttribute()
+    {
+        return match($this->role) {
+            'admin' => 'Administrator',
+            'doctor' => 'Doctor',
+            'patient' => 'Patient',
+            'hospital_admin' => 'Hospital Admin',
+            'staff' => 'Staff',
+            default => 'Unknown'
+        };
+    }
+
+    public function getProfileImageUrlAttribute()
+    {
+        if ($this->profile_image) {
+            return asset('storage/' . $this->profile_image);
+        }
+        
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7C3AED&background=EBF4FF';
     }
 }

@@ -14,33 +14,40 @@ class Product extends Model
         'name',
         'slug',
         'description',
-        'short_description',
-        'sku',
-        'price',
-        'discount_price',
-        'stock_quantity',
-        'category',
+        'generic_name',
+        'brand_name',
+        'category_id',
         'manufacturer',
-        'images',
-        'prescription_required',
-        'ingredients',
-        'usage_instructions',
-        'side_effects',
-        'rating',
-        'total_reviews',
+        'sku',
+        'barcode',
+        'type',
+        'dosage_form',
+        'strength',
+        'pack_size',
+        'price',
+        'original_price',
+        'discount_percentage',
+        'is_prescription_required',
+        'is_otc',
+        'stock_quantity',
         'is_active',
-        'is_featured',
     ];
 
     protected $casts = [
-        'images' => 'array',
         'price' => 'decimal:2',
-        'discount_price' => 'decimal:2',
+        'original_price' => 'decimal:2',
+        'discount_percentage' => 'decimal:2',
+        'is_prescription_required' => 'boolean',
+        'is_otc' => 'boolean',
         'is_active' => 'boolean',
-        'is_featured' => 'boolean',
     ];
 
     // Relationships
+    public function category()
+    {
+        return $this->belongsTo(ProductCategory::class, 'category_id');
+    }
+
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);

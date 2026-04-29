@@ -12,39 +12,52 @@ class BannerSeeder extends Seeder
         $banners = [
             [
                 'title' => 'Emergency Services 24/7',
+                'subtitle' => 'Always Available',
                 'description' => 'Get immediate medical help anytime.',
                 'image' => 'banners/emergency.jpg',
-                'link' => '/emergency',
-                'is_active' => true,
-                'position' => 1,
-                'starts_at' => now(),
-                'ends_at' => now()->addDays(30),
+                'background_color' => 'from-red-500 to-red-700',
+                'cta_text' => 'Get Help Now',
+                'cta_link' => '/emergency',
+                'display_order' => 1,
+                'active' => true,
+                'type' => 'hero',
+                'start_date' => now(),
+                'end_date' => now()->addDays(30),
             ],
             [
                 'title' => 'Top Doctors Available',
+                'subtitle' => 'Verified Specialists',
                 'description' => 'Book with verified specialists.',
                 'image' => 'banners/doctors.jpg',
-                'link' => '/doctors',
-                'is_active' => true,
-                'position' => 2,
-                'starts_at' => now(),
-                'ends_at' => now()->addDays(60),
+                'background_color' => 'from-blue-500 to-blue-700',
+                'cta_text' => 'Find Doctors',
+                'cta_link' => '/doctors',
+                'display_order' => 2,
+                'active' => true,
+                'type' => 'promotional',
+                'start_date' => now(),
+                'end_date' => now()->addDays(30),
             ],
             [
                 'title' => 'Lab Tests at Home',
-                'description' => 'Home collection available for all tests.',
+                'subtitle' => 'Convenient Testing',
+                'description' => 'Get lab tests done at your doorstep.',
                 'image' => 'banners/lab-tests.jpg',
-                'link' => '/lab-tests',
-                'is_active' => true,
-                'position' => 3,
-                'starts_at' => now(),
-                'ends_at' => now()->addDays(45),
+                'background_color' => 'from-green-500 to-green-700',
+                'cta_text' => 'Book Test',
+                'cta_link' => '/lab-tests',
+                'display_order' => 3,
+                'active' => true,
+                'type' => 'promotional',
+                'start_date' => now(),
+                'end_date' => now()->addDays(30),
             ],
         ];
 
         foreach ($banners as $banner) {
             Banner::create($banner);
         }
+
+        $this->command->info('Banners seeded successfully!');
     }
 }
-

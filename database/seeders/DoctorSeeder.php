@@ -20,133 +20,82 @@ class DoctorSeeder extends Seeder
                     'role' => 'doctor',
                 ],
                 'doctor' => [
-                    'specialty' => 'Cardiology',
+                    'specialization' => 'Cardiology',
                     'qualifications' => 'MBBS, MD (Cardiology)',
-                    'bio' => 'Senior Cardiologist with 15+ years experience.',
+                    'experience' => 'Senior Cardiologist with 15+ years experience.',
                     'license_number' => 'LIC001',
-                    'experience_years' => 15,
-                    'consultation_fee' => 1500,
-                    'video_consultation_fee' => 1200,
-                    'hospital' => 'Medigo Heart Center',
-                    'location' => 'Dhaka',
-                    'available_days' => ['monday', 'wednesday', 'friday'],
-                    'start_time' => '09:00',
-                    'end_time' => '17:00',
-                    'is_available' => true,
-                    'accepts_video_consultation' => true,
-                ]
+                    'department' => 'Cardiology',
+                    'consultation_fee' => 1500.00,
+                ],
             ],
             [
                 'user' => [
-                    'name' => 'Dr. Fatima Rahman',
-                    'email' => 'fatima.rahman@medigo.com',
-                    'phone' => '+8801812345678',
+                    'name' => 'Dr. Sarah Rahman',
+                    'email' => 'sarah.rahman@medigo.com',
+                    'phone' => '+8801712345679',
                     'role' => 'doctor',
                 ],
                 'doctor' => [
-                    'specialty' => 'General Physician',
-                    'qualifications' => 'MBBS, FCPS',
-                    'bio' => 'Experienced General Physician.',
+                    'specialization' => 'Pediatrics',
+                    'qualifications' => 'MBBS, FCPS (Pediatrics)',
+                    'experience' => 'Pediatrician with 10+ years experience.',
                     'license_number' => 'LIC002',
-                    'experience_years' => 10,
-                    'consultation_fee' => 1000,
-                    'video_consultation_fee' => 800,
-                    'hospital' => 'Medigo Clinic',
-                    'location' => 'Dhaka',
-                    'available_days' => ['tuesday', 'thursday', 'saturday'],
-                    'start_time' => '10:00',
-                    'end_time' => '18:00',
-                    'is_available' => true,
-                    'accepts_video_consultation' => true,
-                ]
+                    'department' => 'Pediatrics',
+                    'consultation_fee' => 800.00,
+                ],
             ],
-            // Add 3 more doctors...
             [
                 'user' => [
-                    'name' => 'Dr. Sarah Ali',
-                    'email' => 'sarah.ali@medigo.com',
-                    'phone' => '+8801912345678',
+                    'name' => 'Dr. Mohammed Hassan',
+                    'email' => 'mohammed.hassan@medigo.com',
+                    'phone' => '+8801712345680',
                     'role' => 'doctor',
                 ],
                 'doctor' => [
-                    'specialty' => 'Pediatrics',
-                    'qualifications' => 'MBBS, DCH',
-                    'bio' => 'Child specialist.',
+                    'specialization' => 'Orthopedics',
+                    'qualifications' => 'MBBS, MS (Orthopedics)',
+                    'experience' => 'Orthopedic Surgeon with 12+ years experience.',
                     'license_number' => 'LIC003',
-                    'experience_years' => 8,
-                    'consultation_fee' => 1200,
-                    'video_consultation_fee' => 1000,
-                    'hospital' => 'Medigo Children Hospital',
-                    'location' => 'Dhaka',
-                    'available_days' => ['monday', 'tuesday', 'wednesday'],
-                    'start_time' => '14:00',
-                    'end_time' => '20:00',
-                    'is_available' => true,
-                    'accepts_video_consultation' => true,
-                ]
-            ],
-            [
-                'user' => [
-                    'name' => 'Dr. Raj Patel',
-                    'email' => 'raj.patel@medigo.com',
-                    'phone' => '+8801923456789',
-                    'role' => 'doctor',
+                    'department' => 'Orthopedics',
+                    'consultation_fee' => 1200.00,
                 ],
-                'doctor' => [
-                    'specialty' => 'Orthopedics',
-                    'qualifications' => 'MBBS, MS (Ortho)',
-                    'bio' => 'Orthopedic surgeon.',
-                    'license_number' => 'LIC004',
-                    'experience_years' => 12,
-                    'consultation_fee' => 1800,
-                    'video_consultation_fee' => 1500,
-                    'hospital' => 'Medigo Bone Center',
-                    'location' => 'Dhaka',
-                    'available_days' => ['thursday', 'friday'],
-                    'start_time' => '09:00',
-                    'end_time' => '17:00',
-                    'is_available' => true,
-                    'accepts_video_consultation' => false,
-                ]
-            ],
-            [
-                'user' => [
-                    'name' => 'Dr. Lina Chowdhury',
-                    'email' => 'lina.chowdhury@medigo.com',
-                    'phone' => '+8801934567890',
-                    'role' => 'doctor',
-                ],
-                'doctor' => [
-                    'specialty' => 'Gynecology',
-                    'qualifications' => 'MBBS, FCPS (Gyn)',
-                    'bio' => 'Women health specialist.',
-                    'license_number' => 'LIC005',
-                    'experience_years' => 11,
-                    'consultation_fee' => 1400,
-                    'video_consultation_fee' => 1100,
-                    'hospital' => 'Medigo Women Center',
-                    'location' => 'Dhaka',
-                    'available_days' => ['saturday', 'sunday'],
-                    'start_time' => '11:00',
-                    'end_time' => '19:00',
-                    'is_available' => true,
-                    'accepts_video_consultation' => true,
-                ]
             ],
         ];
 
-        foreach ($doctors as $data) {
-            $user = User::create(array_merge($data['user'], [
-                'password' => Hash::make('password'),
+        foreach ($doctors as $doctorData) {
+            // Create user account
+            $user = User::create($doctorData['user'] + [
+                'password' => Hash::make('password123'),
                 'email_verified_at' => now(),
-            ]));
+                'date_of_birth' => '1975-05-15',
+                'gender' => 'male',
+                'address' => '123 Medical College Road',
+                'city' => 'Dhaka',
+                'country' => 'Bangladesh',
+                'is_active' => true,
+                'email_verified' => true,
+                'phone_verified' => true,
+            ]);
 
-            Doctor::create(array_merge($data['doctor'], [
+            // Create doctor profile
+            Doctor::create([
                 'user_id' => $user->id,
-                'rating' => rand(40, 50) / 10,
-                'total_reviews' => rand(10, 50),
-            ]));
+                'name' => $user->name,
+                'email' => $user->email,
+                'password' => Hash::make('password123'),
+                'email_verified_at' => now(),
+                'phone' => $user->phone,
+                'specialization' => $doctorData['doctor']['specialization'],
+                'qualifications' => $doctorData['doctor']['qualifications'],
+                'experience' => $doctorData['doctor']['experience'],
+                'license_number' => $doctorData['doctor']['license_number'],
+                'department' => $doctorData['doctor']['department'],
+                'consultation_fee' => $doctorData['doctor']['consultation_fee'],
+                'profile_image' => null,
+                'is_active' => true,
+            ]);
         }
+
+        $this->command->info('Doctors seeded successfully!');
     }
 }
-

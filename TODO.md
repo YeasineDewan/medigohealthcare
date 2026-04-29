@@ -1,10 +1,28 @@
-# Header Services Update - TODO
+# Medigo Health Web App - JSX Fix Task
 
-## Plan Breakdown (Approved)
-1. **✅ [DONE] Create TODO.md** - Track progress
-2. **✅ [DONE] Edit src/components/layout/Navbar.jsx** - navLinks now Home-only; Services/Emergency dynamic dropdowns remain
-3. **✅ [DONE] Edit src/components/layout/Footer.jsx** - Removed About Us, Careers, Contact, Blog; added Services/Emergency links
-4. **🔄 Test changes** - Run `npm run dev` to verify Services dropdown loads all services from backend
-5. **🔄 Complete task** - attempt_completion
+## Approved Plan Steps (Local Dev Server Fix - Option 1)
 
-## Current Step: 4/5 - Test navigation
+### [ ] Step 1: Clear Vite cache
+rmdir /s /q node_modules\.vite
+- Removes cached builds causing "main.jsx" reference.
+
+### [ ] Step 2: Install/update dependencies (if needed)
+npm install
+
+### [ ] Step 3: Start Vite development server
+npm run dev
+- Opens http://localhost:5173 with proper JSX support.
+
+### [ ] Step 4: Verify fix
+- Check browser console: No "Unexpected token '<'" error.
+- App loads at localhost:5173.
+- Test navigation to admin/doctors etc.
+
+### [ ] Step 5: (Optional) Production deploy prep
+- Update .htaccess for JSX MIME types OR
+- Run conversion script for all-JS.
+
+**Current Status**: Starting Step 1.
+
+**Next Action**: Execute cache clear and dev server start.
+
