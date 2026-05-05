@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+const API_BASE_URL = (import.meta.env.VITE_API_URL || '/api') + '/v1';
+const getAuthToken = () => localStorage.getItem('token') || localStorage.getItem('auth_token');
 
 const labTestService = {
   // Get all lab tests with filters
@@ -35,7 +36,7 @@ const labTestService = {
   // Create lab test booking
   createBooking: async (bookingData) => {
     try {
-      const token = localStorage.getItem('auth_token');
+      const token = getAuthToken();
       const config = {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -54,7 +55,7 @@ const labTestService = {
   // Get user's lab test bookings
   getBookings: async (filters = {}) => {
     try {
-      const token = localStorage.getItem('auth_token');
+      const token = getAuthToken();
       const config = {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -76,7 +77,7 @@ const labTestService = {
   // Get single booking details
   getBooking: async (id) => {
     try {
-      const token = localStorage.getItem('auth_token');
+      const token = getAuthToken();
       const config = {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -94,7 +95,7 @@ const labTestService = {
   // Update booking
   updateBooking: async (id, updateData) => {
     try {
-      const token = localStorage.getItem('auth_token');
+      const token = getAuthToken();
       const config = {
         headers: {
           'Authorization': `Bearer ${token}`,

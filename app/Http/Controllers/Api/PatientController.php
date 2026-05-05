@@ -210,7 +210,7 @@ class PatientController extends Controller
         ]);
     }
 
-    public function medicalHistory($id)
+    public function medicalHistory($id, Request $request)
     {
         $patient = Patient::findOrFail($id);
         

@@ -13,31 +13,48 @@ class Order extends Model
     protected $fillable = [
         'order_number',
         'user_id',
+        'patient_id',
         'subtotal',
-        'tax',
-        'shipping',
-        'discount',
-        'total',
+        'discount_amount',
+        'delivery_fee',
+        'tax_amount',
+        'total_amount',
+        'currency',
         'status',
         'payment_status',
         'payment_method',
-        'shipping_name',
         'shipping_phone',
+        'shipping_email',
         'shipping_address',
         'shipping_city',
-        'shipping_state',
-        'shipping_zip',
-        'notes',
+        'shipping_district',
+        'shipping_postal_code',
+        'order_notes',
+        'admin_notes',
+        'tracking_number',
+        'courier_service',
+        'items',
+        'payment_details',
+        'created_by',
+        'confirmed_at',
+        'processed_at',
+        'cancelled_at',
+        'cancellation_reason',
         'shipped_at',
         'delivered_at',
     ];
 
     protected $casts = [
         'subtotal' => 'decimal:2',
-        'tax' => 'decimal:2',
-        'shipping' => 'decimal:2',
-        'discount' => 'decimal:2',
-        'total' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
+        'delivery_fee' => 'decimal:2',
+        'tax_amount' => 'decimal:2',
+        'total_amount' => 'decimal:2',
+        'items' => 'array',
+        'payment_details' => 'array',
+        'confirmed_at' => 'datetime',
+        'processed_at' => 'datetime',
+        'cancelled_at' => 'datetime',
         'shipped_at' => 'datetime',
         'delivered_at' => 'datetime',
     ];
@@ -51,6 +68,11 @@ class Order extends Model
     public function items()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function patient()
+    {
+        return $this->belongsTo(Patient::class);
     }
 
     protected static function boot()

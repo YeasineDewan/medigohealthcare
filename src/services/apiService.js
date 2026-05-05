@@ -1,8 +1,6 @@
 // API Service for admin operations
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
-
-// Check if backend is available
-const isBackendAvailable = API_BASE_URL && !API_BASE_URL.includes('localhost:8000');
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
+const ENABLE_MOCK_API = import.meta.env.VITE_ENABLE_MOCK_API === 'true';
 
 // Import mock API for development
 import mockApiService from './mockApi.js';
@@ -10,7 +8,7 @@ import mockApiService from './mockApi.js';
 class ApiService {
   constructor() {
     this.baseURL = API_BASE_URL;
-    this.useMock = !isBackendAvailable;
+    this.useMock = ENABLE_MOCK_API;
   }
 
   async request(endpoint, options = {}) {

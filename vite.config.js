@@ -47,6 +47,8 @@ export default defineConfig({
     },
   },
 
+  base: '/',
+
   build: {
     outDir: 'dist',
     emptyOutDir: true,
@@ -66,17 +68,9 @@ export default defineConfig({
           if (/woff2?|ttf|eot/i.test(ext)) return 'assets/fonts/[name]-[hash][extname]'
           return 'assets/[name]-[hash][extname]'
         },
-        // Smart chunk splitting
+        // Keep only route-level manual chunks.
+        // Vendor chunking is left to Vite/Rollup to avoid circular vendor deps.
         manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('react-dom') || id.includes('react-router')) return 'vendor-react'
-            if (id.includes('framer-motion')) return 'vendor-motion'
-            if (id.includes('recharts')) return 'vendor-charts'
-            if (id.includes('lucide-react')) return 'vendor-icons'
-            if (id.includes('jspdf') || id.includes('docx') || id.includes('file-saver')) return 'vendor-export'
-            if (id.includes('axios') || id.includes('zustand')) return 'vendor-utils'
-            return 'vendor-misc'
-          }
           if (id.includes('/pages/admin/')) return 'chunk-admin'
           if (id.includes('/pages/doctor/')) return 'chunk-doctor'
           if (id.includes('/pages/patient/')) return 'chunk-patient'

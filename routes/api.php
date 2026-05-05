@@ -103,9 +103,9 @@ Route::prefix('v1')->group(function () {
         Route::get('/patients/{id}/medical-history', [PatientController::class, 'medicalHistory']);
         Route::get('/patients/{id}/appointments', [PatientController::class, 'appointments']);
         Route::get('/patients/{id}/prescriptions', [PatientController::class, 'prescriptions']);
-        Route::post('/patients/{id}/vital-signs', [PatientController::class, 'storeVitalSigns']);
+        Route::post('/patients/{id}/vital-signs', [PatientController::class, 'updateVitalSigns']);
         Route::get('/patients/search', [PatientController::class, 'search']);
-        Route::get('/patients/statistics', [PatientController::class, 'statistics']);
+        Route::get('/patients/{id}/statistics', [PatientController::class, 'statistics']);
         
         // Appointments
         Route::get('/appointments', [AppointmentController::class, 'index']);

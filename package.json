@@ -9,6 +9,7 @@
     "build": "node node_modules/vite/bin/vite.js build",
     "build:prod": "node node_modules/vite/bin/vite.js build --mode production",
     "build:cpanel": "node node_modules/vite/bin/vite.js build && node deploy-prep.cjs",
+    "package:cpanel": "npm run build:cpanel && powershell -NoProfile -ExecutionPolicy Bypass -Command \"if (Test-Path 'cpanel-deploy.zip') { Remove-Item 'cpanel-deploy.zip' -Force -ErrorAction SilentlyContinue }; Compress-Archive -Path 'dist\\\\*' -DestinationPath 'cpanel-deploy.zip' -Force\"",
     "lint": "node node_modules/eslint/bin/eslint.js .",
     "preview": "node node_modules/vite/bin/vite.js preview",
     "start": "node node_modules/vite/bin/vite.js preview --host",

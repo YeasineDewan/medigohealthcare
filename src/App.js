@@ -18,7 +18,8 @@ import Services from './pages/Services';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import Careers from './pages/Careers';
-import Consult from './pages/Consult';
+import ConsultationPage from './pages/ConsultationPage';
+import ConsultationManagement from './components/consultation/ConsultationManagement';
 import LabTests from './pages/LabTests';
 import LabTestDetails from './pages/LabTestDetails';
 import LabTestBooking from './pages/LabTestBooking';
@@ -175,7 +176,7 @@ import CustomReports from './pages/admin/reports/CustomReports';
 import DoctorLayout from './components/doctor/DoctorLayout';
 import DoctorDashboard from './pages/doctor/DoctorDashboard';
 import DoctorSchedule from './pages/doctor/DoctorSchedule';
-import DoctorLiveConsult from './pages/doctor/DoctorLiveConsult';
+import VideoCallInterface from './components/consultation/VideoCallInterface';
 import DoctorPatients from './pages/doctor/DoctorPatients';
 import DoctorEarnings from './pages/doctor/DoctorEarnings';
 import DoctorProfilePro from './pages/doctor/DoctorProfilePro';
@@ -233,7 +234,8 @@ function App() {
           <Route path="blog" element={<Blog />} />
           <Route path="blog/:id" element={<BlogPost />} />
           <Route path="careers" element={<Careers />} />
-          <Route path="consult" element={<Consult />} />
+          <Route path="consult" element={<ConsultationPage />} />
+          <Route path="consultation" element={<ConsultationPage />} />
           <Route path="/lab-tests" element={<LabTests />} />
           <Route path="/lab-tests/:testId" element={<LabTestDetails />} />
           <Route path="/lab-tests/:testId/book" element={<LabTestBooking />} />
@@ -281,6 +283,9 @@ function App() {
           <Route path="appointments/schedule" element={<AdminAppointments />} />
           <Route path="appointments/waiting" element={<AdminAppointments />} />
           <Route path="appointments/history" element={<AdminAppointments />} />
+          
+          {/* Consultation Management */}
+          <Route path="consultations" element={<ConsultationManagement />} />
           
           {/* Patient Management */}
           <Route path="patients/registration" element={<PatientRegistration />} />
@@ -412,7 +417,7 @@ function App() {
         <Route path="/doctor" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout /></ProtectedRoute>}>
           <Route index element={<DoctorDashboard />} />
           <Route path="schedule" element={<DoctorSchedule />} />
-          <Route path="live-consult" element={<DoctorLiveConsult />} />
+          <Route path="live-consult" element={<VideoCallInterface />} />
           <Route path="appointments" element={<Appointments />} />
           <Route path="profile" element={<ProfessionalDoctorProfile />} />
           <Route path="profile-crud" element={<DoctorProfilePro />} />
@@ -425,7 +430,7 @@ function App() {
           <Route index element={<PatientDashboard />} />
           <Route path="dashboard" element={<AdvancedPatientDashboard />} />
           <Route path="book" element={<PatientBook />} />
-          <Route path="live-consult" element={<PatientLiveConsult />} />
+          <Route path="live-consult" element={<VideoCallInterface />} />
           <Route path="appointments" element={<PatientAppointments />} />
           <Route path="orders" element={<PatientOrders />} />
           <Route path="records" element={<PatientRecords />} />
@@ -444,7 +449,7 @@ function App() {
     <Route path="prescriptions" element={<PatientPrescriptions />} />
     <Route path="profile" element={<PatientProfile />} />
     <Route path="book" element={<PatientBook />} />
-    <Route path="live-consult" element={<PatientLiveConsult />} />
+    <Route path="live-consult" element={<VideoCallInterface />} />
     <Route path="orders" element={<PatientOrders />} />
   </Route>
 </Routes>

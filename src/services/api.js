@@ -1,6 +1,9 @@
 import axios from 'axios';
 
 const API_BASE = (import.meta.env.VITE_API_URL || '/api') + '/v1';
+const AUTH_LOGIN_PATH = '/auth/patient/login';
+
+const getAuthToken = () => localStorage.getItem('token') || localStorage.getItem('auth_token');
 
 export const api = axios.create({
   baseURL: API_BASE,
@@ -14,7 +17,7 @@ export const api = axios.create({
 // Add request interceptor for auth token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = getAuthToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -33,7 +36,8 @@ api.interceptors.response.use(
     // Handle 401 - logout
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
-      window.location.href = '/login';
+      localStorage.removeItem('auth_token');
+      window.location.href = AUTH_LOGIN_PATH;
     }
     return Promise.reject(error);
   }

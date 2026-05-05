@@ -134,12 +134,19 @@ class OrderController extends Controller
                 'shipping_phone' => $request->shipping_phone,
                 'shipping_email' => $request->shipping_email,
                 'order_notes' => $request->order_notes,
+                'items' => $orderItems,
                 'created_by' => $user->id,
             ]);
 
             // Create order items
             foreach ($orderItems as $item) {
-                OrderItem::create(array_merge($item, ['order_id' => $order->id]));
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item['product_id'],
+                    'quantity' => $item['quantity'],
+                    'price' => $item['discount_price'],
+                    'total' => $item['total_price'],
+                ]);
             }
 
             return response()->json([
@@ -381,19 +388,19 @@ class OrderController extends Controller
             $query->where('user_id', $user->id);
         }
 
-        $total = $query->count();
-        $pending = $query->where('status', 'pending')->count();
-        $confirmed = $query->where('status', 'confirmed')->count();
-        $processing = $query->where('status', 'processing')->count();
-        $shipped = $query->where('status', 'shipped')->count();
-        $delivered = $query->where('status', 'delivered')->count();
-        $cancelled = $query->where('status', 'cancelled')->count();
+        $total = (clone $query)->count();
+        $pending = (clone $query)->where('status', 'pending')->count();
+        $confirmed = (clone $query)->where('status', 'confirmed')->count();
+        $processing = (clone $query)->where('status', 'processing')->count();
+        $shipped = (clone $query)->where('status', 'shipped')->count();
+        $delivered = (clone $query)->where('status', 'delivered')->count();
+        $cancelled = (clone $query)->where('status', 'cancelled')->count();
 
-        $totalRevenue = $query->where('payment_status', 'paid')->sum('total_amount');
-        $thisMonthRevenue = $query->where('payment_status', 'paid')
-                                 ->whereMonth('created_at', now()->month)
-                                 ->whereYear('created_at', now()->year)
-                                 ->sum('total_amount');
+        $totalRevenue = (clone $query)->where('payment_status', 'paid')->sum('total_amount');
+        $thisMonthRevenue = (clone $query)->where('payment_status', 'paid')
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->sum('total_amount');
 
         return response()->json([
             'success' => true,

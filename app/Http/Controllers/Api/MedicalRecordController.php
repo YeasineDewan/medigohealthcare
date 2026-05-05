@@ -13,7 +13,13 @@ class MedicalRecordController extends Controller
         $query = MedicalRecord::with(['doctor.user', 'appointment']);
 
         if ($request->user()->role === 'patient') {
-            $query->where('patient_id', $request->user()->id);
+            $patientId = optional($request->user()->patient)->id;
+            if (!$patientId) {
+                return response()->json([
+                    'message' => 'Patient profile not found for current user.'
+                ], 422);
+            }
+            $query->where('patient_id', $patientId);
         }
 
         if ($request->has('record_type')) {
@@ -29,7 +35,7 @@ class MedicalRecordController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'patient_id' => 'required|exists:users,id',
+            'patient_id' => 'required|exists:patients,id',
             'record_type' => 'required|string',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -38,6 +44,7 @@ class MedicalRecordController extends Controller
         ]);
 
         $validated['doctor_id'] = $request->user()->doctor->id ?? null;
+        $validated['created_by'] = $request->user()->id;
 
         $record = MedicalRecord::create($validated);
 
